@@ -76,6 +76,7 @@
                     <div class="nav-link" data-page="podcast" onclick="navigateTo('podcast')">Neural Bridge</div>
                     <div class="nav-link" data-page="vericare" onclick="navigateTo('vericare')">Vericare AI</div>
                     <div class="nav-link" data-page="internships" onclick="navigateTo('internships')">Internships</div>
+                    <div class="nav-link" data-page="ideas" onclick="navigateTo('ideas')">Ideas</div>
                     <div class="nav-link" data-page="github" onclick="navigateTo('github')">GitHub</div>
                 </div>
             </div>
@@ -99,6 +100,12 @@
                     
                     <!-- Social Links -->
                     <div class="social-links">
+                        <a href="https://github.com/tarush-ai" target="_blank" class="social-link">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                            </svg>
+                            GitHub
+                        </a>
                         <a href="https://x.com/tarushgs" target="_blank" class="social-link">
                             <svg viewBox="0 0 24 24" fill="currentColor">
                                 <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
@@ -120,14 +127,22 @@
                         </a>
                     </div>
                     
-                    <div class="stats-row">
-                        <div class="stat-item">
-                            <div class="stat-value">3+</div>
-                            <div class="stat-label">Projects Built</div>
-                        </div>
+                    <div class="stats-row" style="flex-wrap: nowrap; gap: 40px;">
                         <div class="stat-item">
                             <div class="stat-value">1</div>
                             <div class="stat-label">Company Founded</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">4+</div>
+                            <div class="stat-label">Internships</div>
+                        </div>
+                        <div class="stat-item" onclick="navigateTo('github')" style="cursor: pointer;">
+                            <div class="stat-value">8</div>
+                            <div class="stat-label">Public Repositories</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">3</div>
+                            <div class="stat-label">LLMs Implemented</div>
                         </div>
                         <div class="stat-item">
                             <div class="stat-value">∞</div>
@@ -144,16 +159,20 @@
                     <div class="project-grid">
                         <div class="project-card" onclick="navigateTo('vericare')">
                             <div class="project-card-header">
-                                <span class="project-card-icon">🏥</span>
-                                <span class="project-card-tag">Active</span>
+                                <span class="project-card-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#e11d48" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="28" height="28">
+                                        <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" fill="none" stroke="#e11d48"/>
+                                    </svg>
+                                </span>
                             </div>
                             <h3>Vericare AI</h3>
                             <p>Healthcare automation powered by artificial intelligence.</p>
                         </div>
                         <div class="project-card" onclick="navigateTo('podcast')">
                             <div class="project-card-header">
-                                <span class="project-card-icon">🎙️</span>
-                                <span class="project-card-tag">Live</span>
+                                <span class="project-card-icon">
+                                    <img src="logo.jpg" alt="Neural Bridge" style="width: 28px; height: 28px; border-radius: 6px;">
+                                </span>
                             </div>
                             <h3>Neural Bridge Podcast</h3>
                             <p>Bridging generations through AI conversations.</p>
@@ -161,15 +180,20 @@
                         <div class="project-card" onclick="navigateTo('internships')">
                             <div class="project-card-header">
                                 <span class="project-card-icon">💼</span>
-                                <span class="project-card-tag">Experience</span>
                             </div>
                             <h3>Internships</h3>
                             <p>Building at Turing, HumanX, Ema, and more.</p>
                         </div>
+                        <div class="project-card" onclick="navigateTo('ideas')">
+                            <div class="project-card-header">
+                                <span class="project-card-icon">💡</span>
+                            </div>
+                            <h3>Ideas Library</h3>
+                            <p>Free ideas for builders. Take one and run.</p>
+                        </div>
                         <div class="project-card" onclick="navigateTo('github')">
                             <div class="project-card-header">
                                 <span class="project-card-icon">💻</span>
-                                <span class="project-card-tag">Open Source</span>
                             </div>
                             <h3>GitHub</h3>
                             <p>Code, experiments, and open source contributions.</p>
@@ -225,161 +249,44 @@
                         </p>
                     </div>
                     
-                    <a href="https://www.youtube.com/@NeuralBridgePodcast" target="_blank" class="github-link" style="margin-top: 30px; border-color: rgba(167, 139, 250, 0.3); background: rgba(167, 139, 250, 0.1); color: var(--accent-purple);">
-                        Watch on YouTube →
-                    </a>
+                    <div style="display: flex; gap: 16px; justify-content: center; margin-top: 30px; flex-wrap: wrap;">
+                        <a href="https://www.youtube.com/@NeuralBridgePodcast" target="_blank" class="github-link" style="margin-top: 0; border-color: rgba(167, 139, 250, 0.3); background: rgba(167, 139, 250, 0.1); color: var(--accent-purple);">
+                            <svg viewBox="0 0 24 24" fill="currentColor" style="width: 20px; height: 20px;">
+                                <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                            </svg>
+                        </a>
+                        <a href="mailto:neurabridgepodcast@gmail.com" class="github-link" style="margin-top: 0; border-color: rgba(167, 139, 250, 0.3); background: rgba(167, 139, 250, 0.1); color: var(--accent-purple);">
+                            Contact Neural Bridge →
+                        </a>
+                    </div>
                     <div class="back-hint" style="margin-top: 30px;">Type <code>cd ~</code> or <code>cd ..</code> to go back home</div>
                 </div>
                 
                 <!-- Episodes List -->
-                <div class="podcast-episodes" style="margin-top: 40px;">
-                    <h3 style="color: var(--text-primary); font-size: 20px; margin-bottom: 24px; text-align: center;">All Episodes</h3>
-                    <div class="episode-card">
-                        <div class="episode-number">21</div>
-                        <div class="episode-info">
-                            <h3>Episode 21</h3>
-                            <p>Latest episode on Neural Bridge.</p>
+                <div id="podcast-list" class="podcast-episodes" style="margin-top: 40px;">
+                    <!-- Populated by JS -->
+                </div>
+
+                <!-- Podcast Detail View -->
+                <div id="podcast-detail" class="podcast-detail" style="display: none;">
+                    <div class="podcast-detail-header" style="text-align: center; margin-bottom: 30px;">
+                        <h1 id="podcast-detail-title" style="font-size: 32px; margin-bottom: 12px;">Episode Title</h1>
+                        <p id="podcast-detail-desc" style="color: var(--text-dim);">Episode description...</p>
+                    </div>
+                    
+                    <div class="podcast-video-container" style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 30px;">
+                        <iframe id="podcast-video-frame" src="" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+
+                    <div class="podcast-notes" style="background: rgba(18, 18, 26, 0.6); padding: 24px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
+                        <h3 style="color: var(--accent-purple); margin-bottom: 16px;">Key Takeaways & Notes</h3>
+                        <div id="podcast-notes-content" style="color: var(--text-dim); line-height: 1.6;">
+                            <!-- Populated by JS -->
                         </div>
                     </div>
-                    <div class="episode-card">
-                        <div class="episode-number">20</div>
-                        <div class="episode-info">
-                            <h3>Episode 20</h3>
-                            <p>Exploring AI trends and insights.</p>
-                        </div>
-                    </div>
-                    <div class="episode-card">
-                        <div class="episode-number">19</div>
-                        <div class="episode-info">
-                            <h3>Episode 19</h3>
-                            <p>Conversations with industry leaders.</p>
-                        </div>
-                    </div>
-                    <div class="episode-card">
-                        <div class="episode-number">18</div>
-                        <div class="episode-info">
-                            <h3>Episode 18</h3>
-                            <p>Bridging generational perspectives on tech.</p>
-                        </div>
-                    </div>
-                    <div class="episode-card">
-                        <div class="episode-number">17</div>
-                        <div class="episode-info">
-                            <h3>Episode 17</h3>
-                            <p>Deep dive into AI applications.</p>
-                        </div>
-                    </div>
-                    <div class="episode-card">
-                        <div class="episode-number">16</div>
-                        <div class="episode-info">
-                            <h3>Episode 16</h3>
-                            <p>Future of work and automation.</p>
-                        </div>
-                    </div>
-                    <div class="episode-card">
-                        <div class="episode-number">15</div>
-                        <div class="episode-info">
-                            <h3>Episode 15</h3>
-                            <p>Gen Z perspectives on innovation.</p>
-                        </div>
-                    </div>
-                    <div class="episode-card">
-                        <div class="episode-number">14</div>
-                        <div class="episode-info">
-                            <h3>Episode 14</h3>
-                            <p>Building in the AI era.</p>
-                        </div>
-                    </div>
-                    <div class="episode-card">
-                        <div class="episode-number">13</div>
-                        <div class="episode-info">
-                            <h3>Episode 13</h3>
-                            <p>Insights from tech professionals.</p>
-                        </div>
-                    </div>
-                    <div class="episode-card">
-                        <div class="episode-number">12</div>
-                        <div class="episode-info">
-                            <h3>Episode 12</h3>
-                            <p>AI ethics and responsibility.</p>
-                        </div>
-                    </div>
-                    <div class="episode-card">
-                        <div class="episode-number">11</div>
-                        <div class="episode-info">
-                            <h3>Episode 11</h3>
-                            <p>Startup journeys and lessons learned.</p>
-                        </div>
-                    </div>
-                    <div class="episode-card">
-                        <div class="episode-number">10</div>
-                        <div class="episode-info">
-                            <h3>Episode 10</h3>
-                            <p>The intersection of AI and creativity.</p>
-                        </div>
-                    </div>
-                    <div class="episode-card">
-                        <div class="episode-number">09</div>
-                        <div class="episode-info">
-                            <h3>Episode 9</h3>
-                            <p>Machine learning fundamentals.</p>
-                        </div>
-                    </div>
-                    <div class="episode-card">
-                        <div class="episode-number">08</div>
-                        <div class="episode-info">
-                            <h3>Episode 8</h3>
-                            <p>Career paths in technology.</p>
-                        </div>
-                    </div>
-                    <div class="episode-card">
-                        <div class="episode-number">07</div>
-                        <div class="episode-info">
-                            <h3>Episode 7</h3>
-                            <p>Entrepreneurship in the digital age.</p>
-                        </div>
-                    </div>
-                    <div class="episode-card">
-                        <div class="episode-number">06</div>
-                        <div class="episode-info">
-                            <h3>Episode 6</h3>
-                            <p>Understanding large language models.</p>
-                        </div>
-                    </div>
-                    <div class="episode-card">
-                        <div class="episode-number">05</div>
-                        <div class="episode-info">
-                            <h3>Episode 5</h3>
-                            <p>AI in healthcare and beyond.</p>
-                        </div>
-                    </div>
-                    <div class="episode-card">
-                        <div class="episode-number">04</div>
-                        <div class="episode-info">
-                            <h3>Episode 4</h3>
-                            <p>Breaking into the tech industry.</p>
-                        </div>
-                    </div>
-                    <div class="episode-card">
-                        <div class="episode-number">03</div>
-                        <div class="episode-info">
-                            <h3>Episode 3</h3>
-                            <p>Building products that matter.</p>
-                        </div>
-                    </div>
-                    <div class="episode-card">
-                        <div class="episode-number">02</div>
-                        <div class="episode-info">
-                            <h3>Episode 2</h3>
-                            <p>The AI revolution explained.</p>
-                        </div>
-                    </div>
-                    <div class="episode-card">
-                        <div class="episode-number">01</div>
-                        <div class="episode-info">
-                            <h3>Episode 1</h3>
-                            <p>Welcome to Neural Bridge.</p>
-                        </div>
+
+                    <div class="back-hint" style="text-align: center; margin-top: 40px;">
+                        <span onclick="hidePodcastDetail()" style="cursor: pointer; color: var(--accent-purple);">← Back to Episodes</span>
                     </div>
                 </div>
             </div>
@@ -393,8 +300,23 @@
                                 <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" fill="none" stroke="#e11d48"/>
                             </svg>
                         </div>
-                        <h1 class="company-name">Vericare AI</h1>
+                        <h1 class="company-name">VeriCare AI</h1>
                         <p class="company-tagline"><strong style="color: var(--accent-cyan);">Patient Advocacy, Augmented with AI</strong></p>
+                        
+                        <!-- Demo Video -->
+                        <div style="margin-top: 30px; margin-bottom: 30px; width: 100%; max-width: 800px; margin-left: auto; margin-right: auto;">
+                            <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                                <iframe 
+                                    id="vericare-video"
+                                    src="" 
+                                    data-src="https://www.youtube.com/embed/CgwH340HB9U?autoplay=1&mute=1"
+                                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                    allowfullscreen>
+                                </iframe>
+                            </div>
+                        </div>
+
                         <p class="company-description">
                             <strong style="color: var(--accent-cyan);">80%</strong> of US medical bills contain errors.
                         </p>
@@ -407,40 +329,43 @@
                         <p class="company-description">
                             VeriCare AI is the first <strong style="color: var(--accent-cyan);">fully AI</strong> patient advocacy engine, built for both patient advocacy firms and patients: giving them the power to <strong style="color: var(--accent-cyan);">dispute</strong>, <strong style="color: var(--accent-cyan);">negotiate</strong>, and <strong style="color: var(--accent-cyan);">reduce</strong> their bills with the click of a button.
                         </p>
-                        
-                        <a href="https://vericareai.com" target="_blank" class="github-link" style="margin-top: 20px;">
-                            Visit Vericare AI →
-                        </a>
-                        
-                        <!-- Demo Video -->
-                        <div style="margin-top: 40px; width: 100%; max-width: 560px; margin-left: auto; margin-right: auto;">
-                            <h3 style="color: var(--text-primary); font-size: 18px; margin-bottom: 16px; text-align: center;">Watch the Demo</h3>
-                            <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
-                                <iframe 
-                                    src="https://www.youtube.com/embed/CgwH340HB9U" 
-                                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;"
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                                    allowfullscreen>
-                                </iframe>
+
+                        <div style="margin-top: 40px; text-align: center;">
+                            <h4 style="color: var(--accent-cyan); font-size: 18px; margin-bottom: 16px; font-weight: 600;">And Patients Love It.</h4>
+                            <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; color: var(--text-dim); font-size: 13px;">
+                                <div style="background: rgba(255, 255, 255, 0.05); padding: 8px 16px; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.1);">
+                                    <span style="color: var(--text-primary); font-weight: 700;">146</span> Likes
+                                </div>
+                                <div style="background: rgba(255, 255, 255, 0.05); padding: 8px 16px; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.1);">
+                                    <span style="color: var(--text-primary); font-weight: 700;">18k</span> Impressions
+                                </div>
+                                <div style="background: rgba(255, 255, 255, 0.05); padding: 8px 16px; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.1);">
+                                    <span style="color: var(--text-primary); font-weight: 700;">21</span> Reposts
+                                </div>
+                                <div style="background: rgba(255, 255, 255, 0.05); padding: 8px 16px; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.1);">
+                                    <span style="color: var(--text-primary); font-weight: 700;">74</span> Comments
+                                </div>
                             </div>
                         </div>
-                        
-                        <!-- LinkedIn Post Embed -->
-                        <div style="margin-top: 40px; width: 100%; max-width: 560px; margin-left: auto; margin-right: auto;">
-                            <h3 style="color: var(--text-primary); font-size: 18px; margin-bottom: 16px; text-align: center;">The Announcement</h3>
-                            <div style="position: relative; height: 400px; overflow: hidden; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
-                                <iframe 
-                                    src="https://www.linkedin.com/embed/feed/update/urn:li:activity:7391869735728201728" 
-                                    style="width: 100%; height: 100%; border: 0;"
-                                    allowfullscreen>
-                                </iframe>
-                            </div>
+
+                        <!-- Action Buttons -->
+                        <div style="display: flex; gap: 16px; justify-content: center; align-items: center; margin-top: 30px; flex-wrap: wrap;">
+                            <a href="https://www.linkedin.com/company/vericareai" target="_blank" style="display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 8px; background: rgba(34, 211, 238, 0.1); border: 1px solid rgba(34, 211, 238, 0.3); color: var(--accent-cyan); transition: all 0.3s ease;" onmouseover="this.style.background='rgba(34, 211, 238, 0.2)'; this.style.transform='translateY(-2px)'" onmouseout="this.style.background='rgba(34, 211, 238, 0.1)'; this.style.transform='translateY(0)'">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                                </svg>
+                            </a>
+                            <a href="https://medium.com/@vericareai/the-comprehensive-guide-to-requesting-an-itemized-bill-1b002fcb9a7b" target="_blank" class="github-link" style="margin-top: 0;">
+                                Read More on Medium →
+                            </a>
+                            <a href="https://vericareai.com" target="_blank" class="github-link" style="margin-top: 0;">
+                                Visit Vericare AI →
+                            </a>
+                            <a href="mailto:vericareai@gmail.com" class="github-link" style="margin-top: 0; border-color: rgba(34, 211, 238, 0.3); background: rgba(34, 211, 238, 0.1); color: var(--accent-cyan);">
+                                Contact VeriCare →
+                            </a>
                         </div>
-                        
-                        <!-- Read More Link -->
-                        <a href="https://medium.com/@vericareai/the-comprehensive-guide-to-requesting-an-itemized-bill-1b002fcb9a7b" target="_blank" class="github-link" style="margin-top: 30px;">
-                            Read More on Medium →
-                        </a>
+
                     </div>
                     <div class="back-hint">Type <code>cd ~</code> or <code>cd ..</code> to go back home</div>
                 </div>
@@ -458,7 +383,7 @@
                     <div class="internship-card" onclick="navigateTo('internship-turing')">
                         <div class="internship-card-header">
                             <span class="internship-company">Turing</span>
-                            <span class="internship-period">2024</span>
+                            <span class="internship-period">2025</span>
                         </div>
                         <p class="internship-role">AI Training & Evaluation</p>
                         <p class="internship-description">Working on AI model training and evaluation for cutting-edge language models.</p>
@@ -500,7 +425,7 @@
                     <div class="internship-card" onclick="navigateTo('internship-proshort')">
                         <div class="internship-card-header">
                             <span class="internship-company">Proshort</span>
-                            <span class="internship-period">2024</span>
+                            <span class="internship-period">2023</span>
                         </div>
                         <p class="internship-role">Engineering Intern</p>
                         <p class="internship-description">Working on short-form video technology and content creation tools.</p>
@@ -527,37 +452,45 @@
                 </div>
             </div>
 
+            <!-- Ideas Page -->
+            <div class="sub-page" id="page-ideas">
+                <div class="sub-page-header" style="text-align: center; margin-top: 100px;">
+                    <h1>💡 Open Ideas Library</h1>
+                    <div style="font-size: 64px; margin: 40px 0;">🚧</div>
+                    <h2 style="color: var(--accent-orange); margin-bottom: 16px;">Coming Soon</h2>
+                    <p style="color: var(--text-dim); max-width: 500px; margin: 0 auto;">
+                        I'm currently curating a list of ideas I believe in but can't build myself. 
+                        Check back later for free startup ideas.
+                    </p>
+                    <div class="back-hint" style="margin-top: 40px;">Type <code>cd ~</code> or <code>cd ..</code> to go back home</div>
+                </div>
+            </div>
+
             <!-- GitHub Page -->
             <div class="sub-page" id="page-github">
-                <div class="sub-page-header">
+                <div class="sub-page-header" style="text-align: center; margin-top: 100px;">
                     <h1>💻 GitHub</h1>
-                    <p>Where the code lives. Open source projects and experiments.</p>
-                    <div class="back-hint">Type <code>cd ~</code> or <code>cd ..</code> to go back home</div>
-                </div>
-                <div class="github-stats">
-                    <div class="github-stat">
-                        <div class="github-stat-value">--</div>
-                        <div class="github-stat-label">Repositories</div>
+                    <div style="font-size: 64px; margin: 40px 0;">🚧</div>
+                    <h2 style="color: var(--accent-cyan); margin-bottom: 16px;">Coming Soon</h2>
+                    <p style="color: var(--text-dim); max-width: 500px; margin: 0 auto;">
+                        I'm currently building a custom integration to showcase my repositories and contributions directly in this terminal.
+                        <br><br>
+                        For now, you can view my profile on GitHub.com.
+                    </p>
+                    <div style="margin-top: 30px;">
+                        <a href="https://github.com/tarush-ai" target="_blank" class="github-link">
+                            Visit Profile →
+                        </a>
                     </div>
-                    <div class="github-stat">
-                        <div class="github-stat-value">--</div>
-                        <div class="github-stat-label">Contributions</div>
-                    </div>
-                    <div class="github-stat">
-                        <div class="github-stat-value">--</div>
-                        <div class="github-stat-label">Stars</div>
-                    </div>
-                </div>
-                <div style="text-align: center;">
-                    <a href="https://github.com/tarushgupta" target="_blank" class="github-link">
-                        View on GitHub →
-                    </a>
+                    <div class="back-hint" style="margin-top: 40px;">Type <code>cd ~</code> or <code>cd ..</code> to go back home</div>
                 </div>
             </div>
         </div>
 
         <!-- Bottom Terminal -->
         <div class="bottom-terminal" id="bottom-terminal">
+            <div class="terminal-expand-btn" id="expand-terminal-btn" onclick="toggleTerminalExpand()">▲</div>
+            <div class="command-history" id="command-history"></div>
             <div class="terminal-input-row">
                 <span class="terminal-prompt-mini">
                     tarush@citadel:<span class="path" id="current-path">~</span>$
