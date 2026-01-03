@@ -485,29 +485,30 @@
                 <div class="aurelius-container">
                     <!-- Header -->
                     <div class="aurelius-header">
-                        <div class="aurelius-logo-container">
-                            <img src="/aurelius-logo.png" alt="Marcus Aurelius" class="aurelius-logo pixel-art" id="aurelius-state-image">
-                        </div>
-                        <h1 class="aurelius-title">AURELIUS<span class="gpt-suffix">GPT</span></h1>
+                        <h1 class="aurelius-title">AURELIUSGPT</h1>
                         <p class="aurelius-subtitle">Stoic Wisdom from the Philosopher Emperor</p>
-                        <div class="aurelius-badges">
-                            <a href="https://github.com/tarush-ai/AureliusGPT-Torch" target="_blank" rel="noopener noreferrer">
-                                <img src="https://img.shields.io/badge/-000000?logo=github&logoColor=white" alt="GitHub">
-                            </a>
-                            <a href="https://huggingface.co/Tarush-AI/AureliusGPT" target="_blank" rel="noopener noreferrer">
-                                <img src="https://img.shields.io/badge/-FFD21E?logo=huggingface&logoColor=000" alt="Hugging Face">
-                            </a>
+                        <div class="aurelius-welcome-text">
+                            <p>Greetings, seeker of wisdom. I am Marcus Aurelius, trained on the <em>Meditations</em>.</p>
+                            <p>Ask me about stoicism, virtue, resilience, or the nature of the good life.</p>
                         </div>
+                    </div>
+
+                    <!-- Enlarged Image above Chat -->
+                    <div class="aurelius-image-display">
+                        <img src="/aurelius-logo.png" alt="Marcus Aurelius" class="aurelius-logo pixel-art" id="aurelius-state-image">
+                    </div>
+
+                    <!-- Sample Prompts -->
+                    <div class="aurelius-sample-prompts">
+                        <button class="sample-prompt-btn" onclick="useSamplePrompt('Death')">Death</button>
+                        <button class="sample-prompt-btn" onclick="useSamplePrompt('Virtue')">Virtue</button>
+                        <button class="sample-prompt-btn" onclick="useSamplePrompt('Accept')">Accept</button>
+                        <button class="sample-prompt-btn" onclick="useSamplePrompt('Nature')">Nature</button>
                     </div>
 
                     <!-- Chat Interface -->
                     <div class="aurelius-chat-container">
                         <div class="aurelius-messages" id="aurelius-messages">
-                            <div class="aurelius-welcome-message">
-                                <div class="pixel-icon">👑</div>
-                                <p>Greetings, seeker of wisdom. I am Marcus Aurelius, trained on the <em>Meditations</em>.</p>
-                                <p>Ask me about stoicism, virtue, resilience, or the nature of the good life.</p>
-                            </div>
                         </div>
 
                         <!-- Input Area -->
@@ -530,23 +531,27 @@
                     
                     <!-- Export Button -->
                     <div class="aurelius-export-container">
-                        <button class="aurelius-export-btn" id="aurelius-export-btn" title="Export Conversation">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                        <button class="aurelius-export-btn" onclick="exportConversation('txt')" title="Export Conversation">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
                                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                                 <polyline points="7 10 12 15 17 10"></polyline>
                                 <line x1="12" y1="15" x2="12" y2="3"></line>
                             </svg>
+                            <span>Export</span>
                         </button>
-                        <div class="aurelius-export-menu" id="aurelius-export-menu">
-                            <div class="export-option" onclick="exportConversation('txt')">Export as TXT</div>
-                            <div class="export-option" onclick="exportConversation('json')">Export as JSON</div>
-                            <div class="export-option" onclick="exportConversation('markdown')">Export as Markdown</div>
-                        </div>
                     </div>
                     
                     <!-- Blog Section -->
                     <div class="aurelius-blog-section">
                         <h2>About AureliusGPT</h2>
+                        <div class="aurelius-badges-blog">
+                            <a href="https://github.com/tarush-ai/AureliusGPT-Torch" target="_blank" rel="noopener noreferrer">
+                                <img src="https://img.shields.io/badge/-000000?logo=github&logoColor=white" alt="GitHub">
+                            </a>
+                            <a href="https://huggingface.co/Tarush-AI/AureliusGPT" target="_blank" rel="noopener noreferrer">
+                                <img src="https://img.shields.io/badge/-FFD21E?logo=huggingface&logoColor=000" alt="Hugging Face">
+                            </a>
+                        </div>
                         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
                         <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
                         <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>

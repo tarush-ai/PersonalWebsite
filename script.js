@@ -1273,6 +1273,18 @@ let isAureliusSending = false;
 let conversationHistory = [];
 let countdownTimer = null;
 
+// Sample prompt handler
+function useSamplePrompt(prompt) {
+    const input = document.getElementById('aurelius-input');
+    if (input) {
+        input.value = prompt;
+        input.focus();
+    }
+}
+
+// Make it globally available
+window.useSamplePrompt = useSamplePrompt;
+
 // Image state management
 function setAureliusImage(state) {
     const img = document.getElementById('aurelius-state-image');
@@ -1305,46 +1317,20 @@ function setAureliusImage(state) {
 
 // Export functionality
 function exportConversation(format) {
-    const menu = document.getElementById('aurelius-export-menu');
-    menu.classList.remove('active');
-    
     if (conversationHistory.length === 0) {
         alert('No conversation to export yet. Start chatting with Aurelius first!');
         return;
     }
     
-    let content = '';
-    let filename = '';
-    let mimeType = '';
+    // CLI-style TXT export
+    const content = conversationHistory.map(msg => {
+        const prefix = msg.role === 'user' ? '> ' : '> AURELIUS: ';
+        const timestamp = new Date(msg.timestamp).toLocaleString();
+        return `[${timestamp}] ${prefix}${msg.content}`;
+    }).join('\n\n');
     
-    switch(format) {
-        case 'txt':
-            content = conversationHistory.map(msg => {
-                const role = msg.role === 'user' ? 'You' : 'Aurelius';
-                const timestamp = new Date(msg.timestamp).toLocaleString();
-                return `[${timestamp}] ${role}:\n${msg.content}\n`;
-            }).join('\n');
-            filename = 'aurelius-conversation.txt';
-            mimeType = 'text/plain';
-            break;
-            
-        case 'json':
-            content = JSON.stringify(conversationHistory, null, 2);
-            filename = 'aurelius-conversation.json';
-            mimeType = 'application/json';
-            break;
-            
-        case 'markdown':
-            content = '# Conversation with AureliusGPT\n\n';
-            content += conversationHistory.map(msg => {
-                const role = msg.role === 'user' ? '**You**' : '**Aurelius**';
-                const timestamp = new Date(msg.timestamp).toLocaleString();
-                return `### ${role} - ${timestamp}\n\n${msg.content}\n`;
-            }).join('\n---\n\n');
-            filename = 'aurelius-conversation.md';
-            mimeType = 'text/markdown';
-            break;
-    }
+    const filename = 'aurelius-conversation.txt';
+    const mimeType = 'text/plain';
     
     // Create and trigger download
     const blob = new Blob([content], { type: mimeType });
@@ -1396,10 +1382,9 @@ function showCountdown(messagesContainer) {
             
             // Show retry message
             const retryEl = document.createElement('div');
-            retryEl.className = 'aurelius-message';
+            retryEl.className = 'aurelius-message aurelius-response';
             retryEl.innerHTML = `
                 <div class="message-content">
-                    <div class="message-icon pixel-icon">👑</div>
                     <div class="message-text" style="color: var(--accent-green);">
                         The server should be ready now. Please try your question again.
                     </div>
@@ -1424,7 +1409,6 @@ async function sendAureliusMessage() {
     userMessageEl.className = 'aurelius-message user-message';
     userMessageEl.innerHTML = `
         <div class="message-content">
-            <div class="message-icon">🧑</div>
             <div class="message-text">${escapeHtml(userMessage)}</div>
         </div>
     `;
@@ -1449,12 +1433,12 @@ async function sendAureliusMessage() {
     
     // Show loading indicator
     const loadingEl = document.createElement('div');
-    loadingEl.className = 'aurelius-message aurelius-message loading-message';
+    loadingEl.className = 'aurelius-message loading-message';
     loadingEl.innerHTML = `
         <div class="message-content">
-            <div class="message-icon pixel-icon">👑</div>
-            <div class="message-text">
-                <div class="typing-indicator">
+            <div class="message-text" style="color: var(--accent-purple);">
+                <span style="font-weight: 600;">> AURELIUS: </span>
+                <div class="typing-indicator" style="display: inline-block;">
                     <span></span><span></span><span></span>
                 </div>
             </div>
@@ -1529,10 +1513,9 @@ async function sendAureliusMessage() {
         
         // Add Aurelius response with typewriter effect
         const aureliusMessageEl = document.createElement('div');
-        aureliusMessageEl.className = 'aurelius-message aurelius-message';
+        aureliusMessageEl.className = 'aurelius-message aurelius-response';
         aureliusMessageEl.innerHTML = `
             <div class="message-content">
-                <div class="message-icon pixel-icon">👑</div>
                 <div class="message-text"></div>
             </div>
         `;
@@ -1559,12 +1542,11 @@ async function sendAureliusMessage() {
         
         // Show error message
         const errorMessageEl = document.createElement('div');
-        errorMessageEl.className = 'aurelius-message aurelius-message error-message';
+        errorMessageEl.className = 'aurelius-message error-message';
         errorMessageEl.innerHTML = `
             <div class="message-content">
-                <div class="message-icon">⚠️</div>
-                <div class="message-text">
-                    The oracle is temporarily silent. The server may be starting up or the token may need configuration.
+                <div class="message-text" style="color: #fca5a5;">
+                    <span style="font-weight: 600;">> ERROR: </span>The oracle is temporarily silent. The server may be starting up or the token may need configuration.
                     <br><small style="opacity: 0.6;">Error: ${error.message}</small>
                 </div>
             </div>
@@ -1576,28 +1558,6 @@ async function sendAureliusMessage() {
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
 }
-
-// Export button toggle
-document.addEventListener('DOMContentLoaded', () => {
-    const exportBtn = document.getElementById('aurelius-export-btn');
-    const exportMenu = document.getElementById('aurelius-export-menu');
-    
-    if (exportBtn && exportMenu) {
-        exportBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            exportMenu.classList.toggle('active');
-        });
-        
-        // Close menu when clicking outside
-        document.addEventListener('click', () => {
-            exportMenu.classList.remove('active');
-        });
-        
-        exportMenu.addEventListener('click', (e) => {
-            e.stopPropagation();
-        });
-    }
-});
 
 // Make exportConversation globally available
 window.exportConversation = exportConversation;
