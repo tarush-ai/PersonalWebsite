@@ -1705,25 +1705,26 @@ body.terminal-mode-off .back-hint {
 /* Enlarged Image Display Above Chat */
 .aurelius-image-display {
     text-align: center;
-    margin-bottom: 30px;
+    margin-bottom: 35px;
     position: relative;
     z-index: 1;
+    padding: 20px;
 }
 
 @keyframes breathe {
     0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-5px); }
+    50% { transform: translateY(-8px); }
 }
 
 .aurelius-logo {
     width: auto;
-    height: 220px;
-    max-width: 400px;
-    border-radius: 12px;
-    border: 2px solid rgba(139, 92, 246, 0.3);
+    height: 400px;
+    max-width: 700px;
+    border-radius: 16px;
+    border: 3px solid rgba(139, 92, 246, 0.4);
     box-shadow: 
-        0 0 30px rgba(139, 92, 246, 0.3),
-        0 10px 40px rgba(0, 0, 0, 0.3);
+        0 0 50px rgba(139, 92, 246, 0.5),
+        0 15px 60px rgba(0, 0, 0, 0.4);
     image-rendering: pixelated;
     -ms-interpolation-mode: nearest-neighbor;
     object-fit: contain;
@@ -1733,10 +1734,10 @@ body.terminal-mode-off .back-hint {
 
 .aurelius-logo:hover {
     animation-play-state: paused;
-    transform: scale(1.05) translateY(-5px);
+    transform: scale(1.02) translateY(-8px);
     box-shadow: 
-        0 0 40px rgba(139, 92, 246, 0.5),
-        0 15px 50px rgba(0, 0, 0, 0.4);
+        0 0 60px rgba(139, 92, 246, 0.6),
+        0 20px 70px rgba(0, 0, 0, 0.5);
 }
 
 .pixel-art {
@@ -1844,12 +1845,12 @@ body.terminal-mode-off .back-hint {
 }
 
 .aurelius-messages {
-    height: 500px;
+    height: 330px;
     overflow-y: auto;
-    padding: 30px;
+    padding: 24px;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 16px;
     background: linear-gradient(180deg, rgba(10, 10, 15, 0.4) 0%, rgba(18, 18, 26, 0.6) 100%);
 }
 
@@ -2090,14 +2091,14 @@ body.terminal-mode-off .back-hint {
     0%, 100% { 
         transform: scale(1);
         box-shadow: 
-            0 0 30px rgba(139, 92, 246, 0.3),
-            0 10px 40px rgba(0, 0, 0, 0.3);
+            0 0 50px rgba(139, 92, 246, 0.5),
+            0 15px 60px rgba(0, 0, 0, 0.4);
     }
     50% { 
-        transform: scale(1.05);
+        transform: scale(1.03);
         box-shadow: 
-            0 0 50px rgba(139, 92, 246, 0.6),
-            0 10px 40px rgba(0, 0, 0, 0.3);
+            0 0 70px rgba(139, 92, 246, 0.7),
+            0 15px 60px rgba(0, 0, 0, 0.4);
     }
 }
 
@@ -2105,21 +2106,21 @@ body.terminal-mode-off .back-hint {
     0% { 
         transform: scale(1);
         box-shadow: 
-            0 0 30px rgba(251, 191, 36, 0.3),
-            0 10px 40px rgba(0, 0, 0, 0.3);
+            0 0 50px rgba(251, 191, 36, 0.5),
+            0 15px 60px rgba(0, 0, 0, 0.4);
     }
     50% { 
-        transform: scale(1.1);
+        transform: scale(1.05);
         box-shadow: 
-            0 0 80px rgba(251, 191, 36, 0.8),
-            0 0 120px rgba(251, 191, 36, 0.4),
-            0 10px 40px rgba(0, 0, 0, 0.3);
+            0 0 100px rgba(251, 191, 36, 0.9),
+            0 0 140px rgba(251, 191, 36, 0.5),
+            0 15px 60px rgba(0, 0, 0, 0.4);
     }
     100% {
         transform: scale(1);
         box-shadow: 
-            0 0 30px rgba(139, 92, 246, 0.3),
-            0 10px 40px rgba(0, 0, 0, 0.3);
+            0 0 50px rgba(139, 92, 246, 0.5),
+            0 15px 60px rgba(0, 0, 0, 0.4);
     }
 }
 
@@ -2366,8 +2367,8 @@ body.terminal-mode-off .back-hint {
     }
     
     .aurelius-logo {
-        height: 150px;
-        max-width: 280px;
+        height: 250px;
+        max-width: 90%;
     }
     
     .aurelius-badges-blog img {
@@ -2390,6 +2391,11 @@ body.terminal-mode-off .back-hint {
     .sample-prompt-btn {
         padding: 8px 16px;
         font-size: 12px;
+    }
+    
+    .aurelius-messages {
+        height: 250px;
+        padding: 16px;
     }
     
     .aurelius-messages {
