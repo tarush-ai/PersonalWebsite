@@ -1134,6 +1134,8 @@ window.goBackFromIdea = goBackFromIdea;
 toggleSwitch.addEventListener('click', toggleMode);
 
 // AureliusGPT Chat
+// Backend handles the inference
+
 
 // Quotes
 const stoicQuotes = [

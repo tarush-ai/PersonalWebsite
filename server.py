@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import os
+import requests
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 from dotenv import load_dotenv
@@ -12,15 +13,30 @@ CORS(app)
 @app.route('/api/aurelius', methods=['POST'])
 def aurelius_chat():
     try:
-        # data = request.json
-        # user_input = data.get('inputs', '')
+        data = request.json
+        api_url = os.environ.get("HF_API_URL")
+        api_token = os.environ.get("HF_API_TOKEN")
+
+        if not api_url or not api_token:
+            return jsonify({'error': 'Server misconfigured: Missing HF_API_URL or HF_API_TOKEN'}), 500
+
+        headers = {
+            "Authorization": f"Bearer {api_token}",
+            "Content-Type": "application/json"
+        }
+
+        response = requests.post(api_url, headers=headers, json=data)
         
-        # Static response as inference is being figured out
-        response_text = "coming soon; figuring out inference"
-        
-        return jsonify([{'generated_text': response_text}])
+        if response.status_code != 200:
+            return jsonify({
+                'error': f"Upstream API Error: {response.status_code}", 
+                'details': response.text
+            }), response.status_code
+
+        return jsonify(response.json())
 
     except Exception as e:
+        print(f"Error in aurelius_chat: {e}")
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/health', methods=['GET'])
