@@ -1,6 +1,4 @@
-/* ============================================
-   PARTICLES
-   ============================================ */
+// Particles
 function createParticles(containerId, count = 50) {
     const container = document.getElementById(containerId);
     if (!container) return;
@@ -15,12 +13,10 @@ function createParticles(containerId, count = 50) {
     }
 }
 
-// Create initial particles
+// Init particles
 createParticles('particles', 50);
 
-/* ============================================
-   TERMINAL INTRO SEQUENCE
-   ============================================ */
+// Terminal Intro
 const commands = [
     {
         prompt: { user: 'tarushgupta', host: "tarush's_macbook_pro", path: '~' },
@@ -93,7 +89,7 @@ async function bootSequence() {
         }
     }
 
-    // ASCII art
+    // Ascii art
     const towerLines = [
         '  ═══╦═══                                                        ═══╦═══  ',
         '    ║║║    ████████╗ █████╗ ██████╗ ██╗   ██╗███████╗██╗  ██╗      ║║║    ',
@@ -257,7 +253,7 @@ function skipIntro() {
     }, 500);
 }
 
-// Event listeners for terminal intro
+// Intro listeners
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' && waitingForEnter) {
         executeCommand();
@@ -278,9 +274,7 @@ window.addEventListener('load', () => {
     setTimeout(bootSequence, 500);
 });
 
-/* ============================================
-   PORTFOLIO PAGE LOGIC
-   ============================================ */
+// Portfolio Logic
 const portfolioPage = document.getElementById('portfolio-page');
 const bottomTerminal = document.getElementById('bottom-terminal');
 const terminalInput = document.getElementById('terminal-input');
@@ -294,7 +288,7 @@ const traditionalNav = document.getElementById('traditional-nav');
 const backHomeBtn = document.getElementById('back-home-btn');
 const portfolioContent = document.getElementById('portfolio-content');
 
-// Navigation suggestions
+// Nav suggestions
 const suggestions = [
     { cmd: 'cd podcast', label: 'cd podcast' },
     { cmd: 'cd vericare', label: 'cd vericare' },
@@ -312,7 +306,7 @@ let currentInternship = null;
 let commandHistory = [];
 let terminalExpanded = false;
 
-// Pages mapping
+// Pages map
 const pages = {
     'home': { path: '~', el: 'page-home' },
     'podcast': { path: '~/podcast', el: 'page-podcast' },
@@ -1139,11 +1133,9 @@ window.goBackFromIdea = goBackFromIdea;
 // Toggle switch event listener
 toggleSwitch.addEventListener('click', toggleMode);
 
-/* ============================================
-   AURELIUSGPT CHAT FUNCTIONALITY
-   ============================================ */
+// AureliusGPT Chat
 
-// Stoic quotes from Meditations
+// Quotes
 const stoicQuotes = [
     "You have power over your mind—not outside events. Realize this, and you will find strength.",
     "The impediment to action advances action. What stands in the way becomes the way.",
@@ -1224,7 +1216,7 @@ async function sendAureliusMessage() {
     sendBtn.disabled = true;
     
     try {
-        // Call our backend API (which securely handles the HuggingFace token)
+        // Call backend
         const response = await fetch("/api/aurelius", {
             method: "POST",
             headers: { 
@@ -1313,7 +1305,7 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
-// Typewriter effect for AI responses
+// Typewriter effect
 async function typewriterEffect(text, element, speed = 30) {
     element.textContent = '';
     for (let i = 0; i < text.length; i++) {
@@ -1344,7 +1336,7 @@ function createAureliusParticles() {
     }
 }
 
-// Initialize AureliusGPT input handlers
+// Init Aurelius
 function initializeAureliusGPT() {
     const aureliusInput = document.getElementById('aurelius-input');
     if (aureliusInput && !aureliusInput.dataset.initialized) {
@@ -1356,7 +1348,7 @@ function initializeAureliusGPT() {
             this.style.height = Math.min(this.scrollHeight, 120) + 'px';
         });
         
-        // Send on Enter (Shift+Enter for new line)
+        // Enter to send
         aureliusInput.addEventListener('keydown', function(e) {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
@@ -1369,5 +1361,5 @@ function initializeAureliusGPT() {
     createAureliusParticles();
 }
 
-// Make sendAureliusMessage available globally
+// Global export
 window.sendAureliusMessage = sendAureliusMessage;
