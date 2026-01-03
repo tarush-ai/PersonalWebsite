@@ -552,9 +552,50 @@
                                 <img src="https://img.shields.io/badge/-FFD21E?logo=huggingface&logoColor=white" alt="Hugging Face">
                             </a>
                         </div>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-                        <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-                        <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
+                        
+                        <h3>Motivations</h3>
+                        <p>I have always been deeply captivated by philosophy from a young age. I first read <a href="https://www.gutenberg.org/cache/epub/2680/pg2680-images.html" target="_blank"><em>Meditations</em> by Marcus Aurelius</a> in 7th grade, and became enthralled by the concepts of Stoicism and accepting what is out of one's hands. This led me to Seneca's <em>Letters from a Stoic</em>, Epictetus' <em>The Discourses</em>, and one of my favorites, <em>The Fragments of Zeno and Cleanthes</em>. However, <em>Meditations</em> was the foundational text that encouraged me to explore the Stoic school of philosophy.</p>
+                        
+                        <p>Therefore, I made a decision to pretrain my first, minuscule language model on this principal work. Having technical experience in LLMs before this project, I realized training on such an incredibly small corpus (in the context of language model scaling laws) would be challenging and I would significantly risk overfitting, but I made the decision to go for it anyway. The result is my first self-pretrained model, AureliusGPT.</p>
+
+                        <h3>Overview</h3>
+                        <p>AureliusGPT-Torch is an <strong>845k parameter</strong> Small Language Model (SLM) pretrained on <em>Meditations</em> by Marcus Aurelius and other adjacent philosophical works. Built with PyTorch and SentencePiece, it represents a larger, more comprehensive reimplementation of <a href="https://github.com/tarush-ai/AureliusGPT" target="_blank">AureliusGPT</a>, my smaller model trained on the same core corpus using a handwritten NumPy-first approach.</p>
+                        
+                        <p>Rather than reimplementing a custom BPE algorithm from scratch, AureliusGPT-Torch trains SentencePiece on its corpus and relies on PyTorch for automatic differentiation. This work was made possible by <a href="https://www.gutenberg.org/cache/epub/2680/pg2680-images.html" target="_blank">Project Gutenberg's open-source <em>Meditations</em></a>.</p>
+
+                        <h3>Data & Training</h3>
+                        <p>The original corpus of <em>Meditations</em> contains approximately <strong>89k tokens</strong> when tokenized by a SentencePiece BPE tokenizer (vocabulary size: 2,000). Given the risk of overfitting on such a small dataset, I employed <strong>Off-Policy, Sequence-Level Knowledge Distillation</strong> from Llama 3.2 1B.</p>
+                        
+                        <p>I fine-tuned Llama 3.2 1B on <em>Meditations</em> using LoRA, then used it to generate approximately <strong>122k tokens</strong> of synthetic Stoic-adjacent data over 100 iterations. This expanded the training corpus while maintaining philosophical coherence. Training was conducted on a local CPU with a 80:20 train-validation split across <strong>50 epochs</strong>.</p>
+
+                        <h3>Architecture</h3>
+                        <p>AureliusGPT-Torch uses a <strong>6-layer Transformer</strong> architecture based on "Attention is All You Need" (Vaswani et al.):</p>
+                        <ul>
+                            <li><strong>Model Dimension (d_model):</strong> 64</li>
+                            <li><strong>Attention Heads:</strong> 4</li>
+                            <li><strong>Head Dimension:</strong> 16</li>
+                            <li><strong>Feedforward Dimension:</strong> 64</li>
+                            <li><strong>Vocabulary Size:</strong> 4,000 tokens</li>
+                            <li><strong>Context Length:</strong> 512 tokens</li>
+                        </ul>
+                        <p>The model employs <strong>sinusoidal positional embeddings</strong>, multi-head causal attention, and Post-Norm LayerNorm. All training was conducted sequentially on CPU.</p>
+
+                        <h3>Future Work</h3>
+                        <p><strong>StoicDiscourseLM:</strong> A future project will expand beyond Marcus Aurelius to include works by Zeno, Epictetus, and other Stoic philosophers, potentially using a Mixture of Experts (MoE) architecture with expert models for each philosopher.</p>
+                        
+                        <p><strong>Planned Improvements:</strong></p>
+                        <ul>
+                            <li>Integration of synthetic data generation and LoRA fine-tuning into the main repository</li>
+                            <li>Conversion to Llama 3.2 1B as the universal "Stoic validator" (replacing GPT-4o API)</li>
+                            <li>Implementation of Best-of-N sampling with concurrent generation</li>
+                            <li>Automated overfitting detection and hyperparameter optimization</li>
+                            <li>Enhanced training visualization and monitoring</li>
+                        </ul>
+
+                        <h3>Technical Notes</h3>
+                        <p>Some character artifacts in outputs are due to SentencePiece segmentation and Unicode normalization at small scale. With an increased vocabulary size and optimized Unicode handling, these would be minimized. The model demonstrates semantic alignment with Stoic philosophy while exhibiting typical limitations of small-scale language models trained on specialized corpus.</p>
+                        
+                        <p class="about-footer">For detailed technical specifications, training code, and model weights, visit the <a href="https://github.com/tarush-ai/AureliusGPT-Torch" target="_blank">GitHub repository</a> or <a href="https://huggingface.co/Tarush-AI/AureliusGPT" target="_blank">HuggingFace model page</a>.</p>
                     </div>
 
                     <div class="back-hint" style="margin-top: 30px; text-align: center;">Type <code>cd ~</code> or <code>cd ..</code> to return to your citadel</div>

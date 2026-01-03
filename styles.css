@@ -2282,12 +2282,68 @@ body.terminal-mode-off .back-hint {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
+.aurelius-blog-section h3 {
+    font-size: 22px;
+    color: var(--accent-orange);
+    margin-top: 40px;
+    margin-bottom: 16px;
+    text-align: left;
+    font-weight: 600;
+}
+
+.aurelius-blog-section h3:first-of-type {
+    margin-top: 30px;
+}
+
 .aurelius-blog-section p {
     color: var(--text-dim);
     line-height: 1.8;
     margin-bottom: 16px;
     font-size: 14px;
     text-align: left;
+}
+
+.aurelius-blog-section ul {
+    color: var(--text-dim);
+    line-height: 1.8;
+    margin-bottom: 20px;
+    margin-left: 24px;
+    text-align: left;
+}
+
+.aurelius-blog-section li {
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.aurelius-blog-section a {
+    color: var(--accent-cyan);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.aurelius-blog-section a:hover {
+    color: var(--accent-purple);
+    text-decoration: underline;
+}
+
+.aurelius-blog-section strong {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.aurelius-blog-section em {
+    color: var(--accent-purple);
+    font-style: italic;
+}
+
+.about-footer {
+    margin-top: 40px;
+    padding-top: 30px;
+    border-top: 1px solid rgba(139, 92, 246, 0.2);
+    font-size: 13px;
+    text-align: center !important;
+    color: var(--text-dim);
 }
 
 /* Particle system for AureliusGPT */
@@ -2386,6 +2442,14 @@ body.terminal-mode-off .back-hint {
     
     .aurelius-blog-section h2 {
         font-size: 28px;
+    }
+    
+    .aurelius-blog-section h3 {
+        font-size: 18px;
+    }
+    
+    .aurelius-blog-section ul {
+        margin-left: 16px;
     }
     
     .sample-prompt-btn {
