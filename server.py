@@ -4,6 +4,7 @@ import requests
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 from dotenv import load_dotenv
+from openai import OpenAI
 
 load_dotenv()
 
@@ -40,6 +41,39 @@ def aurelius_chat():
 
     except Exception as e:
         print(f"Error in aurelius_chat: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/justify', methods=['POST'])
+def justify_response():
+    try:
+        data = request.json
+        user_prompt = data.get('user_prompt', '')
+        model_response = data.get('model_response', '')
+        
+        if not user_prompt or not model_response:
+            return jsonify({'error': 'Missing user_prompt or model_response'}), 400
+        
+        # Initialize OpenAI client
+        client = OpenAI()
+        
+        prompt = "Your responsibility is to justify the output of a toy (845k param) model fitted on Meditations by Marcus Aurelius. Please read the user's prompt, the model's response, and give the model a score out of 100 of prediction given it's status as a toy model. Generate a short report of its accuracy, identifying potential semantic, linguistic, and Stoic-meaning based connections in the generation."
+        
+        text = f"User prompt: {user_prompt}\n\nModel response: {model_response}"
+        
+        response = client.chat.completions.create(
+            model="gpt-4o",
+            messages=[
+                {"role": "system", "content": prompt},
+                {"role": "user", "content": text}
+            ]
+        )
+        
+        justification = response.choices[0].message.content
+        
+        return jsonify({'justification': justification})
+        
+    except Exception as e:
+        print(f"Error in justify_response: {e}")
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/health', methods=['GET'])

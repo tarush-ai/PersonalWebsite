@@ -1524,6 +1524,45 @@ async function sendAureliusMessage() {
         const messageTextEl = aureliusMessageEl.querySelector('.message-text');
         await typewriterEffect(aureliusResponse, messageTextEl, 20);
         
+        // Check if validator is enabled
+        const validatorEnabled = document.getElementById('stoic-validator-toggle').checked;
+        
+        if (validatorEnabled) {
+            // Call justification API
+            try {
+                const justificationResponse = await fetch("/api/justify", {
+                    method: "POST",
+                    headers: { 
+                        "Content-Type": "application/json" 
+                    },
+                    body: JSON.stringify({ 
+                        user_prompt: userMessage,
+                        model_response: aureliusResponse
+                    })
+                });
+                
+                if (justificationResponse.ok) {
+                    const justData = await justificationResponse.json();
+                    const justification = justData.justification;
+                    
+                    // Add justification message
+                    const justificationEl = document.createElement('div');
+                    justificationEl.className = 'aurelius-message justification-message';
+                    justificationEl.innerHTML = `
+                        <div class="message-content">
+                            <div class="message-text"></div>
+                        </div>
+                    `;
+                    messagesContainer.appendChild(justificationEl);
+                    
+                    const justTextEl = justificationEl.querySelector('.message-text');
+                    await typewriterEffect(justification, justTextEl, 15);
+                }
+            } catch (error) {
+                console.error('Justification Error:', error);
+            }
+        }
+        
         // Return to idle state after response
         setTimeout(() => {
             setAureliusImage('idle');
