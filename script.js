@@ -1176,12 +1176,6 @@ function updateStoicQuote() {
     }
 }
 
-// HuggingFace API Token - Set via environment variable or add directly
-// For Render deployment: Set HUGGINGFACE_TOKEN in environment variables
-const HF_TOKEN = typeof window !== 'undefined' && window.HUGGINGFACE_TOKEN 
-    ? window.HUGGINGFACE_TOKEN 
-    : 'YOUR_HF_TOKEN_HERE'; // Replace with your token for local development
-
 let isAureliusSending = false;
 
 async function sendAureliusMessage() {
@@ -1230,11 +1224,10 @@ async function sendAureliusMessage() {
     sendBtn.disabled = true;
     
     try {
-        // Call HuggingFace API
-        const response = await fetch("https://api-inference.huggingface.co/models/Tarush-AI/AureliusGPT", {
+        // Call our backend API (which securely handles the HuggingFace token)
+        const response = await fetch("/api/aurelius", {
             method: "POST",
             headers: { 
-                "Authorization": `Bearer ${HF_TOKEN}`, 
                 "Content-Type": "application/json" 
             },
             body: JSON.stringify({ 
@@ -1252,7 +1245,8 @@ async function sendAureliusMessage() {
         messagesContainer.removeChild(loadingEl);
         
         if (!response.ok) {
-            throw new Error(`API Error: ${response.status}`);
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.error || `API Error: ${response.status}`);
         }
         
         const data = await response.json();
@@ -1300,7 +1294,7 @@ async function sendAureliusMessage() {
             <div class="message-content">
                 <div class="message-icon">⚠️</div>
                 <div class="message-text">
-                    The oracle is temporarily silent. Please ensure your HuggingFace API token is configured.
+                    The oracle is temporarily silent. The server may be starting up or the token may need configuration.
                     <br><small style="opacity: 0.6;">Error: ${error.message}</small>
                 </div>
             </div>

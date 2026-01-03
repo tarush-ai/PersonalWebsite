@@ -4,6 +4,10 @@
 .env.production
 config.js
 
+# Dependencies
+node_modules/
+package-lock.json
+
 # OS files
 .DS_Store
 Thumbs.db
@@ -19,10 +23,11 @@ Thumbs.db
 .vscode/
 .idea/
 
-# Dependencies (if added later)
-node_modules/
-
-# Build outputs (if added later)
+# Build outputs
 dist/
 build/
+
+# Logs
+*.log
+npm-debug.log*
 
