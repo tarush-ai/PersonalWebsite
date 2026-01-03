@@ -28,8 +28,8 @@ app.post('/api/aurelius', async (req, res) => {
             return res.status(500).json({ error: 'Server configuration error' });
         }
 
-        // Call HuggingFace API
-        const response = await fetch('https://api-inference.huggingface.co/models/Tarush-AI/AureliusGPT', {
+        // Call HuggingFace API (new router endpoint)
+        const response = await fetch('https://router.huggingface.co/models/Tarush-AI/AureliusGPT', {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${HF_TOKEN}`,
