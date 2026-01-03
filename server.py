@@ -17,6 +17,9 @@ def aurelius_chat():
         api_url = os.environ.get("HF_API_URL")
         api_token = os.environ.get("HF_API_TOKEN")
 
+        print(f"DEBUG: Received request for Aurelius. URL: {api_url}") # Debug log
+        print(f"DEBUG: Input data: {data}") # Debug log
+
         if not api_url or not api_token:
             return jsonify({'error': 'Server misconfigured: Missing HF_API_URL or HF_API_TOKEN'}), 500
 
