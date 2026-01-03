@@ -271,7 +271,46 @@ document.addEventListener('touchstart', () => {
 });
 
 window.addEventListener('load', () => {
-    setTimeout(bootSequence, 500);
+    // Handle initial routing
+    const path = window.location.pathname;
+    let routed = false;
+    
+    if (path !== '/' && path !== '/index.html') {
+        const parts = path.replace(/^\/+|\/+$/g, '').split('/');
+        let targetPage = parts[0];
+        
+        // Mappings
+        if (targetPage === 'aurelius') targetPage = 'aureliusgpt';
+        
+        // Handle sub-pages
+        if (targetPage === 'internships' && parts[1]) {
+            targetPage = 'internship-' + parts[1];
+        } else if (targetPage === 'ideas' && parts[1]) {
+            targetPage = 'idea-' + parts[1];
+        }
+        
+        // Check if valid
+        if (pages[targetPage] || targetPage.startsWith('internship-') || targetPage.startsWith('idea-')) {
+            routed = true;
+            skipIntro();
+            setTimeout(() => {
+                navigateTo(targetPage, false);
+            }, 600);
+        }
+    }
+    
+    if (!routed) {
+        setTimeout(bootSequence, 500);
+    }
+});
+
+window.addEventListener('popstate', (event) => {
+    if (event.state && event.state.page) {
+        navigateTo(event.state.page, false);
+    } else {
+        // Fallback or handle browser back to root
+        navigateTo('home', false);
+    }
 });
 
 // Portfolio Logic
@@ -627,7 +666,24 @@ function updateAutocompleteGhost() {
     }
 }
 
-function navigateTo(page) {
+function navigateTo(page, updateHistory = true) {
+    // Update URL history
+    if (updateHistory) {
+        let url = '/';
+        if (page !== 'home') {
+            if (page.startsWith('internship-')) {
+                const company = page.replace('internship-', '');
+                url = `/internships/${company}`;
+            } else if (page.startsWith('idea-')) {
+                const idea = page.replace('idea-', '');
+                url = `/ideas/${idea}`;
+            } else {
+                url = `/${page}`;
+            }
+        }
+        history.pushState({ page: page }, '', url);
+    }
+
     // Handle internship sub-pages
     if (page.startsWith('internship-')) {
         const internshipId = page.replace('internship-', '');
@@ -638,7 +694,7 @@ function navigateTo(page) {
     // Handle idea sub-pages
     if (page.startsWith('idea-')) {
         const ideaId = page.replace('idea-', '');
-        navigateTo('ideas');
+        navigateTo('ideas', false); // Don't push history for intermediate step
         setTimeout(() => showIdeaDetail(ideaId), 100);
         return;
     }
