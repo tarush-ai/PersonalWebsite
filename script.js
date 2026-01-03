@@ -287,10 +287,14 @@ window.addEventListener('load', () => {
             targetPage = 'internship-' + parts[1];
         } else if (targetPage === 'ideas' && parts[1]) {
             targetPage = 'idea-' + parts[1];
+        } else if (targetPage === 'podcast' && parts[1]) {
+            // Handle podcast/SLUG
+            // We need to pass the raw part[1] which is the slug
+            targetPage = 'podcast/' + decodeURIComponent(parts[1]);
         }
         
         // Check if valid
-        if (pages[targetPage] || targetPage.startsWith('internship-') || targetPage.startsWith('idea-')) {
+        if (pages[targetPage] || targetPage.startsWith('internship-') || targetPage.startsWith('idea-') || targetPage.startsWith('podcast/')) {
             routed = true;
             skipIntro();
             setTimeout(() => {
@@ -528,12 +532,22 @@ const podcastEpisodes = [
     }
 ];
 
+// Helper to generate slugs
+function createSlug(title) {
+    return title.toLowerCase().trim().replace(/ /g, '+');
+}
+
+// Add slugs to podcast episodes
+podcastEpisodes.forEach(ep => {
+    ep.slug = createSlug(ep.title);
+});
+
 function renderPodcastList() {
     const listEl = document.getElementById('podcast-list');
     if (!listEl) return;
     
     listEl.innerHTML = podcastEpisodes.map((ep, index) => `
-        <div class="episode-card" onclick="showPodcastDetail(${index})">
+        <div class="episode-card" onclick="navigateTo('podcast/${ep.slug}')">
             <div class="episode-number">${podcastEpisodes.length - index}</div>
             <div class="episode-info">
                 <h3>${ep.title}</h3>
@@ -543,7 +557,20 @@ function renderPodcastList() {
     `).join('');
 }
 
-function showPodcastDetail(index) {
+function showPodcastDetail(identifier) {
+    let index = -1;
+    
+    // Check if identifier is index (number) or slug (string)
+    if (typeof identifier === 'number') {
+        index = identifier;
+    } else {
+        index = podcastEpisodes.findIndex(ep => ep.slug === identifier);
+        // Fallback: try to find by ID if it was passed as string number
+        if (index === -1 && !isNaN(parseInt(identifier))) {
+            index = parseInt(identifier) - 1; // 1-based to 0-based
+        }
+    }
+
     const ep = podcastEpisodes[index];
     if (!ep) return;
     
@@ -555,7 +582,7 @@ function showPodcastDetail(index) {
     document.getElementById('podcast-list').style.display = 'none';
     document.getElementById('podcast-detail').style.display = 'block';
     
-    currentPathEl.textContent = `~/podcast/${index + 1}`;
+    currentPathEl.textContent = `~/podcast/${ep.slug}`;
     document.getElementById('portfolio-content').scrollTop = 0;
 }
 
@@ -667,20 +694,28 @@ function updateAutocompleteGhost() {
 }
 
 function navigateTo(page, updateHistory = true) {
+    // Determine the URL for history
+    let url = '/';
+    let historyPage = page;
+
+    if (page !== 'home') {
+        if (page.startsWith('internship-')) {
+            const company = page.replace('internship-', '');
+            url = `/internships/${company}`;
+        } else if (page.startsWith('idea-')) {
+            const idea = page.replace('idea-', '');
+            url = `/ideas/${idea}`;
+        } else if (page.startsWith('podcast/')) {
+            // Handle podcast detail
+            const slug = page.replace('podcast/', '');
+            url = `/podcast/${slug}`;
+        } else {
+            url = `/${page}`;
+        }
+    }
+
     // Update URL history
     if (updateHistory) {
-        let url = '/';
-        if (page !== 'home') {
-            if (page.startsWith('internship-')) {
-                const company = page.replace('internship-', '');
-                url = `/internships/${company}`;
-            } else if (page.startsWith('idea-')) {
-                const idea = page.replace('idea-', '');
-                url = `/ideas/${idea}`;
-            } else {
-                url = `/${page}`;
-            }
-        }
         history.pushState({ page: page }, '', url);
     }
 
@@ -696,6 +731,14 @@ function navigateTo(page, updateHistory = true) {
         const ideaId = page.replace('idea-', '');
         navigateTo('ideas', false); // Don't push history for intermediate step
         setTimeout(() => showIdeaDetail(ideaId), 100);
+        return;
+    }
+
+    // Handle podcast sub-pages
+    if (page.startsWith('podcast/')) {
+        const slug = page.replace('podcast/', '');
+        navigateTo('podcast', false); // Go to main podcast page first
+        setTimeout(() => showPodcastDetail(slug), 100);
         return;
     }
     
@@ -1227,6 +1270,146 @@ function updateStoicQuote() {
 }
 
 let isAureliusSending = false;
+let conversationHistory = [];
+let countdownTimer = null;
+
+// Image state management
+function setAureliusImage(state) {
+    const img = document.getElementById('aurelius-state-image');
+    if (!img) return;
+    
+    // Remove all state classes
+    img.classList.remove('thinking', 'eureka', 'meditating');
+    
+    // Map states to images
+    const stateImages = {
+        'idle': '/aurelius-logo.png',
+        'meditating': '/aurelius-meditating.jpg',
+        'thinking': '/aurelius-thinking.jpg',
+        'eureka': '/aurelius-eureka.png'
+    };
+    
+    if (stateImages[state]) {
+        // Add fade effect
+        img.style.opacity = '0';
+        
+        setTimeout(() => {
+            img.src = stateImages[state];
+            if (state !== 'idle') {
+                img.classList.add(state);
+            }
+            img.style.opacity = '1';
+        }, 300);
+    }
+}
+
+// Export functionality
+function exportConversation(format) {
+    const menu = document.getElementById('aurelius-export-menu');
+    menu.classList.remove('active');
+    
+    if (conversationHistory.length === 0) {
+        alert('No conversation to export yet. Start chatting with Aurelius first!');
+        return;
+    }
+    
+    let content = '';
+    let filename = '';
+    let mimeType = '';
+    
+    switch(format) {
+        case 'txt':
+            content = conversationHistory.map(msg => {
+                const role = msg.role === 'user' ? 'You' : 'Aurelius';
+                const timestamp = new Date(msg.timestamp).toLocaleString();
+                return `[${timestamp}] ${role}:\n${msg.content}\n`;
+            }).join('\n');
+            filename = 'aurelius-conversation.txt';
+            mimeType = 'text/plain';
+            break;
+            
+        case 'json':
+            content = JSON.stringify(conversationHistory, null, 2);
+            filename = 'aurelius-conversation.json';
+            mimeType = 'application/json';
+            break;
+            
+        case 'markdown':
+            content = '# Conversation with AureliusGPT\n\n';
+            content += conversationHistory.map(msg => {
+                const role = msg.role === 'user' ? '**You**' : '**Aurelius**';
+                const timestamp = new Date(msg.timestamp).toLocaleString();
+                return `### ${role} - ${timestamp}\n\n${msg.content}\n`;
+            }).join('\n---\n\n');
+            filename = 'aurelius-conversation.md';
+            mimeType = 'text/markdown';
+            break;
+    }
+    
+    // Create and trigger download
+    const blob = new Blob([content], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+// Show countdown for 503 errors
+function showCountdown(messagesContainer) {
+    const countdownEl = document.createElement('div');
+    countdownEl.className = 'aurelius-message';
+    countdownEl.innerHTML = `
+        <div class="message-content">
+            <div class="aurelius-countdown">
+                <h3>Aurelius is meditating...</h3>
+                <div class="countdown-timer" id="countdown-display">30</div>
+                <p style="color: var(--text-dim); font-size: 13px;">The server is starting up. Please wait.</p>
+            </div>
+        </div>
+    `;
+    messagesContainer.appendChild(countdownEl);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    
+    // Set image to meditating state
+    setAureliusImage('meditating');
+    
+    let secondsLeft = 30;
+    const display = document.getElementById('countdown-display');
+    
+    countdownTimer = setInterval(() => {
+        secondsLeft--;
+        if (display) {
+            display.textContent = secondsLeft;
+        }
+        
+        if (secondsLeft <= 0) {
+            clearInterval(countdownTimer);
+            if (countdownEl.parentNode) {
+                messagesContainer.removeChild(countdownEl);
+            }
+            // Return to idle state
+            setAureliusImage('idle');
+            
+            // Show retry message
+            const retryEl = document.createElement('div');
+            retryEl.className = 'aurelius-message';
+            retryEl.innerHTML = `
+                <div class="message-content">
+                    <div class="message-icon pixel-icon">👑</div>
+                    <div class="message-text" style="color: var(--accent-green);">
+                        The server should be ready now. Please try your question again.
+                    </div>
+                </div>
+            `;
+            messagesContainer.appendChild(retryEl);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+    }, 1000);
+}
 
 async function sendAureliusMessage() {
     const input = document.getElementById('aurelius-input');
@@ -1247,12 +1430,22 @@ async function sendAureliusMessage() {
     `;
     messagesContainer.appendChild(userMessageEl);
     
+    // Add to conversation history
+    conversationHistory.push({
+        role: 'user',
+        content: userMessage,
+        timestamp: new Date()
+    });
+    
     // Clear input
     input.value = '';
     input.style.height = 'auto';
     
     // Scroll to bottom
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    
+    // Set to thinking state
+    setAureliusImage('thinking');
     
     // Show loading indicator
     const loadingEl = document.createElement('div');
@@ -1294,6 +1487,15 @@ async function sendAureliusMessage() {
         // Remove loading indicator
         messagesContainer.removeChild(loadingEl);
         
+        // Handle 503 error specifically
+        if (response.status === 503) {
+            setAureliusImage('idle');
+            isAureliusSending = false;
+            sendBtn.disabled = false;
+            showCountdown(messagesContainer);
+            return;
+        }
+        
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({}));
             throw new Error(errorData.error || `API Error: ${response.status}`);
@@ -1315,6 +1517,16 @@ async function sendAureliusMessage() {
             aureliusResponse = "The winds of wisdom are silent today. Try again, seeker.";
         }
         
+        // Show eureka state
+        setAureliusImage('eureka');
+        
+        // Add to conversation history
+        conversationHistory.push({
+            role: 'assistant',
+            content: aureliusResponse,
+            timestamp: new Date()
+        });
+        
         // Add Aurelius response with typewriter effect
         const aureliusMessageEl = document.createElement('div');
         aureliusMessageEl.className = 'aurelius-message aurelius-message';
@@ -1329,6 +1541,11 @@ async function sendAureliusMessage() {
         const messageTextEl = aureliusMessageEl.querySelector('.message-text');
         await typewriterEffect(aureliusResponse, messageTextEl, 20);
         
+        // Return to idle state after response
+        setTimeout(() => {
+            setAureliusImage('idle');
+        }, 2000);
+        
     } catch (error) {
         console.error('AureliusGPT Error:', error);
         
@@ -1336,6 +1553,9 @@ async function sendAureliusMessage() {
         if (loadingEl.parentNode) {
             messagesContainer.removeChild(loadingEl);
         }
+        
+        // Return to idle state
+        setAureliusImage('idle');
         
         // Show error message
         const errorMessageEl = document.createElement('div');
@@ -1356,6 +1576,31 @@ async function sendAureliusMessage() {
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
 }
+
+// Export button toggle
+document.addEventListener('DOMContentLoaded', () => {
+    const exportBtn = document.getElementById('aurelius-export-btn');
+    const exportMenu = document.getElementById('aurelius-export-menu');
+    
+    if (exportBtn && exportMenu) {
+        exportBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            exportMenu.classList.toggle('active');
+        });
+        
+        // Close menu when clicking outside
+        document.addEventListener('click', () => {
+            exportMenu.classList.remove('active');
+        });
+        
+        exportMenu.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+    }
+});
+
+// Make exportConversation globally available
+window.exportConversation = exportConversation;
 
 function escapeHtml(text) {
     const div = document.createElement('div');

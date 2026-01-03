@@ -18,7 +18,7 @@ def aurelius_chat():
         api_token = os.environ.get("HF_API_TOKEN")
 
         print(f"DEBUG: Received request for Aurelius. URL: {api_url}") # Debug log
-        print(f"DEBUG: Input data: {data}") # Debug log
+        # print(f"DEBUG: Input data: {data}") # Debug log
 
         if not api_url or not api_token:
             return jsonify({'error': 'Server misconfigured: Missing HF_API_URL or HF_API_TOKEN'}), 500
@@ -52,10 +52,12 @@ def serve_index():
 
 @app.route('/<path:path>')
 def serve_static(path):
-    try:
+    # Check if file exists in the current directory
+    if os.path.exists(path) and os.path.isfile(path):
         return send_from_directory('.', path)
-    except:
-        return send_from_directory('.', 'index.html')
+    
+    # If not a file, serves index.html (SPA routing)
+    return send_from_directory('.', 'index.html')
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5001))
