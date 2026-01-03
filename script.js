@@ -298,6 +298,7 @@ const portfolioContent = document.getElementById('portfolio-content');
 const suggestions = [
     { cmd: 'cd podcast', label: 'cd podcast' },
     { cmd: 'cd vericare', label: 'cd vericare' },
+    { cmd: 'cd aureliusgpt', label: 'cd aureliusgpt' },
     { cmd: 'cd internships', label: 'cd internships' },
     { cmd: 'cd ideas', label: 'cd ideas' },
     { cmd: 'cd github', label: 'cd github' }
@@ -316,6 +317,7 @@ const pages = {
     'home': { path: '~', el: 'page-home' },
     'podcast': { path: '~/podcast', el: 'page-podcast' },
     'vericare': { path: '~/vericare', el: 'page-vericare' },
+    'aureliusgpt': { path: '~/aureliusgpt', el: 'page-aureliusgpt' },
     'internships': { path: '~/internships', el: 'page-internships' },
     'ideas': { path: '~/ideas', el: 'page-ideas' },
     'github': { path: '~/github', el: 'page-github' }
@@ -686,6 +688,16 @@ function navigateTo(page) {
         // Optional: Stop video when navigating away to save resources/bandwidth
         // vericareVideo.src = ""; 
     }
+    
+    // Initialize AureliusGPT when navigating to it
+    if (page === 'aureliusgpt') {
+        if (typeof initializeAureliusGPT === 'function') {
+            initializeAureliusGPT();
+        }
+        if (typeof updateStoicQuote === 'function') {
+            updateStoicQuote();
+        }
+    }
 }
 
 function showInternshipDetail(internshipId) {
@@ -818,6 +830,8 @@ function handleCommand(cmd) {
             navigateTo('podcast');
         } else if (target === 'vericare' || target === '~/vericare' || target === 'vericare-ai') {
             navigateTo('vericare');
+        } else if (target === 'aureliusgpt' || target === '~/aureliusgpt' || target === 'aurelius') {
+            navigateTo('aureliusgpt');
         } else if (target === 'internships' || target === '~/internships') {
             navigateTo('internships');
         } else if (target === 'ideas' || target === '~/ideas') {
@@ -1124,3 +1138,242 @@ window.goBackFromIdea = goBackFromIdea;
 
 // Toggle switch event listener
 toggleSwitch.addEventListener('click', toggleMode);
+
+/* ============================================
+   AURELIUSGPT CHAT FUNCTIONALITY
+   ============================================ */
+
+// Stoic quotes from Meditations
+const stoicQuotes = [
+    "You have power over your mind—not outside events. Realize this, and you will find strength.",
+    "The impediment to action advances action. What stands in the way becomes the way.",
+    "Waste no more time arguing about what a good man should be. Be one.",
+    "Very little is needed to make a happy life; it is all within yourself, in your way of thinking.",
+    "If it is not right, do not do it. If it is not true, do not say it.",
+    "The best revenge is to be unlike him who performed the injury.",
+    "When you arise in the morning, think of what a precious privilege it is to be alive—to breathe, to think, to enjoy, to love.",
+    "Confine yourself to the present.",
+    "Everything we hear is an opinion, not a fact. Everything we see is a perspective, not the truth.",
+    "The soul becomes dyed with the color of its thoughts.",
+    "Accept the things to which fate binds you, and love the people with whom fate brings you together, but do so with all your heart.",
+    "He who lives in harmony with himself lives in harmony with the universe.",
+    "Our life is what our thoughts make it.",
+    "The happiness of your life depends upon the quality of your thoughts.",
+    "Dwell on the beauty of life. Watch the stars, and see yourself running with them."
+];
+
+// Get random stoic quote
+function getRandomQuote() {
+    return stoicQuotes[Math.floor(Math.random() * stoicQuotes.length)];
+}
+
+// Update quote in the header
+function updateStoicQuote() {
+    const quoteElement = document.querySelector('.aurelius-quote');
+    if (quoteElement) {
+        const newQuote = getRandomQuote();
+        quoteElement.innerHTML = newQuote;
+    }
+}
+
+// HuggingFace API Token - Set via environment variable or add directly
+// For Render deployment: Set HUGGINGFACE_TOKEN in environment variables
+const HF_TOKEN = typeof window !== 'undefined' && window.HUGGINGFACE_TOKEN 
+    ? window.HUGGINGFACE_TOKEN 
+    : 'YOUR_HF_TOKEN_HERE'; // Replace with your token for local development
+
+let isAureliusSending = false;
+
+async function sendAureliusMessage() {
+    const input = document.getElementById('aurelius-input');
+    const messagesContainer = document.getElementById('aurelius-messages');
+    const sendBtn = document.getElementById('aurelius-send-btn');
+    
+    const userMessage = input.value.trim();
+    if (!userMessage || isAureliusSending) return;
+    
+    // Add user message to chat
+    const userMessageEl = document.createElement('div');
+    userMessageEl.className = 'aurelius-message user-message';
+    userMessageEl.innerHTML = `
+        <div class="message-content">
+            <div class="message-icon">🧑</div>
+            <div class="message-text">${escapeHtml(userMessage)}</div>
+        </div>
+    `;
+    messagesContainer.appendChild(userMessageEl);
+    
+    // Clear input
+    input.value = '';
+    input.style.height = 'auto';
+    
+    // Scroll to bottom
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    
+    // Show loading indicator
+    const loadingEl = document.createElement('div');
+    loadingEl.className = 'aurelius-message aurelius-message loading-message';
+    loadingEl.innerHTML = `
+        <div class="message-content">
+            <div class="message-icon pixel-icon">👑</div>
+            <div class="message-text">
+                <div class="typing-indicator">
+                    <span></span><span></span><span></span>
+                </div>
+            </div>
+        </div>
+    `;
+    messagesContainer.appendChild(loadingEl);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    
+    isAureliusSending = true;
+    sendBtn.disabled = true;
+    
+    try {
+        // Call HuggingFace API
+        const response = await fetch("https://api-inference.huggingface.co/models/Tarush-AI/AureliusGPT", {
+            method: "POST",
+            headers: { 
+                "Authorization": `Bearer ${HF_TOKEN}`, 
+                "Content-Type": "application/json" 
+            },
+            body: JSON.stringify({ 
+                "inputs": userMessage,
+                "parameters": {
+                    "max_new_tokens": 250,
+                    "temperature": 0.8,
+                    "top_p": 0.9,
+                    "do_sample": true
+                }
+            })
+        });
+        
+        // Remove loading indicator
+        messagesContainer.removeChild(loadingEl);
+        
+        if (!response.ok) {
+            throw new Error(`API Error: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        let aureliusResponse = '';
+        
+        // Handle different response formats
+        if (Array.isArray(data) && data[0]?.generated_text) {
+            aureliusResponse = data[0].generated_text;
+            // Remove the input prompt if it's repeated
+            if (aureliusResponse.startsWith(userMessage)) {
+                aureliusResponse = aureliusResponse.slice(userMessage.length).trim();
+            }
+        } else if (data.generated_text) {
+            aureliusResponse = data.generated_text;
+        } else {
+            aureliusResponse = "The winds of wisdom are silent today. Try again, seeker.";
+        }
+        
+        // Add Aurelius response with typewriter effect
+        const aureliusMessageEl = document.createElement('div');
+        aureliusMessageEl.className = 'aurelius-message aurelius-message';
+        aureliusMessageEl.innerHTML = `
+            <div class="message-content">
+                <div class="message-icon pixel-icon">👑</div>
+                <div class="message-text"></div>
+            </div>
+        `;
+        messagesContainer.appendChild(aureliusMessageEl);
+        
+        const messageTextEl = aureliusMessageEl.querySelector('.message-text');
+        await typewriterEffect(aureliusResponse, messageTextEl, 20);
+        
+    } catch (error) {
+        console.error('AureliusGPT Error:', error);
+        
+        // Remove loading indicator
+        if (loadingEl.parentNode) {
+            messagesContainer.removeChild(loadingEl);
+        }
+        
+        // Show error message
+        const errorMessageEl = document.createElement('div');
+        errorMessageEl.className = 'aurelius-message aurelius-message error-message';
+        errorMessageEl.innerHTML = `
+            <div class="message-content">
+                <div class="message-icon">⚠️</div>
+                <div class="message-text">
+                    The oracle is temporarily silent. Please ensure your HuggingFace API token is configured.
+                    <br><small style="opacity: 0.6;">Error: ${error.message}</small>
+                </div>
+            </div>
+        `;
+        messagesContainer.appendChild(errorMessageEl);
+    } finally {
+        isAureliusSending = false;
+        sendBtn.disabled = false;
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// Typewriter effect for AI responses
+async function typewriterEffect(text, element, speed = 30) {
+    element.textContent = '';
+    for (let i = 0; i < text.length; i++) {
+        element.textContent += text.charAt(i);
+        await new Promise(resolve => setTimeout(resolve, speed));
+    }
+}
+
+// Create particles for AureliusGPT page
+function createAureliusParticles() {
+    const existingContainer = document.querySelector('.aurelius-particles');
+    if (existingContainer) return; // Already created
+    
+    const container = document.createElement('div');
+    container.className = 'aurelius-particles';
+    document.getElementById('page-aureliusgpt').appendChild(container);
+    
+    const particleCount = 25;
+    const colors = ['gold', 'purple'];
+    
+    for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.className = `aurelius-particle ${colors[Math.floor(Math.random() * colors.length)]}`;
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.animationDelay = Math.random() * 15 + 's';
+        particle.style.animationDuration = (12 + Math.random() * 8) + 's';
+        container.appendChild(particle);
+    }
+}
+
+// Initialize AureliusGPT input handlers
+function initializeAureliusGPT() {
+    const aureliusInput = document.getElementById('aurelius-input');
+    if (aureliusInput && !aureliusInput.dataset.initialized) {
+        aureliusInput.dataset.initialized = 'true';
+        
+        // Textarea auto-resize
+        aureliusInput.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+        });
+        
+        // Send on Enter (Shift+Enter for new line)
+        aureliusInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendAureliusMessage();
+            }
+        });
+    }
+    
+    // Create particles
+    createAureliusParticles();
+}
+
+// Make sendAureliusMessage available globally
+window.sendAureliusMessage = sendAureliusMessage;

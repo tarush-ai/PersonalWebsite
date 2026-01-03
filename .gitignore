@@ -1,0 +1,28 @@
+# API Keys & Environment Variables
+.env
+.env.local
+.env.production
+config.js
+
+# OS files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Backup files
+*-original.png
+*-backup.*
+
+# Editor directories
+.vscode/
+.idea/
+
+# Dependencies (if added later)
+node_modules/
+
+# Build outputs (if added later)
+dist/
+build/
+

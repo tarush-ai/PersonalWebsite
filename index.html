@@ -75,6 +75,7 @@
                     <div class="nav-link active" data-page="home" onclick="navigateTo('home')">Home</div>
                     <div class="nav-link" data-page="podcast" onclick="navigateTo('podcast')">Neural Bridge</div>
                     <div class="nav-link" data-page="vericare" onclick="navigateTo('vericare')">Vericare AI</div>
+                    <div class="nav-link" data-page="aureliusgpt" onclick="navigateTo('aureliusgpt')">AureliusGPT</div>
                     <div class="nav-link" data-page="internships" onclick="navigateTo('internships')">Internships</div>
                     <div class="nav-link" data-page="ideas" onclick="navigateTo('ideas')">Ideas</div>
                     <div class="nav-link" data-page="github" onclick="navigateTo('github')">GitHub</div>
@@ -197,6 +198,15 @@
                             </div>
                             <h3>GitHub</h3>
                             <p>Code, experiments, and open source contributions.</p>
+                        </div>
+                        <div class="project-card" onclick="navigateTo('aureliusgpt')">
+                            <div class="project-card-header">
+                                <span class="project-card-icon">
+                                    <img src="aurelius-logo.png" alt="AureliusGPT" style="width: auto; height: 28px; max-width: 52px; border-radius: 6px; image-rendering: pixelated; object-fit: contain;">
+                                </span>
+                            </div>
+                            <h3>AureliusGPT</h3>
+                            <p>Stoic wisdom from Marcus Aurelius, powered by AI.</p>
                         </div>
                     </div>
                 </div>
@@ -463,6 +473,57 @@
                         Check back later for free startup ideas.
                     </p>
                     <div class="back-hint" style="margin-top: 40px;">Type <code>cd ~</code> or <code>cd ..</code> to go back home</div>
+                </div>
+            </div>
+
+            <!-- AureliusGPT Page -->
+            <div class="sub-page" id="page-aureliusgpt">
+                <div class="aurelius-container">
+                    <!-- Header -->
+                    <div class="aurelius-header">
+                        <div class="aurelius-logo-container">
+                            <img src="aurelius-logo.png" alt="Marcus Aurelius" class="aurelius-logo pixel-art">
+                        </div>
+                        <h1 class="aurelius-title">AURELIUS<span class="gpt-suffix">GPT</span></h1>
+                        <p class="aurelius-subtitle">Stoic Wisdom from the Philosopher Emperor</p>
+                        <div class="aurelius-quote">
+                            "You have power over your mind—not outside events.<br>Realize this, and you will find strength."
+                        </div>
+                    </div>
+
+                    <!-- Chat Interface -->
+                    <div class="aurelius-chat-container">
+                        <div class="aurelius-messages" id="aurelius-messages">
+                            <div class="aurelius-welcome-message">
+                                <div class="pixel-icon">👑</div>
+                                <p>Greetings, seeker of wisdom. I am Marcus Aurelius, trained on the <em>Meditations</em>.</p>
+                                <p>Ask me about stoicism, virtue, resilience, or the nature of the good life.</p>
+                            </div>
+                        </div>
+
+                        <!-- Input Area -->
+                        <div class="aurelius-input-container">
+                            <div class="aurelius-input-wrapper">
+                                <textarea 
+                                    id="aurelius-input" 
+                                    class="aurelius-input" 
+                                    placeholder="Seek wisdom from Marcus Aurelius..."
+                                    rows="1"></textarea>
+                                <button id="aurelius-send-btn" class="aurelius-send-btn" onclick="sendAureliusMessage()">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+                                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="aurelius-info">
+                                <span class="pixel-dot"></span>
+                                Model: <strong>Tarush-AI/AureliusGPT</strong> • Pretrained on <em>Meditations</em>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="back-hint" style="margin-top: 30px; text-align: center;">Type <code>cd ~</code> or <code>cd ..</code> to return to your citadel</div>
                 </div>
             </div>
 
