@@ -1921,13 +1921,99 @@ body.terminal-mode-off .back-hint {
 }
 
 .justification-message .message-text {
-    color: var(--accent-orange) !important;
+    color: var(--text-dim) !important;
+    display: block;
 }
 
-.justification-message .message-text::before {
-    content: '> JUSTIFICATION: ';
+.justification-prefix {
     color: var(--accent-orange);
     font-weight: 600;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.markdown-content {
+    color: var(--text-dim);
+    line-height: 1.6;
+}
+
+.markdown-content h1,
+.markdown-content h2,
+.markdown-content h3 {
+    color: var(--accent-orange);
+    margin-top: 12px;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.markdown-content h1 {
+    font-size: 16px;
+}
+
+.markdown-content h2 {
+    font-size: 15px;
+}
+
+.markdown-content h3 {
+    font-size: 14px;
+}
+
+.markdown-content p {
+    margin: 8px 0;
+    color: var(--text-dim);
+}
+
+.markdown-content strong {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.markdown-content em {
+    color: var(--accent-purple);
+    font-style: italic;
+}
+
+.markdown-content ul,
+.markdown-content ol {
+    margin: 8px 0;
+    padding-left: 20px;
+}
+
+.markdown-content li {
+    margin: 4px 0;
+    color: var(--text-dim);
+}
+
+.markdown-content code {
+    background: rgba(139, 92, 246, 0.1);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--accent-cyan);
+}
+
+.markdown-content pre {
+    background: rgba(18, 18, 26, 0.8);
+    border: 1px solid rgba(139, 92, 246, 0.2);
+    border-radius: 8px;
+    padding: 12px;
+    margin: 8px 0;
+    overflow-x: auto;
+}
+
+.markdown-content pre code {
+    background: transparent;
+    padding: 0;
+    color: var(--accent-cyan);
+}
+
+.markdown-content blockquote {
+    border-left: 3px solid var(--accent-orange);
+    padding-left: 12px;
+    margin: 8px 0;
+    color: var(--text-dim);
+    font-style: italic;
 }
 
 .error-message .message-text {

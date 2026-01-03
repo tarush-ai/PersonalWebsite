@@ -1545,18 +1545,22 @@ async function sendAureliusMessage() {
                     const justData = await justificationResponse.json();
                     const justification = justData.justification;
                     
+                    // Parse markdown to HTML
+                    const markdownHTML = marked.parse(justification);
+                    
                     // Add justification message
                     const justificationEl = document.createElement('div');
                     justificationEl.className = 'aurelius-message justification-message';
                     justificationEl.innerHTML = `
                         <div class="message-content">
-                            <div class="message-text"></div>
+                            <div class="message-text">
+                                <span class="justification-prefix">> JUSTIFICATION: </span>
+                                <div class="markdown-content">${markdownHTML}</div>
+                            </div>
                         </div>
                     `;
                     messagesContainer.appendChild(justificationEl);
-                    
-                    const justTextEl = justificationEl.querySelector('.message-text');
-                    await typewriterEffect(justification, justTextEl, 15);
+                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
                 }
             } catch (error) {
                 console.error('Justification Error:', error);
