@@ -1273,6 +1273,11 @@ let isAureliusSending = false;
 let conversationHistory = [];
 let countdownTimer = null;
 
+// Cycling autocomplete for sample prompts
+const aureliusSamplePrompts = ['Death', 'Virtue', 'Accept', 'Nature'];
+let currentAureliusPromptIndex = 0;
+let aureliusPromptCycleInterval = null;
+
 // Sample prompt handler
 function useSamplePrompt(prompt) {
     const input = document.getElementById('aurelius-input');
@@ -1282,12 +1287,48 @@ function useSamplePrompt(prompt) {
     }
 }
 
+// Start cycling through sample prompts
+function startAureliusPromptCycle() {
+    const cyclingTextEl = document.getElementById('aurelius-cycling-prompt');
+    if (!cyclingTextEl) return;
+    
+    // Update immediately
+    updateAureliusPrompt();
+    
+    // Cycle every 3 seconds
+    aureliusPromptCycleInterval = setInterval(() => {
+        currentAureliusPromptIndex = (currentAureliusPromptIndex + 1) % aureliusSamplePrompts.length;
+        updateAureliusPrompt();
+    }, 3000);
+}
+
+// Update the cycling prompt with fade animation
+function updateAureliusPrompt() {
+    const cyclingTextEl = document.getElementById('aurelius-cycling-prompt');
+    if (!cyclingTextEl) return;
+    
+    cyclingTextEl.style.opacity = '0';
+    setTimeout(() => {
+        cyclingTextEl.textContent = aureliusSamplePrompts[currentAureliusPromptIndex];
+        cyclingTextEl.style.opacity = '1';
+    }, 150);
+}
+
+// Stop cycling prompts
+function stopAureliusPromptCycle() {
+    if (aureliusPromptCycleInterval) {
+        clearInterval(aureliusPromptCycleInterval);
+        aureliusPromptCycleInterval = null;
+    }
+}
+
 // Make it globally available
 window.useSamplePrompt = useSamplePrompt;
 
 // Image state management
 function setAureliusImage(state) {
     const img = document.getElementById('aurelius-state-image');
+    const imageDisplay = document.querySelector('.aurelius-image-display');
     if (!img) return;
     
     // Remove all state classes
@@ -1312,6 +1353,19 @@ function setAureliusImage(state) {
             }
             img.style.opacity = '1';
         }, 300);
+    }
+    
+    // Make the face sticky and prominent during processing
+    if (imageDisplay) {
+        if (state === 'thinking' || state === 'eureka' || state === 'meditating') {
+            imageDisplay.classList.add('processing');
+            // Scroll to keep face visible
+            setTimeout(() => {
+                imageDisplay.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 100);
+        } else {
+            imageDisplay.classList.remove('processing');
+        }
     }
 }
 
@@ -1652,16 +1706,46 @@ function initializeAureliusGPT() {
         aureliusInput.addEventListener('input', function() {
             this.style.height = 'auto';
             this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+            
+            // Hide autocomplete when user is typing
+            const autocomplete = document.getElementById('aurelius-autocomplete');
+            if (autocomplete) {
+                if (this.value.trim()) {
+                    autocomplete.style.opacity = '0';
+                    autocomplete.style.pointerEvents = 'none';
+                } else {
+                    autocomplete.style.opacity = '1';
+                    autocomplete.style.pointerEvents = 'all';
+                }
+            }
         });
         
-        // Enter to send
+        // Enter to send, Tab to accept autocomplete
         aureliusInput.addEventListener('keydown', function(e) {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
                 sendAureliusMessage();
             }
+            
+            // Tab to accept cycling prompt
+            if (e.key === 'Tab' && !this.value.trim()) {
+                e.preventDefault();
+                const currentPrompt = aureliusSamplePrompts[currentAureliusPromptIndex];
+                this.value = currentPrompt;
+                this.focus();
+                
+                // Hide autocomplete
+                const autocomplete = document.getElementById('aurelius-autocomplete');
+                if (autocomplete) {
+                    autocomplete.style.opacity = '0';
+                    autocomplete.style.pointerEvents = 'none';
+                }
+            }
         });
     }
+    
+    // Start cycling prompts
+    startAureliusPromptCycle();
     
     // Create particles
     createAureliusParticles();

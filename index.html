@@ -499,12 +499,25 @@
                         <img src="/aurelius-logo.png" alt="Marcus Aurelius" class="aurelius-logo pixel-art" id="aurelius-state-image">
                     </div>
 
-                    <!-- Sample Prompts -->
+                    <!-- Sample Prompts - Quick Access -->
+                    <div class="aurelius-quick-prompts-label">
+                        <span style="font-size: 11px; color: var(--text-dim); font-style: italic;">Quick Prompts:</span>
+                    </div>
                     <div class="aurelius-sample-prompts">
                         <button class="sample-prompt-btn" onclick="useSamplePrompt('Death')">Death</button>
                         <button class="sample-prompt-btn" onclick="useSamplePrompt('Virtue')">Virtue</button>
                         <button class="sample-prompt-btn" onclick="useSamplePrompt('Accept')">Accept</button>
                         <button class="sample-prompt-btn" onclick="useSamplePrompt('Nature')">Nature</button>
+                    </div>
+
+                    <!-- Model Size Disclaimer -->
+                    <div class="aurelius-model-disclaimer">
+                        <div class="disclaimer-icon">⚠️</div>
+                        <div class="disclaimer-content">
+                            <h4>About This Model</h4>
+                            <p>AureliusGPT has only <strong>845k parameters</strong> — approximately <strong>800,000x smaller</strong> than state-of-the-art LLMs like DeepSeek R1.</p>
+                            <p>Responses may be cryptic or require knowledge of Stoic philosophy to interpret. For clearer understanding, <strong>enable the Stoic Validator below</strong>.</p>
+                        </div>
                     </div>
 
                     <!-- Chat Interface -->
@@ -514,6 +527,14 @@
 
                         <!-- Input Area -->
                         <div class="aurelius-input-container">
+                            <!-- Cycling Autocomplete Suggestion -->
+                            <div class="aurelius-autocomplete-suggestion" id="aurelius-autocomplete">
+                                <span class="autocomplete-hint-text">Try this prompt:</span>
+                                <span class="autocomplete-cycling-text" id="aurelius-cycling-prompt">Death</span>
+                                <kbd>TAB</kbd>
+                                <span class="autocomplete-note">← Try these sample prompts for best results</span>
+                            </div>
+
                             <div class="aurelius-input-wrapper">
                                 <textarea 
                                     id="aurelius-input" 
@@ -554,9 +575,51 @@
                         </button>
                     </div>
                     
+                    <!-- Layperson's Summary -->
+                    <div class="aurelius-summary-section">
+                        <h2>Why This Matters: Training Philosophy with Mathematics</h2>
+                        
+                        <div class="summary-content">
+                            <div class="summary-intro">
+                                <p>At 17, I built a language model that generates Stoic philosophy — not because it was easy, but because it was <em>supposed to be impossible</em>.</p>
+                            </div>
+
+                            <div class="summary-grid">
+                                <div class="summary-card">
+                                    <div class="summary-card-icon">📖</div>
+                                    <h3>The Origin</h3>
+                                    <p>I first read Marcus Aurelius' <em>Meditations</em> in 7th grade. The Stoic principles of acceptance, virtue, and resilience stuck with me. Years later, as I dove deep into AI and language models, I wondered: <strong>could I teach a machine to think like a Stoic philosopher?</strong></p>
+                                </div>
+
+                                <div class="summary-card">
+                                    <div class="summary-card-icon">⚠️</div>
+                                    <h3>The Challenge</h3>
+                                    <p>Training a language model on only 89,000 tokens is like trying to teach someone English using just one short book. Modern scaling laws predicted this would fail spectacularly. The model should overfit, memorize, and produce gibberish.</p>
+                                </div>
+
+                                <div class="summary-card">
+                                    <div class="summary-card-icon">💡</div>
+                                    <h3>The Innovation</h3>
+                                    <p>I used <strong>knowledge distillation</strong> from a larger model (Llama 3.2 1B) to generate synthetic Stoic-flavored text, expanding the training corpus. Then I built a complete Transformer architecture from scratch — attention mechanisms, embeddings, positional encodings, all of it.</p>
+                                </div>
+
+                                <div class="summary-card">
+                                    <div class="summary-card-icon">🎯</div>
+                                    <h3>Why It's Impressive</h3>
+                                    <p>AureliusGPT has <strong>845,000 parameters</strong>. DeepSeek R1 has <strong>671 billion</strong>. That's 800,000x smaller, yet it still generates coherent (if cryptic) Stoic text. It proves you can do meaningful AI research without massive compute budgets.</p>
+                                </div>
+                            </div>
+
+                            <div class="summary-footer">
+                                <p><strong>Educational Value:</strong> This is a complete, from-scratch implementation of a Transformer language model. Every component — from BPE tokenization to multi-head attention to the training loop — was built to understand how these systems truly work at the mathematical level.</p>
+                                <p class="tech-spec-link">For the full technical specification, architecture details, and training methodology, <strong>continue reading below ↓</strong></p>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Blog Section -->
                     <div class="aurelius-blog-section">
-                        <h2>About AureliusGPT</h2>
+                        <h2>Technical Specification</h2>
                         <div class="aurelius-badges-blog">
                             <a href="https://github.com/tarush-ai/AureliusGPT-Torch" target="_blank" rel="noopener noreferrer">
                                 <img src="https://img.shields.io/badge/-000000?logo=github&logoColor=white" alt="GitHub">
