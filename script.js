@@ -1381,19 +1381,6 @@ function setAureliusImage(state) {
             sideFaceContainer.classList.add('visible');
         }
     }
-    
-    // Make the face sticky and prominent during processing
-    if (imageDisplay) {
-        if (state === 'thinking' || state === 'eureka' || state === 'meditating') {
-            imageDisplay.classList.add('processing');
-            // Scroll to keep face visible
-            setTimeout(() => {
-                imageDisplay.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }, 100);
-        } else {
-            imageDisplay.classList.remove('processing');
-        }
-    }
 }
 
 // Export functionality

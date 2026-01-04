@@ -1709,28 +1709,6 @@ body.terminal-mode-off .back-hint {
     position: relative;
     z-index: 1;
     padding: 20px;
-    transition: all 0.5s ease;
-}
-
-/* Sticky face when processing */
-.aurelius-image-display.processing {
-    position: sticky;
-    top: 20px;
-    z-index: 100;
-    background: radial-gradient(
-        ellipse at center,
-        rgba(10, 10, 15, 0.95) 0%,
-        rgba(10, 10, 15, 0.85) 50%,
-        transparent 100%
-    );
-    padding: 30px 20px;
-    border-radius: 20px;
-}
-
-.aurelius-image-display.processing .aurelius-logo {
-    box-shadow: 
-        0 0 80px rgba(139, 92, 246, 0.8),
-        0 20px 80px rgba(0, 0, 0, 0.6);
 }
 
 @keyframes breathe {
