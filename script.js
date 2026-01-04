@@ -1328,11 +1328,16 @@ window.useSamplePrompt = useSamplePrompt;
 // Image state management
 function setAureliusImage(state) {
     const img = document.getElementById('aurelius-state-image');
+    const sideImg = document.getElementById('aurelius-side-image');
+    const sideFaceContainer = document.getElementById('aurelius-side-face');
     const imageDisplay = document.querySelector('.aurelius-image-display');
     if (!img) return;
     
-    // Remove all state classes
+    // Remove all state classes from both images
     img.classList.remove('thinking', 'eureka', 'meditating');
+    if (sideImg) {
+        sideImg.classList.remove('thinking', 'eureka', 'meditating');
+    }
     
     // Map states to images
     const stateImages = {
@@ -1343,7 +1348,7 @@ function setAureliusImage(state) {
     };
     
     if (stateImages[state]) {
-        // Add fade effect
+        // Add fade effect to main image
         img.style.opacity = '0';
         
         setTimeout(() => {
@@ -1353,6 +1358,28 @@ function setAureliusImage(state) {
             }
             img.style.opacity = '1';
         }, 300);
+        
+        // Update side image as well
+        if (sideImg) {
+            sideImg.style.opacity = '0';
+            setTimeout(() => {
+                sideImg.src = stateImages[state];
+                if (state !== 'idle') {
+                    sideImg.classList.add(state);
+                }
+                sideImg.style.opacity = '1';
+            }, 300);
+        }
+    }
+    
+    // Show side face when processing or when there are messages
+    if (sideFaceContainer) {
+        const messagesContainer = document.getElementById('aurelius-messages');
+        const hasMessages = messagesContainer && messagesContainer.children.length > 0;
+        
+        if (state === 'thinking' || state === 'eureka' || state === 'meditating' || hasMessages) {
+            sideFaceContainer.classList.add('visible');
+        }
     }
     
     // Make the face sticky and prominent during processing
