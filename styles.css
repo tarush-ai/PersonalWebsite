@@ -1834,52 +1834,8 @@ body.terminal-mode-off .back-hint {
 /* Chat Wrapper - Contains side face and chat */
 .aurelius-chat-wrapper {
     display: flex;
-    gap: 0;
+    gap: 20px;
     align-items: flex-start;
-}
-
-/* Resize Handle */
-.resize-handle {
-    width: 10px;
-    cursor: col-resize;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    position: relative;
-    flex-shrink: 0;
-    z-index: 10;
-    padding: 0 5px;
-}
-
-.aurelius-chat-wrapper:hover .resize-handle {
-    opacity: 1;
-}
-
-.resize-handle:hover,
-.resize-handle.resizing {
-    opacity: 1;
-}
-
-.resize-handle-line {
-    width: 2px;
-    height: 100%;
-    background: rgba(139, 92, 246, 0.3);
-    border-radius: 2px;
-    transition: all 0.3s ease;
-}
-
-.resize-handle:hover .resize-handle-line {
-    background: rgba(139, 92, 246, 0.6);
-    width: 3px;
-    box-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
-}
-
-.resize-handle.resizing .resize-handle-line {
-    background: rgba(251, 191, 36, 0.8);
-    width: 4px;
-    box-shadow: 0 0 15px rgba(251, 191, 36, 0.6);
 }
 
 /* Side Aurelius Face */
@@ -1912,26 +1868,20 @@ body.terminal-mode-off .back-hint {
         0 10px 40px rgba(0, 0, 0, 0.4);
     image-rendering: pixelated;
     -ms-interpolation-mode: nearest-neighbor;
-    transition: opacity 0.6s ease-in-out, box-shadow 0.3s ease;
+    transition: opacity 0.6s ease-in-out, transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* State animations for side image - removed pulsing, only use box-shadow changes */
+/* State animations for side image */
 .aurelius-side-image.thinking {
-    box-shadow: 
-        0 0 50px rgba(139, 92, 246, 0.7),
-        0 10px 40px rgba(0, 0, 0, 0.4);
+    animation: thinking-pulse 2s infinite;
 }
 
 .aurelius-side-image.eureka {
-    box-shadow: 
-        0 0 60px rgba(251, 191, 36, 0.8),
-        0 10px 40px rgba(0, 0, 0, 0.4);
+    animation: eureka-glow 1s ease-out;
 }
 
 .aurelius-side-image.meditating {
-    box-shadow: 
-        0 0 40px rgba(139, 92, 246, 0.5),
-        0 10px 40px rgba(0, 0, 0, 0.4);
+    animation: meditate-breathe 3s ease-in-out infinite;
 }
 
 /* Chat Container */

@@ -1713,83 +1713,6 @@ function createAureliusParticles() {
     }
 }
 
-// Resize functionality for Aurelius side face and chat
-function initializeAureliusResize() {
-    const resizeHandle = document.getElementById('resize-handle');
-    const sideFace = document.getElementById('aurelius-side-face');
-    const chatContainer = document.getElementById('aurelius-chat-container');
-    const wrapper = document.getElementById('aurelius-chat-wrapper');
-    
-    if (!resizeHandle || !sideFace || !chatContainer || !wrapper) return;
-    
-    let isResizing = false;
-    let startX = 0;
-    let startWidthFace = 0;
-    
-    const MIN_FACE_WIDTH = 200;
-    const MAX_FACE_WIDTH = 500;
-    const MIN_CHAT_WIDTH = 400;
-    
-    resizeHandle.addEventListener('mousedown', (e) => {
-        isResizing = true;
-        startX = e.clientX;
-        startWidthFace = sideFace.offsetWidth;
-        
-        resizeHandle.classList.add('resizing');
-        document.body.style.cursor = 'col-resize';
-        document.body.style.userSelect = 'none';
-        
-        e.preventDefault();
-    });
-    
-    document.addEventListener('mousemove', (e) => {
-        if (!isResizing) return;
-        
-        // Since face is now on the RIGHT, dragging RIGHT makes it smaller, LEFT makes it bigger
-        const deltaX = startX - e.clientX; // Inverted!
-        let newWidthFace = startWidthFace + deltaX;
-        
-        // Get wrapper width to calculate chat width
-        const wrapperWidth = wrapper.offsetWidth;
-        const newWidthChat = wrapperWidth - newWidthFace - 30; // 30px for gap and handle
-        
-        // Apply constraints
-        if (newWidthFace < MIN_FACE_WIDTH) {
-            newWidthFace = MIN_FACE_WIDTH;
-        } else if (newWidthFace > MAX_FACE_WIDTH) {
-            newWidthFace = MAX_FACE_WIDTH;
-        } else if (newWidthChat < MIN_CHAT_WIDTH) {
-            newWidthFace = wrapperWidth - MIN_CHAT_WIDTH - 30;
-        }
-        
-        sideFace.style.width = newWidthFace + 'px';
-        
-        e.preventDefault();
-    });
-    
-    document.addEventListener('mouseup', () => {
-        if (isResizing) {
-            isResizing = false;
-            resizeHandle.classList.remove('resizing');
-            document.body.style.cursor = '';
-            document.body.style.userSelect = '';
-            
-            // Save preference to localStorage
-            const currentWidth = sideFace.offsetWidth;
-            localStorage.setItem('aureliusFaceWidth', currentWidth);
-        }
-    });
-    
-    // Load saved width preference
-    const savedWidth = localStorage.getItem('aureliusFaceWidth');
-    if (savedWidth && sideFace.classList.contains('visible')) {
-        const width = parseInt(savedWidth);
-        if (width >= MIN_FACE_WIDTH && width <= MAX_FACE_WIDTH) {
-            sideFace.style.width = width + 'px';
-        }
-    }
-}
-
 // Init Aurelius
 function initializeAureliusGPT() {
     const aureliusInput = document.getElementById('aurelius-input');
@@ -1840,9 +1763,6 @@ function initializeAureliusGPT() {
     
     // Start cycling prompts
     startAureliusPromptCycle();
-    
-    // Initialize resize functionality
-    initializeAureliusResize();
     
     // Create particles
     createAureliusParticles();
