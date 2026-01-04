@@ -1912,20 +1912,26 @@ body.terminal-mode-off .back-hint {
         0 10px 40px rgba(0, 0, 0, 0.4);
     image-rendering: pixelated;
     -ms-interpolation-mode: nearest-neighbor;
-    transition: opacity 0.6s ease-in-out, transform 0.3s ease, box-shadow 0.3s ease;
+    transition: opacity 0.6s ease-in-out, box-shadow 0.3s ease;
 }
 
-/* State animations for side image */
+/* State animations for side image - removed pulsing, only use box-shadow changes */
 .aurelius-side-image.thinking {
-    animation: thinking-pulse 2s infinite;
+    box-shadow: 
+        0 0 50px rgba(139, 92, 246, 0.7),
+        0 10px 40px rgba(0, 0, 0, 0.4);
 }
 
 .aurelius-side-image.eureka {
-    animation: eureka-glow 1s ease-out;
+    box-shadow: 
+        0 0 60px rgba(251, 191, 36, 0.8),
+        0 10px 40px rgba(0, 0, 0, 0.4);
 }
 
 .aurelius-side-image.meditating {
-    animation: meditate-breathe 3s ease-in-out infinite;
+    box-shadow: 
+        0 0 40px rgba(139, 92, 246, 0.5),
+        0 10px 40px rgba(0, 0, 0, 0.4);
 }
 
 /* Chat Container */

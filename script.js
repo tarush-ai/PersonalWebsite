@@ -1745,7 +1745,8 @@ function initializeAureliusResize() {
     document.addEventListener('mousemove', (e) => {
         if (!isResizing) return;
         
-        const deltaX = e.clientX - startX;
+        // Since face is now on the RIGHT, dragging RIGHT makes it smaller, LEFT makes it bigger
+        const deltaX = startX - e.clientX; // Inverted!
         let newWidthFace = startWidthFace + deltaX;
         
         // Get wrapper width to calculate chat width
