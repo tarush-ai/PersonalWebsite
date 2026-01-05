@@ -80,9 +80,77 @@ def justify_response():
 def health_check():
     return jsonify({'status': 'ok', 'backend': 'python'})
 
+def get_og_tags(path):
+    """Generate OG tags based on the requested path"""
+    base_url = "https://www.tarush.ai"
+    
+    og_configs = {
+        '/aureliusgpt': {
+            'title': 'AureliusGPT — Small Language Models from First Principles',
+            'description': 'A family of SLMs pretrained from scratch on classical philosophy texts, built without shortcuts.',
+            'image': f'{base_url}/aurelius-thinking.jpg',
+            'url': f'{base_url}/aureliusgpt'
+        },
+        '/podcast': {
+            'title': 'Neural Bridge Podcast — Bridging Generations Through AI',
+            'description': 'Connecting younger generations to current professionals through fascinating discussions on AI.',
+            'image': f'{base_url}/logo.jpg',
+            'url': f'{base_url}/podcast'
+        },
+        '/vericare': {
+            'title': 'VeriCare AI — Patient Advocacy, Augmented with AI',
+            'description': 'The first fully AI patient advocacy engine, built to dispute, negotiate, and reduce medical bills.',
+            'image': f'{base_url}/favicon.png',
+            'url': f'{base_url}/vericare'
+        }
+    }
+    
+    # Default to homepage
+    config = og_configs.get(path, {
+        'title': 'Tarush Gupta — Builder, Founder, Developer',
+        'description': 'Personal citadel showcasing my work in AI, startups, and research.',
+        'image': f'{base_url}/favicon.png',
+        'url': base_url
+    })
+    
+    return config
+
+def inject_og_tags(html_content, path):
+    """Inject OG tags into HTML based on the path"""
+    config = get_og_tags(path)
+    
+    # Replace the OG tag values
+    html_content = html_content.replace(
+        'content="Tarush Gupta — Builder, Founder, Developer" id="og-title"',
+        f'content="{config["title"]}" id="og-title"'
+    )
+    html_content = html_content.replace(
+        'content="Personal citadel showcasing my work in AI, startups, and research." id="og-description"',
+        f'content="{config["description"]}" id="og-description"'
+    )
+    html_content = html_content.replace(
+        'content="https://www.tarush.ai/favicon.png" id="og-image"',
+        f'content="{config["image"]}" id="og-image"'
+    )
+    html_content = html_content.replace(
+        'content="https://www.tarush.ai/" id="og-url"',
+        f'content="{config["url"]}" id="og-url"'
+    )
+    
+    # Also update the document title
+    html_content = html_content.replace(
+        '<title>Tarush\'s Citadel</title>',
+        f'<title>{config["title"]}</title>'
+    )
+    
+    return html_content
+
 @app.route('/')
 def serve_index():
-    return send_from_directory('.', 'index.html')
+    with open('index.html', 'r', encoding='utf-8') as f:
+        html_content = f.read()
+    html_content = inject_og_tags(html_content, '/')
+    return html_content
 
 @app.route('/<path:path>')
 def serve_static(path):
@@ -90,8 +158,15 @@ def serve_static(path):
     if os.path.exists(path) and os.path.isfile(path):
         return send_from_directory('.', path)
     
-    # If not a file, serves index.html (SPA routing)
-    return send_from_directory('.', 'index.html')
+    # For SPA routes, serve index.html with appropriate OG tags
+    with open('index.html', 'r', encoding='utf-8') as f:
+        html_content = f.read()
+    
+    # Normalize path for OG tag lookup
+    normalized_path = '/' + path.strip('/')
+    html_content = inject_og_tags(html_content, normalized_path)
+    
+    return html_content
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5001))
