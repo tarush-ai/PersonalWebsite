@@ -274,6 +274,7 @@ window.addEventListener('load', () => {
     // Handle initial routing
     const path = window.location.pathname;
     let routed = false;
+    let initialPage = 'home';
     
     if (path !== '/' && path !== '/index.html') {
         const parts = path.replace(/^\/+|\/+$/g, '').split('/');
@@ -296,12 +297,16 @@ window.addEventListener('load', () => {
         // Check if valid
         if (pages[targetPage] || targetPage.startsWith('internship-') || targetPage.startsWith('idea-') || targetPage.startsWith('podcast/')) {
             routed = true;
+            initialPage = targetPage;
             skipIntro();
             setTimeout(() => {
                 navigateTo(targetPage, false);
             }, 600);
         }
     }
+    
+    // Set initial OG tags based on the page being loaded
+    updateOpenGraphTags(initialPage);
     
     if (!routed) {
         setTimeout(bootSequence, 500);
@@ -693,6 +698,60 @@ function updateAutocompleteGhost() {
     }
 }
 
+// Update Open Graph meta tags based on current page
+function updateOpenGraphTags(page) {
+    const ogTitle = document.getElementById('og-title');
+    const ogDescription = document.getElementById('og-description');
+    const ogImage = document.getElementById('og-image');
+    const ogUrl = document.getElementById('og-url');
+    const ogImageWidth = document.getElementById('og-image-width');
+    const ogImageHeight = document.getElementById('og-image-height');
+    
+    const baseUrl = 'https://www.tarush.ai';
+    
+    // Define OG tags for each page
+    const ogData = {
+        'home': {
+            title: 'Tarush Gupta — Builder, Founder, Developer',
+            description: 'Personal citadel showcasing my work in AI, startups, and research.',
+            image: `${baseUrl}/favicon.png`,
+            url: baseUrl
+        },
+        'aureliusgpt': {
+            title: 'AureliusGPT — Small Language Models from First Principles',
+            description: 'A family of SLMs pretrained from scratch on classical philosophy texts, built without shortcuts.',
+            image: `${baseUrl}/aurelius-thinking.jpg`,
+            url: `${baseUrl}/aureliusgpt`
+        },
+        'podcast': {
+            title: 'Neural Bridge Podcast — Bridging Generations Through AI',
+            description: 'Connecting younger generations to current professionals through fascinating discussions on AI.',
+            image: `${baseUrl}/logo.jpg`,
+            url: `${baseUrl}/podcast`
+        },
+        'vericare': {
+            title: 'VeriCare AI — Patient Advocacy, Augmented with AI',
+            description: 'The first fully AI patient advocacy engine, built to dispute, negotiate, and reduce medical bills.',
+            image: `${baseUrl}/favicon.png`,
+            url: `${baseUrl}/vericare`
+        }
+    };
+    
+    // Get data for current page or default to home
+    const data = ogData[page] || ogData['home'];
+    
+    // Update meta tags
+    if (ogTitle) ogTitle.setAttribute('content', data.title);
+    if (ogDescription) ogDescription.setAttribute('content', data.description);
+    if (ogImage) ogImage.setAttribute('content', data.image);
+    if (ogUrl) ogUrl.setAttribute('content', data.url);
+    if (ogImageWidth) ogImageWidth.setAttribute('content', '1200');
+    if (ogImageHeight) ogImageHeight.setAttribute('content', '630');
+    
+    // Update document title as well
+    document.title = data.title;
+}
+
 function navigateTo(page, updateHistory = true) {
     // Determine the URL for history
     let url = '/';
@@ -718,6 +777,9 @@ function navigateTo(page, updateHistory = true) {
     if (updateHistory) {
         history.pushState({ page: page }, '', url);
     }
+    
+    // Update Open Graph tags for social sharing
+    updateOpenGraphTags(page);
 
     // Handle internship sub-pages
     if (page.startsWith('internship-')) {
