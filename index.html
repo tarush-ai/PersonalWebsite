@@ -509,13 +509,13 @@
                         <img src="/aurelius-logo.png" alt="Marcus Aurelius" class="aurelius-logo pixel-art" id="aurelius-state-image">
                     </div>
 
-                    <!-- Model Size Disclaimer -->
-                    <div class="aurelius-model-disclaimer">
-                        <div class="disclaimer-icon">⚠️</div>
-                        <div class="disclaimer-content">
-                            <h4>About This Model</h4>
-                            <p>AureliusGPT has only <strong>845k parameters</strong> — approximately <strong>800,000x smaller</strong> than state-of-the-art LLMs like DeepSeek R1.</p>
-                            <p>Responses may be cryptic or require knowledge of Stoic philosophy to interpret. For clearer understanding, <strong>enable the Stoic Validator below</strong>.</p>
+                    <!-- Prompt Guide -->
+                    <div class="aurelius-prompt-guide">
+                        <div class="prompt-guide-text">
+                            <strong>Best Results:</strong> Use 1-2 word Stoic prompts
+                        </div>
+                        <div class="prompt-guide-hint">
+                            Press <kbd>TAB</kbd> to cycle through suggestions
                         </div>
                     </div>
 
@@ -523,6 +523,9 @@
                     <div class="aurelius-chat-wrapper">
                         <!-- Side Aurelius Face (shown on scroll/interaction) -->
                         <div class="aurelius-side-face" id="aurelius-side-face">
+                            <button class="side-face-toggle" id="side-face-toggle" onclick="toggleSideFace()" title="Minimize/Maximize Aurelius">
+                                <span id="side-face-toggle-icon">«</span>
+                            </button>
                             <img src="/aurelius-logo.png" alt="Marcus Aurelius" class="aurelius-side-image pixel-art" id="aurelius-side-image">
                         </div>
 
@@ -559,7 +562,7 @@
                             <div class="stoic-validator-section">
                                 <div class="validator-toggle-wrapper">
                                     <label class="validator-toggle">
-                                        <input type="checkbox" id="stoic-validator-toggle">
+                                        <input type="checkbox" id="stoic-validator-toggle" checked>
                                         <span class="toggle-slider"></span>
                                     </label>
                                     <span class="validator-label">Stoic Validator</span>

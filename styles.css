@@ -1849,11 +1849,54 @@ body.terminal-mode-off .back-hint {
     top: 20px;
     align-self: flex-start;
     min-width: 0;
+    position: relative;
 }
 
 .aurelius-side-face.visible {
     width: 320px;
     opacity: 1;
+}
+
+.aurelius-side-face.minimized {
+    width: 60px !important;
+}
+
+/* Toggle button for side face */
+.side-face-toggle {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 20;
+    background: rgba(139, 92, 246, 0.8);
+    border: 1px solid rgba(251, 191, 36, 0.5);
+    border-radius: 6px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.side-face-toggle:hover {
+    background: rgba(251, 191, 36, 0.9);
+    border-color: rgba(251, 191, 36, 0.8);
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(251, 191, 36, 0.4);
+}
+
+.side-face-toggle:active {
+    transform: scale(0.95);
+}
+
+.aurelius-side-face.minimized .side-face-toggle {
+    right: 5px;
 }
 
 .aurelius-side-image {
@@ -1899,7 +1942,7 @@ body.terminal-mode-off .back-hint {
 }
 
 .aurelius-messages {
-    height: 330px;
+    height: 520px;
     overflow-y: auto;
     padding: 24px;
     display: flex;
@@ -2402,48 +2445,47 @@ body.terminal-mode-off .back-hint {
     transform: translateY(0);
 }
 
-/* Model Disclaimer Box */
-.aurelius-model-disclaimer {
-    display: flex;
-    gap: 16px;
-    align-items: flex-start;
-    background: linear-gradient(135deg, rgba(251, 146, 60, 0.05) 0%, rgba(239, 68, 68, 0.05) 100%);
-    border: 1px solid rgba(251, 146, 60, 0.3);
+/* Prompt Guide */
+.aurelius-prompt-guide {
+    text-align: center;
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(251, 191, 36, 0.08) 100%);
+    border: 1px solid rgba(251, 191, 36, 0.3);
     border-radius: 12px;
     padding: 20px 24px;
     margin-bottom: 25px;
     box-shadow: 
-        0 4px 16px rgba(251, 146, 60, 0.1),
-        inset 0 1px 0 rgba(251, 146, 60, 0.1);
+        0 4px 16px rgba(251, 191, 36, 0.1),
+        inset 0 1px 0 rgba(251, 191, 36, 0.1);
 }
 
-.disclaimer-icon {
-    font-size: 24px;
-    line-height: 1;
-    flex-shrink: 0;
-}
-
-.disclaimer-content h4 {
-    font-size: 14px;
-    color: var(--accent-orange);
-    margin-bottom: 10px;
-    font-weight: 600;
-}
-
-.disclaimer-content p {
-    font-size: 12px;
-    color: var(--text-dim);
-    line-height: 1.6;
-    margin-bottom: 8px;
-}
-
-.disclaimer-content p:last-child {
-    margin-bottom: 0;
-}
-
-.disclaimer-content strong {
+.prompt-guide-text {
+    font-size: 20px;
     color: var(--text-primary);
-    font-weight: 600;
+    margin-bottom: 10px;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.prompt-guide-text strong {
+    color: var(--accent-orange);
+    font-weight: 700;
+}
+
+.prompt-guide-hint {
+    font-size: 14px;
+    color: var(--text-dim);
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.prompt-guide-hint kbd {
+    background: rgba(251, 191, 36, 0.2);
+    border: 1px solid rgba(251, 191, 36, 0.4);
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    color: var(--accent-orange);
+    font-family: 'JetBrains Mono', monospace;
+    margin: 0 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 /* Cycling Autocomplete Suggestion */
@@ -2957,7 +2999,7 @@ body.terminal-mode-off .back-hint {
     }
     
     .aurelius-messages {
-        height: 400px;
+        height: 450px;
         padding: 20px;
     }
     
@@ -3001,23 +3043,17 @@ body.terminal-mode-off .back-hint {
         padding: 20px;
     }
     
-    /* Model disclaimer mobile */
-    .aurelius-model-disclaimer {
-        flex-direction: column;
+    /* Prompt guide mobile */
+    .aurelius-prompt-guide {
         padding: 16px 20px;
-        gap: 12px;
     }
     
-    .disclaimer-icon {
-        font-size: 20px;
+    .prompt-guide-text {
+        font-size: 16px;
     }
     
-    .disclaimer-content h4 {
-        font-size: 13px;
-    }
-    
-    .disclaimer-content p {
-        font-size: 11px;
+    .prompt-guide-hint {
+        font-size: 12px;
     }
     
     /* Autocomplete mobile */

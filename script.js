@@ -1284,12 +1284,30 @@ function goBackFromIdea() {
     hideIdeaDetail();
 }
 
+// Toggle side Aurelius face minimize/maximize
+function toggleSideFace() {
+    const sideFace = document.getElementById('aurelius-side-face');
+    const toggleIcon = document.getElementById('side-face-toggle-icon');
+    
+    if (sideFace) {
+        sideFace.classList.toggle('minimized');
+        
+        // Update icon
+        if (sideFace.classList.contains('minimized')) {
+            toggleIcon.textContent = '»';
+        } else {
+            toggleIcon.textContent = '«';
+        }
+    }
+}
+
 // Make functions available globally
 window.navigateTo = navigateTo;
 window.toggleMode = toggleMode;
 window.showIdeaDetail = showIdeaDetail;
 window.hideIdeaDetail = hideIdeaDetail;
 window.goBackFromIdea = goBackFromIdea;
+window.toggleSideFace = toggleSideFace;
 
 // Toggle switch event listener
 toggleSwitch.addEventListener('click', toggleMode);
@@ -1334,6 +1352,7 @@ function updateStoicQuote() {
 let isAureliusSending = false;
 let conversationHistory = [];
 let countdownTimer = null;
+let pendingRetryMessage = null;
 
 // Cycling autocomplete for sample prompts
 const aureliusSamplePrompts = ['Death', 'Virtue', 'Accept', 'Nature'];
@@ -1483,7 +1502,7 @@ function showCountdown(messagesContainer) {
             <div class="aurelius-countdown">
                 <h3>Aurelius is meditating...</h3>
                 <div class="countdown-timer" id="countdown-display">30</div>
-                <p style="color: var(--text-dim); font-size: 13px;">The server is starting up. Please wait.</p>
+                <p style="color: var(--text-dim); font-size: 13px;">The server is starting up. Retrying automatically...</p>
             </div>
         </div>
     `;
@@ -1510,29 +1529,44 @@ function showCountdown(messagesContainer) {
             // Return to idle state
             setAureliusImage('idle');
             
-            // Show retry message
-            const retryEl = document.createElement('div');
-            retryEl.className = 'aurelius-message aurelius-response';
-            retryEl.innerHTML = `
-                <div class="message-content">
-                    <div class="message-text" style="color: var(--accent-green);">
-                        The server should be ready now. Please try your question again.
+            // Auto-retry the pending message
+            if (pendingRetryMessage) {
+                const messageToRetry = pendingRetryMessage;
+                pendingRetryMessage = null;
+                
+                // Show retrying message
+                const retryEl = document.createElement('div');
+                retryEl.className = 'aurelius-message aurelius-response';
+                retryEl.innerHTML = `
+                    <div class="message-content">
+                        <div class="message-text" style="color: var(--accent-green);">
+                            Retrying your message...
+                        </div>
                     </div>
-                </div>
-            `;
-            messagesContainer.appendChild(retryEl);
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                `;
+                messagesContainer.appendChild(retryEl);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                
+                // Wait a moment then retry
+                setTimeout(() => {
+                    if (retryEl.parentNode) {
+                        messagesContainer.removeChild(retryEl);
+                    }
+                    sendAureliusMessageWithText(messageToRetry);
+                }, 1000);
+            }
         }
     }, 1000);
 }
 
-async function sendAureliusMessage() {
-    const input = document.getElementById('aurelius-input');
+// Helper function that sends a message with specific text (used for auto-retry)
+async function sendAureliusMessageWithText(messageText) {
     const messagesContainer = document.getElementById('aurelius-messages');
     const sendBtn = document.getElementById('aurelius-send-btn');
     
-    const userMessage = input.value.trim();
-    if (!userMessage || isAureliusSending) return;
+    if (!messageText || isAureliusSending) return;
+    
+    const userMessage = messageText;
     
     // Add user message to chat
     const userMessageEl = document.createElement('div');
@@ -1550,10 +1584,6 @@ async function sendAureliusMessage() {
         content: userMessage,
         timestamp: new Date()
     });
-    
-    // Clear input
-    input.value = '';
-    input.style.height = 'auto';
     
     // Scroll to bottom
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
@@ -1606,6 +1636,10 @@ async function sendAureliusMessage() {
             setAureliusImage('idle');
             isAureliusSending = false;
             sendBtn.disabled = false;
+            
+            // Store message for auto-retry
+            pendingRetryMessage = userMessage;
+            
             showCountdown(messagesContainer);
             return;
         }
@@ -1733,6 +1767,21 @@ async function sendAureliusMessage() {
         sendBtn.disabled = false;
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
+}
+
+// Wrapper function that gets input value and calls the helper
+async function sendAureliusMessage() {
+    const input = document.getElementById('aurelius-input');
+    const userMessage = input.value.trim();
+    
+    if (!userMessage || isAureliusSending) return;
+    
+    // Clear input
+    input.value = '';
+    input.style.height = 'auto';
+    
+    // Call the helper function with the message text
+    await sendAureliusMessageWithText(userMessage);
 }
 
 // Make exportConversation globally available
