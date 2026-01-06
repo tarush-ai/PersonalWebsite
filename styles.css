@@ -1888,9 +1888,16 @@ body.terminal-mode-off .back-hint {
     pointer-events: none;
 }
 
+/* Show toggle button when side face is visible or has been visible (minimized) */
 .aurelius-side-face.visible .side-face-toggle {
-    opacity: 1;
-    pointer-events: all;
+    opacity: 1 !important;
+    pointer-events: all !important;
+}
+
+/* Keep toggle button visible even when minimized */
+.aurelius-side-face.minimized .side-face-toggle {
+    opacity: 1 !important;
+    pointer-events: all !important;
 }
 
 .side-face-toggle:hover {
@@ -2502,6 +2509,12 @@ body.terminal-mode-off .back-hint {
     margin-top: 12px;
     padding-top: 12px;
     border-top: 1px solid rgba(139, 92, 246, 0.2);
+}
+
+.prompt-guide-disclaimer em {
+    color: var(--text-dim);
+    font-style: italic;
+    font-weight: 400;
 }
 
 /* Cycling Autocomplete Suggestion */
