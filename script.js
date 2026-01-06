@@ -321,6 +321,9 @@ window.addEventListener('load', () => {
     // Set initial OG tags based on the page being loaded
     updateOpenGraphTags(initialPage);
     
+    // Set initial history state so back button works correctly
+    history.replaceState({ page: initialPage }, '', window.location.href);
+    
     if (!routed) {
         if (isMobile) {
             skipIntro();
@@ -773,6 +776,12 @@ function navigateTo(page, updateHistory = true) {
     // Determine the URL for history
     let url = '/';
     let historyPage = page;
+
+    // Close mobile nav if open
+    const navOverlay = document.getElementById('mobile-nav-overlay');
+    if (navOverlay && navOverlay.classList.contains('active')) {
+        toggleMobileNav();
+    }
 
     if (page !== 'home') {
         if (page.startsWith('internship-')) {
