@@ -86,6 +86,8 @@
                     <img src="favicon.svg" alt="T" style="height: 24px; width: 24px; margin-right: 8px; border-radius: 4px;">
                     TARUSH.AI
                 </div>
+                
+                <!-- Desktop Links -->
                 <div class="nav-links">
                     <div class="nav-link active" data-page="home" onclick="navigateTo('home')">Home</div>
                     <div class="nav-link" data-page="podcast" onclick="navigateTo('podcast')">Neural Bridge</div>
@@ -95,8 +97,35 @@
                     <div class="nav-link" data-page="ideas" onclick="navigateTo('ideas')">Ideas</div>
                     <div class="nav-link" data-page="github" onclick="navigateTo('github')">GitHub</div>
                 </div>
+
+                <!-- Mobile Hamburger -->
+                <div class="nav-hamburger" id="nav-hamburger" onclick="toggleMobileNav()">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
             </div>
         </nav>
+
+        <!-- Mobile Navigation Overlay -->
+        <div class="mobile-nav-overlay" id="mobile-nav-overlay">
+            <div class="mobile-nav-header">
+                <div class="nav-logo" onclick="navigateTo('home'); toggleMobileNav();" style="display: flex; align-items: center;">
+                    <img src="favicon.svg" alt="T" style="height: 24px; width: 24px; margin-right: 8px; border-radius: 4px;">
+                    TARUSH.AI
+                </div>
+                <div class="mobile-nav-close" onclick="toggleMobileNav()">✕</div>
+            </div>
+            <div class="mobile-nav-links">
+                <div class="mobile-nav-link" onclick="navigateTo('home'); toggleMobileNav();">Home</div>
+                <div class="mobile-nav-link" onclick="navigateTo('podcast'); toggleMobileNav();">Neural Bridge Podcast</div>
+                <div class="mobile-nav-link" onclick="navigateTo('vericare'); toggleMobileNav();">Vericare AI</div>
+                <div class="mobile-nav-link" onclick="navigateTo('aureliusgpt'); toggleMobileNav();">AureliusGPT</div>
+                <div class="mobile-nav-link" onclick="navigateTo('internships'); toggleMobileNav();">Internships</div>
+                <div class="mobile-nav-link" onclick="navigateTo('ideas'); toggleMobileNav();">Ideas Library</div>
+                <div class="mobile-nav-link" onclick="navigateTo('github'); toggleMobileNav();">GitHub</div>
+            </div>
+        </div>
 
         <!-- Back to Home Button -->
         <div class="back-home-btn" id="back-home-btn" onclick="navigateTo('home')">
@@ -744,6 +773,19 @@
         <div class="bottom-terminal" id="bottom-terminal">
             <div class="terminal-expand-btn" id="expand-terminal-btn" onclick="toggleTerminalExpand()">▲</div>
             <div class="command-history" id="command-history"></div>
+            
+            <!-- Quick Actions Chips -->
+            <div class="quick-actions" id="quick-actions">
+                <div class="chip" onclick="handleChipCommand('cd podcast')">cd podcast</div>
+                <div class="chip" onclick="handleChipCommand('cd vericare')">cd vericare</div>
+                <div class="chip" onclick="handleChipCommand('cd aureliusgpt')">cd aureliusgpt</div>
+                <div class="chip" onclick="handleChipCommand('cd internships')">cd internships</div>
+                <div class="chip" onclick="handleChipCommand('cd ideas')">cd ideas</div>
+                <div class="chip" onclick="handleChipCommand('cd github')">cd github</div>
+                <div class="chip" onclick="handleChipCommand('cd home')">cd ~</div>
+                <div class="chip" onclick="handleChipCommand('clear')">clear</div>
+            </div>
+
             <div class="terminal-input-row">
                 <span class="terminal-prompt-mini">
                     tarush@citadel:<span class="path" id="current-path">~</span>$

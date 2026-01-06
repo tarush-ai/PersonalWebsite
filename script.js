@@ -55,6 +55,9 @@ const transitionOverlay = document.getElementById('transition-overlay');
 const loadingProgress = document.getElementById('loading-progress');
 const finalMessage = document.getElementById('final-message');
 
+// Mobile Detection
+const isMobile = window.innerWidth < 768;
+
 let currentCommandIndex = 0;
 let isTyping = false;
 let waitingForEnter = false;
@@ -144,6 +147,16 @@ async function typeCommand(cmdParts, commandSpan) {
     isTyping = false;
     waitingForEnter = true;
     enterPrompt.classList.add('visible');
+
+    // Auto-advance logic for desktop (10s timeout)
+    if (!isMobile) {
+        const thisCommandIndex = currentCommandIndex;
+        setTimeout(() => {
+            if (waitingForEnter && currentCommandIndex === thisCommandIndex) {
+                executeCommand();
+            }
+        }, 10000);
+    }
 }
 
 async function startNextCommand() {
@@ -309,7 +322,11 @@ window.addEventListener('load', () => {
     updateOpenGraphTags(initialPage);
     
     if (!routed) {
-        setTimeout(bootSequence, 500);
+        if (isMobile) {
+            skipIntro();
+        } else {
+            setTimeout(bootSequence, 500);
+        }
     }
 });
 
@@ -1865,3 +1882,31 @@ function initializeAureliusGPT() {
 
 // Global export
 window.sendAureliusMessage = sendAureliusMessage;
+
+// Mobile Navigation Toggle
+function toggleMobileNav() {
+    const navOverlay = document.getElementById('mobile-nav-overlay');
+    
+    if (navOverlay) {
+        navOverlay.classList.toggle('active');
+        
+        if (navOverlay.classList.contains('active')) {
+            document.body.style.overflow = 'hidden'; // Prevent scrolling background
+        } else {
+            document.body.style.overflow = '';
+        }
+    }
+}
+
+// Make toggleMobileNav global
+window.toggleMobileNav = toggleMobileNav;
+
+// Handle chip clicks
+function handleChipCommand(cmd) {
+    const input = document.getElementById('terminal-input');
+    if (input) {
+        input.value = cmd;
+        handleCommand(cmd);
+    }
+}
+window.handleChipCommand = handleChipCommand;
