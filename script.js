@@ -1529,38 +1529,20 @@ function showCountdown(messagesContainer) {
             // Return to idle state
             setAureliusImage('idle');
             
-            // Auto-retry the pending message
-            if (pendingRetryMessage) {
-                const messageToRetry = pendingRetryMessage;
-                pendingRetryMessage = null;
-                
-                // Show retrying message
-                const retryEl = document.createElement('div');
-                retryEl.className = 'aurelius-message aurelius-response';
-                retryEl.innerHTML = `
-                    <div class="message-content">
-                        <div class="message-text" style="color: var(--accent-green);">
-                            Retrying your message...
-                        </div>
-                    </div>
-                `;
-                messagesContainer.appendChild(retryEl);
-                messagesContainer.scrollTop = messagesContainer.scrollHeight;
-                
-                // Wait a moment then retry
-                setTimeout(() => {
-                    if (retryEl.parentNode) {
-                        messagesContainer.removeChild(retryEl);
-                    }
-                    sendAureliusMessageWithText(messageToRetry);
-                }, 1000);
-            }
+                // Auto-retry the pending message
+                if (pendingRetryMessage) {
+                    const messageToRetry = pendingRetryMessage;
+                    pendingRetryMessage = null;
+                    
+                    // Retry immediately without showing duplicate user message
+                    sendAureliusMessageWithText(messageToRetry, true);
+                }
         }
     }, 1000);
 }
 
 // Helper function that sends a message with specific text (used for auto-retry)
-async function sendAureliusMessageWithText(messageText) {
+async function sendAureliusMessageWithText(messageText, skipUserMessage = false) {
     const messagesContainer = document.getElementById('aurelius-messages');
     const sendBtn = document.getElementById('aurelius-send-btn');
     
@@ -1568,22 +1550,24 @@ async function sendAureliusMessageWithText(messageText) {
     
     const userMessage = messageText;
     
-    // Add user message to chat
-    const userMessageEl = document.createElement('div');
-    userMessageEl.className = 'aurelius-message user-message';
-    userMessageEl.innerHTML = `
-        <div class="message-content">
-            <div class="message-text">${escapeHtml(userMessage)}</div>
-        </div>
-    `;
-    messagesContainer.appendChild(userMessageEl);
-    
-    // Add to conversation history
-    conversationHistory.push({
-        role: 'user',
-        content: userMessage,
-        timestamp: new Date()
-    });
+    // Add user message to chat (unless skipping for retry)
+    if (!skipUserMessage) {
+        const userMessageEl = document.createElement('div');
+        userMessageEl.className = 'aurelius-message user-message';
+        userMessageEl.innerHTML = `
+            <div class="message-content">
+                <div class="message-text">${escapeHtml(userMessage)}</div>
+            </div>
+        `;
+        messagesContainer.appendChild(userMessageEl);
+        
+        // Add to conversation history
+        conversationHistory.push({
+            role: 'user',
+            content: userMessage,
+            timestamp: new Date()
+        });
+    }
     
     // Scroll to bottom
     messagesContainer.scrollTop = messagesContainer.scrollHeight;

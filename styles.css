@@ -1858,15 +1858,17 @@ body.terminal-mode-off .back-hint {
 }
 
 .aurelius-side-face.minimized {
-    width: 60px !important;
+    width: 0 !important;
+    opacity: 0;
+    overflow: hidden;
 }
 
 /* Toggle button for side face */
 .side-face-toggle {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    z-index: 20;
+    position: fixed;
+    top: 120px;
+    left: 20px;
+    z-index: 200;
     background: rgba(139, 92, 246, 0.8);
     border: 1px solid rgba(251, 191, 36, 0.5);
     border-radius: 6px;
@@ -1882,6 +1884,13 @@ body.terminal-mode-off .back-hint {
     transition: all 0.3s ease;
     backdrop-filter: blur(10px);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.aurelius-side-face.visible .side-face-toggle {
+    opacity: 1;
+    pointer-events: all;
 }
 
 .side-face-toggle:hover {
@@ -1893,10 +1902,6 @@ body.terminal-mode-off .back-hint {
 
 .side-face-toggle:active {
     transform: scale(0.95);
-}
-
-.aurelius-side-face.minimized .side-face-toggle {
-    right: 5px;
 }
 
 .aurelius-side-image {
@@ -2474,6 +2479,7 @@ body.terminal-mode-off .back-hint {
     font-size: 14px;
     color: var(--text-dim);
     font-family: 'JetBrains Mono', monospace;
+    margin-bottom: 12px;
 }
 
 .prompt-guide-hint kbd {
@@ -2486,6 +2492,16 @@ body.terminal-mode-off .back-hint {
     font-family: 'JetBrains Mono', monospace;
     margin: 0 4px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.prompt-guide-disclaimer {
+    font-size: 16px;
+    color: var(--accent-purple);
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(139, 92, 246, 0.2);
 }
 
 /* Cycling Autocomplete Suggestion */
@@ -3054,6 +3070,19 @@ body.terminal-mode-off .back-hint {
     
     .prompt-guide-hint {
         font-size: 12px;
+    }
+    
+    .prompt-guide-disclaimer {
+        font-size: 14px;
+    }
+    
+    /* Side face toggle mobile */
+    .side-face-toggle {
+        top: 80px;
+        left: 10px;
+        width: 28px;
+        height: 28px;
+        font-size: 16px;
     }
     
     /* Autocomplete mobile */
