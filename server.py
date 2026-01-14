@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 import os
 import requests
+import json
+from pathlib import Path
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 from dotenv import load_dotenv
@@ -10,6 +12,30 @@ load_dotenv()
 
 app = Flask(__name__, static_folder='.')
 CORS(app)
+
+# Visitor counter file
+VISITOR_COUNT_FILE = Path('visitor_count.json')
+
+def get_visitor_count():
+    """Get current visitor count from file"""
+    if VISITOR_COUNT_FILE.exists():
+        try:
+            with open(VISITOR_COUNT_FILE, 'r') as f:
+                data = json.load(f)
+                return data.get('count', 0)
+        except:
+            return 0
+    return 0
+
+def increment_visitor_count():
+    """Increment and save visitor count"""
+    count = get_visitor_count()
+    count += 1
+    
+    with open(VISITOR_COUNT_FILE, 'w') as f:
+        json.dump({'count': count}, f)
+    
+    return count
 
 @app.route('/api/aurelius', methods=['POST'])
 def aurelius_chat():
@@ -79,6 +105,22 @@ def justify_response():
 @app.route('/api/health', methods=['GET'])
 def health_check():
     return jsonify({'status': 'ok', 'backend': 'python'})
+
+@app.route('/api/visitors', methods=['POST', 'GET'])
+def visitor_counter():
+    """Track and return visitor count"""
+    try:
+        if request.method == 'POST':
+            # Increment count for new visitor
+            count = increment_visitor_count()
+        else:
+            # Just return current count
+            count = get_visitor_count()
+        
+        return jsonify({'count': count})
+    except Exception as e:
+        print(f"Error in visitor_counter: {e}")
+        return jsonify({'error': str(e), 'count': 0}), 500
 
 def get_og_tags(path):
     """Generate OG tags based on the requested path"""

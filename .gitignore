@@ -35,3 +35,4 @@ build/
 *.log
 npm-debug.log*
 
+visitor_count.json

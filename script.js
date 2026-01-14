@@ -352,6 +352,8 @@ const suggestionText = document.getElementById('suggestion-text');
 const currentPathEl = document.getElementById('current-path');
 const modeToggle = document.getElementById('mode-toggle');
 const toggleSwitch = document.getElementById('toggle-switch');
+const themeToggle = document.getElementById('theme-toggle');
+const themeToggleSwitch = document.getElementById('theme-toggle-switch');
 const traditionalNav = document.getElementById('traditional-nav');
 const backHomeBtn = document.getElementById('back-home-btn');
 const portfolioContent = document.getElementById('portfolio-content');
@@ -628,6 +630,13 @@ function showPortfolio() {
     
     portfolioPage.classList.add('active');
     
+    // Load theme preference
+    loadThemePreference();
+    
+    // Fetch visitor count and start refresh interval
+    fetchVisitorCount();
+    startVisitorCountRefresh();
+    
     requestAnimationFrame(() => {
         transitionOverlay.style.opacity = '0';
         
@@ -637,6 +646,7 @@ function showPortfolio() {
             setTimeout(() => {
                 bottomTerminal.classList.add('active');
                 modeToggle.classList.add('visible');
+                themeToggle.classList.add('visible');
                 terminalInput.focus();
                 startSuggestionCycle();
             }, 300);
@@ -1335,8 +1345,121 @@ window.hideIdeaDetail = hideIdeaDetail;
 window.goBackFromIdea = goBackFromIdea;
 window.toggleSideFace = toggleSideFace;
 
-// Toggle switch event listener
+// Toggle switch event listeners
 toggleSwitch.addEventListener('click', toggleMode);
+themeToggleSwitch.addEventListener('click', toggleTheme);
+
+// Theme Toggle Functions
+function toggleTheme() {
+    const isLightMode = document.body.classList.toggle('light-mode');
+    const label = document.getElementById('theme-toggle-label');
+    
+    if (isLightMode) {
+        label.textContent = 'Light Mode';
+    } else {
+        label.textContent = 'Dark Mode';
+    }
+    
+    localStorage.setItem('theme', isLightMode ? 'light' : 'dark');
+}
+
+function loadThemePreference() {
+    const savedTheme = localStorage.getItem('theme');
+    const label = document.getElementById('theme-toggle-label');
+    
+    if (savedTheme === 'light') {
+        document.body.classList.add('light-mode');
+        if (label) label.textContent = 'Light Mode';
+    } else {
+        if (label) label.textContent = 'Dark Mode';
+    }
+}
+
+// Visitor Counter Functions
+async function fetchVisitorCount() {
+    try {
+        const response = await fetch('/api/visitors', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            updateVisitorCount(data.count);
+        } else {
+            console.error('Failed to fetch visitor count');
+            updateVisitorCount('---');
+        }
+    } catch (error) {
+        console.error('Error fetching visitor count:', error);
+        updateVisitorCount('---');
+    }
+}
+
+// Refresh visitor count periodically (every 30 seconds)
+function startVisitorCountRefresh() {
+    setInterval(async () => {
+        try {
+            const response = await fetch('/api/visitors', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                const counterEl = document.getElementById('visitor-count');
+                if (counterEl && counterEl.textContent !== '---') {
+                    counterEl.textContent = data.count.toLocaleString();
+                }
+            }
+        } catch (error) {
+            console.error('Error refreshing visitor count:', error);
+        }
+    }, 30000); // 30 seconds
+}
+
+function updateVisitorCount(count) {
+    const counterEl = document.getElementById('visitor-count');
+    if (counterEl) {
+        // Animate the count
+        animateCounter(counterEl, count);
+    }
+}
+
+function animateCounter(element, targetCount) {
+    if (targetCount === '---') {
+        element.textContent = '---';
+        return;
+    }
+    
+    const duration = 2000;
+    const start = 0;
+    const end = parseInt(targetCount);
+    const startTime = performance.now();
+    
+    function update(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        
+        // Easing function for smooth animation
+        const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+        const current = Math.floor(start + (end - start) * easeOutQuart);
+        
+        element.textContent = current.toLocaleString();
+        
+        if (progress < 1) {
+            requestAnimationFrame(update);
+        } else {
+            element.textContent = end.toLocaleString();
+        }
+    }
+    
+    requestAnimationFrame(update);
+}
 
 // AureliusGPT Chat
 // Backend handles the inference
