@@ -7,15 +7,44 @@ from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 from dotenv import load_dotenv
 from openai import OpenAI
+import sys
+
+# Add backend directory to path for imports
+sys.path.append(os.path.join(os.path.dirname(__file__), 'backend'))
 
 load_dotenv()
 
 app = Flask(__name__, static_folder='.')
 CORS(app)
 
+# Import and register route blueprints
+try:
+    from backend.routes.podcast_routes import podcast_bp
+    from backend.routes.project_routes import project_bp
+    from backend.routes.image_routes import image_bp
+    from backend.routes.analytics_routes import analytics_bp
+    
+    app.register_blueprint(podcast_bp)
+    app.register_blueprint(project_bp)
+    app.register_blueprint(image_bp)
+    app.register_blueprint(analytics_bp)
+    
+    print("✓ Route blueprints registered successfully")
+except Exception as e:
+    print(f"Warning: Could not register route blueprints: {e}")
+    print("The app will continue with basic functionality")
+
 # Database setup
 DATABASE_URL = os.environ.get('DATABASE_URL')
 USE_DATABASE = DATABASE_URL is not None
+
+# Initialize database schema if using database
+if USE_DATABASE:
+    try:
+        from backend.database.schema import init_database
+        init_database()
+    except Exception as e:
+        print(f"Warning: Could not initialize database schema: {e}")
 
 if USE_DATABASE:
     import psycopg

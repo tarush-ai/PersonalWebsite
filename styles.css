@@ -643,6 +643,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 100%;
 }
 
 .portfolio-content::-webkit-scrollbar {
@@ -1098,14 +1099,20 @@ body.light-mode .visitor-counter {
     display: none;
     width: 100%;
     max-width: 900px;
+    margin: 0 auto;
 }
 
 .sub-page.active {
-    display: block;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .sub-page-header {
     margin-bottom: 40px;
+    text-align: center;
+    width: 100%;
+    max-width: 900px;
 }
 
 .sub-page-header h1 {
@@ -1144,6 +1151,9 @@ body.terminal-mode-off .back-hint {
     display: flex;
     flex-direction: column;
     gap: 16px;
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
 }
 
 .episode-card {
@@ -1194,6 +1204,9 @@ body.terminal-mode-off .back-hint {
 .company-hero {
     text-align: center;
     padding: 60px 0;
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
 }
 
 .company-logo {
@@ -1278,7 +1291,9 @@ body.terminal-mode-off .back-hint {
    ============================================ */
 .internships-scroll {
     width: 100%;
+    max-width: 900px;
     overflow-x: hidden;
+    margin: 0 auto;
 }
 
 .internship-card {
@@ -1885,6 +1900,10 @@ body.light-mode .theme-toggle-switch::after {
     margin: 0 auto;
     padding: 40px 20px;
     position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 /* CRT Scanline Overlay */

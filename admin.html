@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Visitor Counter</title>
+    <title>Admin Panel - tarush.ai</title>
     <style>
         * {
             margin: 0;
@@ -11,258 +11,803 @@
             box-sizing: border-box;
         }
         
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: rgba(18, 18, 26, 0.8);
+            --text-primary: #e0e0e0;
+            --text-dim: #6b7280;
+            --accent-cyan: #22d3ee;
+            --accent-purple: #a78bfa;
+            --accent-green: #4ade80;
+            --accent-red: #ef4444;
+            --accent-orange: #fb923c;
+            --border-color: rgba(255, 255, 255, 0.1);
+        }
+        
         body {
-            font-family: 'SF Mono', 'Monaco', 'Inconsolata', monospace;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'JetBrains Mono', 'SF Mono', 'Monaco', monospace;
+            background: var(--bg-primary);
+            color: var(--text-primary);
             min-height: 100vh;
+        }
+        
+        /* Layout */
+        .admin-dashboard {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar */
+        .admin-sidebar {
+            width: 260px;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            padding: 24px 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        
+        .admin-logo {
+            padding: 0 24px 24px;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--accent-cyan);
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 24px;
+        }
+        
+        .admin-nav {
+            list-style: none;
+        }
+        
+        .admin-nav-item {
+            padding: 12px 24px;
+            cursor: pointer;
+            transition: all 0.2s;
             display: flex;
             align-items: center;
-            justify-content: center;
-            padding: 20px;
+            gap: 12px;
+            font-size: 14px;
+            color: var(--text-dim);
         }
         
-        .admin-container {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 16px;
-            padding: 40px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            max-width: 500px;
-            width: 100%;
+        .admin-nav-item:hover {
+            background: rgba(34, 211, 238, 0.1);
+            color: var(--text-primary);
         }
         
-        h1 {
-            color: #667eea;
-            margin-bottom: 10px;
-            font-size: 28px;
+        .admin-nav-item.active {
+            background: rgba(34, 211, 238, 0.15);
+            color: var(--accent-cyan);
+            border-left: 3px solid var(--accent-cyan);
+            padding-left: 21px;
         }
         
-        .subtitle {
-            color: #666;
-            margin-bottom: 30px;
+        .admin-nav-icon {
+            font-size: 18px;
+        }
+        
+        /* Main Content */
+        .admin-content {
+            margin-left: 260px;
+            flex: 1;
+            padding: 32px;
+            max-width: 1400px;
+        }
+        
+        .admin-section {
+            display: none;
+        }
+        
+        .admin-section.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .section-header {
+            margin-bottom: 32px;
+        }
+        
+        .section-title {
+            font-size: 32px;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+        
+        .section-subtitle {
+            color: var(--text-dim);
             font-size: 14px;
         }
         
+        /* Auth Form */
+        .auth-container {
+            max-width: 400px;
+            margin: 100px auto;
+            background: var(--bg-card);
+            padding: 40px;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+        }
+        
+        .auth-container h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+            color: var(--accent-cyan);
+        }
+        
+        .auth-container p {
+            color: var(--text-dim);
+            margin-bottom: 24px;
+            font-size: 13px;
+        }
+        
+        /* Form Elements */
         .form-group {
             margin-bottom: 20px;
+            text-align: left;
         }
         
-        label {
+        .form-label {
             display: block;
             margin-bottom: 8px;
-            color: #333;
-            font-weight: 600;
-            font-size: 14px;
+            font-size: 13px;
+            color: var(--text-primary);
+            font-weight: 500;
         }
         
-        input {
+        .form-input, .form-textarea, .form-select {
             width: 100%;
             padding: 12px 16px;
-            border: 2px solid #e0e0e0;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
             border-radius: 8px;
+            color: var(--text-primary);
             font-family: inherit;
-            font-size: 16px;
+            font-size: 14px;
             transition: border-color 0.3s;
         }
         
-        input:focus {
+        .form-input:focus, .form-textarea:focus, .form-select:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: var(--accent-cyan);
         }
         
-        input[type="password"] {
-            letter-spacing: 4px;
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
         }
         
-        button {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+        /* Buttons */
+        .btn {
+            padding: 12px 24px;
             border: none;
             border-radius: 8px;
             font-family: inherit;
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 600;
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
         
-        button:hover {
+        .btn-primary {
+            background: var(--accent-cyan);
+            color: var(--bg-primary);
+        }
+        
+        .btn-primary:hover {
+            background: #18b3d5;
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
         }
         
-        button:active {
-            transform: translateY(0);
+        .btn-success {
+            background: var(--accent-green);
+            color: var(--bg-primary);
         }
         
-        button:disabled {
-            opacity: 0.6;
+        .btn-danger {
+            background: var(--accent-red);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: rgba(107, 114, 128, 0.2);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
             cursor: not-allowed;
             transform: none;
         }
         
-        .message {
-            margin-top: 20px;
-            padding: 12px 16px;
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+        
+        .stat-card {
+            background: var(--bg-card);
+            padding: 24px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--accent-cyan);
+            margin-bottom: 4px;
+        }
+        
+        .stat-subtext {
+            font-size: 12px;
+            color: var(--text-dim);
+        }
+        
+        /* Tables */
+        .data-table {
+            width: 100%;
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+        }
+        
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .table-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        thead th {
+            text-align: left;
+            padding: 16px 24px;
+            font-size: 12px;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid var(--border-color);
+            font-weight: 600;
+        }
+        
+        tbody td {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 14px;
+        }
+        
+        tbody tr:hover {
+            background: rgba(34, 211, 238, 0.05);
+        }
+        
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .table-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+        
+        /* Badge */
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .badge-success {
+            background: rgba(74, 222, 128, 0.2);
+            color: var(--accent-green);
+        }
+        
+        .badge-warning {
+            background: rgba(251, 146, 60, 0.2);
+            color: var(--accent-orange);
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-dim);
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             border-radius: 8px;
+            transition: all 0.2s;
+        }
+        
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+        }
+        
+        .modal-body {
+            padding: 24px;
+        }
+        
+        .modal-footer {
+            padding: 24px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+        
+        /* Message */
+        .message {
+            padding: 16px 20px;
+            border-radius: 8px;
+            margin-bottom: 24px;
             font-size: 14px;
             display: none;
         }
         
-        .message.success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        
-        .message.error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        
         .message.show {
-            display: block;
+            display: flex;
+            align-items: center;
+            gap: 12px;
             animation: slideIn 0.3s ease;
         }
         
         @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
-        .current-count {
-            background: #f8f9fa;
-            padding: 16px;
-            border-radius: 8px;
-            margin-bottom: 20px;
+        .message-success {
+            background: rgba(74, 222, 128, 0.1);
+            color: var(--accent-green);
+            border: 1px solid rgba(74, 222, 128, 0.3);
+        }
+        
+        .message-error {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--accent-red);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+        
+        /* Empty State */
+        .empty-state {
             text-align: center;
+            padding: 60px 20px;
+            color: var(--text-dim);
         }
         
-        .current-count .label {
-            font-size: 12px;
-            color: #666;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
         }
         
-        .current-count .count {
-            font-size: 32px;
-            color: #667eea;
-            font-weight: bold;
-            margin-top: 8px;
+        .empty-state-text {
+            font-size: 16px;
+            margin-bottom: 24px;
+        }
+        
+        /* Loading */
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(34, 211, 238, 0.3);
+            border-top-color: var(--accent-cyan);
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .admin-sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+            }
+            
+            .admin-sidebar.mobile-open {
+                transform: translateX(0);
+            }
+            
+            .admin-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+            
+            .section-title {
+                font-size: 24px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="admin-container">
-        <h1>🔧 Admin Panel</h1>
-        <p class="subtitle">Update visitor counter for tarush.ai</p>
+    <!-- Auth Container (shown first) -->
+    <div class="auth-container" id="authContainer">
+        <h1>🔐 Admin Panel</h1>
+        <p>Enter your admin token to continue</p>
         
-        <div class="current-count">
-            <div class="label">Current Count</div>
-            <div class="count" id="currentCount">---</div>
-        </div>
-        
-        <form id="adminForm">
+        <form id="authForm">
             <div class="form-group">
-                <label for="adminToken">Admin Token</label>
+                <label class="form-label" for="adminToken">Admin Token</label>
                 <input 
                     type="password" 
                     id="adminToken" 
+                    class="form-input"
                     placeholder="Enter your admin token"
                     required
+                    autocomplete="off"
                 >
             </div>
             
-            <div class="form-group">
-                <label for="newCount">New Visitor Count</label>
-                <input 
-                    type="number" 
-                    id="newCount" 
-                    placeholder="e.g., 200"
-                    min="0"
-                    required
-                >
-            </div>
-            
-            <button type="submit" id="submitBtn">Update Count</button>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">
+                Unlock Admin Panel
+            </button>
         </form>
         
-        <div class="message" id="message"></div>
+        <div class="message message-error" id="authError"></div>
     </div>
-    
-    <script>
-        // Load current count on page load
-        async function loadCurrentCount() {
-            try {
-                const response = await fetch('/api/visitors');
-                const data = await response.json();
-                document.getElementById('currentCount').textContent = data.count.toLocaleString();
-            } catch (error) {
-                document.getElementById('currentCount').textContent = 'Error';
-            }
-        }
-        
-        loadCurrentCount();
-        
-        // Handle form submission
-        document.getElementById('adminForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const submitBtn = document.getElementById('submitBtn');
-            const messageEl = document.getElementById('message');
-            const adminToken = document.getElementById('adminToken').value;
-            const newCount = parseInt(document.getElementById('newCount').value);
-            
-            // Disable button
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Updating...';
-            
-            // Hide previous message
-            messageEl.classList.remove('show', 'success', 'error');
-            
-            try {
-                const response = await fetch('/api/admin/visitors', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Admin-Token': adminToken
-                    },
-                    body: JSON.stringify({ count: newCount })
-                });
-                
-                const data = await response.json();
-                
-                if (response.ok) {
-                    messageEl.textContent = `✓ ${data.message}`;
-                    messageEl.classList.add('success', 'show');
-                    
-                    // Update current count display
-                    document.getElementById('currentCount').textContent = data.count.toLocaleString();
-                    
-                    // Clear form
-                    document.getElementById('newCount').value = '';
-                } else {
-                    messageEl.textContent = `✗ Error: ${data.error}`;
-                    messageEl.classList.add('error', 'show');
-                }
-            } catch (error) {
-                messageEl.textContent = `✗ Error: ${error.message}`;
-                messageEl.classList.add('error', 'show');
-            } finally {
-                // Re-enable button
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Update Count';
-            }
-        });
-    </script>
+
+    <!-- Admin Dashboard (hidden until authenticated) -->
+    <div class="admin-dashboard" id="adminDashboard" style="display: none;">
+        <!-- Sidebar -->
+        <nav class="admin-sidebar">
+            <div class="admin-logo">⚡ Admin Panel</div>
+            <ul class="admin-nav">
+                <li class="admin-nav-item active" data-section="dashboard">
+                    <span class="admin-nav-icon">📊</span>
+                    <span>Dashboard</span>
+                </li>
+                <li class="admin-nav-item" data-section="podcasts">
+                    <span class="admin-nav-icon">🎙️</span>
+                    <span>Podcasts</span>
+                </li>
+                <li class="admin-nav-item" data-section="projects">
+                    <span class="admin-nav-icon">💼</span>
+                    <span>Projects</span>
+                </li>
+                <li class="admin-nav-item" data-section="images">
+                    <span class="admin-nav-icon">🖼️</span>
+                    <span>Images</span>
+                </li>
+                <li class="admin-nav-item" data-section="analytics">
+                    <span class="admin-nav-icon">📈</span>
+                    <span>Analytics</span>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="admin-content">
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="admin-section active">
+                <div class="section-header">
+                    <h1 class="section-title">Dashboard</h1>
+                    <p class="section-subtitle">Welcome back! Here's an overview of your content.</p>
+                </div>
+
+                <div class="stats-grid" id="statsGrid">
+                    <!-- Stats will be loaded here -->
+                </div>
+
+                <div class="message message-success" id="dashboardMessage"></div>
+            </section>
+
+            <!-- Podcasts Section -->
+            <section id="podcasts" class="admin-section">
+                <div class="section-header">
+                    <h1 class="section-title">Podcast Episodes</h1>
+                    <p class="section-subtitle">Manage your Neural Bridge podcast episodes</p>
+                </div>
+
+                <div class="message" id="podcastMessage"></div>
+
+                <div class="data-table">
+                    <div class="table-header">
+                        <h3 class="table-title">All Episodes</h3>
+                        <button class="btn btn-primary btn-small" onclick="openPodcastModal()">
+                            + Add Episode
+                        </button>
+                    </div>
+                    <div id="podcastTableContent">
+                        <!-- Table will be loaded here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Projects Section -->
+            <section id="projects" class="admin-section">
+                <div class="section-header">
+                    <h1 class="section-title">Projects & Internships</h1>
+                    <p class="section-subtitle">Manage your work experience and projects</p>
+                </div>
+
+                <div class="message" id="projectMessage"></div>
+
+                <div class="data-table">
+                    <div class="table-header">
+                        <h3 class="table-title">All Projects</h3>
+                        <button class="btn btn-primary btn-small" onclick="openProjectModal()">
+                            + Add Project
+                        </button>
+                    </div>
+                    <div id="projectTableContent">
+                        <!-- Table will be loaded here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Images Section -->
+            <section id="images" class="admin-section">
+                <div class="section-header">
+                    <h1 class="section-title">Image Manager</h1>
+                    <p class="section-subtitle">Upload and manage images</p>
+                </div>
+
+                <div class="message" id="imageMessage"></div>
+
+                <div class="data-table">
+                    <div class="table-header">
+                        <h3 class="table-title">Uploaded Images</h3>
+                        <button class="btn btn-primary btn-small" onclick="openImageUpload()">
+                            + Upload Image
+                        </button>
+                    </div>
+                    <div id="imageTableContent">
+                        <!-- Images will be loaded here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Analytics Section -->
+            <section id="analytics" class="admin-section">
+                <div class="section-header">
+                    <h1 class="section-title">Analytics</h1>
+                    <p class="section-subtitle">View detailed analytics and insights</p>
+                </div>
+
+                <div class="stats-grid" id="analyticsStats">
+                    <!-- Analytics stats will be loaded here -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Podcast Modal -->
+    <div class="modal" id="podcastModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="podcastModalTitle">Add Podcast Episode</h3>
+                <button class="modal-close" onclick="closePodcastModal()">×</button>
+            </div>
+            <form id="podcastForm">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">Title *</label>
+                        <input type="text" class="form-input" name="title" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Description *</label>
+                        <textarea class="form-textarea" name="description" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">YouTube Embed URL *</label>
+                        <input type="url" class="form-input" name="youtube_url" required 
+                               placeholder="https://www.youtube.com/embed/...">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Slug *</label>
+                        <input type="text" class="form-input" name="slug" required 
+                               placeholder="my-episode-title">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Notes (Optional)</label>
+                        <textarea class="form-textarea" name="notes"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Order Index</label>
+                        <input type="number" class="form-input" name="order_index" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">
+                            <input type="checkbox" name="published" checked> Published
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closePodcastModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Episode</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Project Modal -->
+    <div class="modal" id="projectModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="projectModalTitle">Add Project</h3>
+                <button class="modal-close" onclick="closeProjectModal()">×</button>
+            </div>
+            <form id="projectForm">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">Type *</label>
+                        <select class="form-select" name="type" required>
+                            <option value="internship">Internship</option>
+                            <option value="project">Project</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Company *</label>
+                        <input type="text" class="form-input" name="company" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Role *</label>
+                        <input type="text" class="form-input" name="role" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Period *</label>
+                        <input type="text" class="form-input" name="period" required placeholder="2024">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Description *</label>
+                        <textarea class="form-textarea" name="description" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Details *</label>
+                        <textarea class="form-textarea" name="details" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tags (comma separated)</label>
+                        <input type="text" class="form-input" name="tags" placeholder="AI, ML, Python">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Slug *</label>
+                        <input type="text" class="form-input" name="slug" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Contact Email</label>
+                        <input type="email" class="form-input" name="contact_email">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Contact Subject</label>
+                        <input type="text" class="form-input" name="contact_subject">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">
+                            <input type="checkbox" name="published" checked> Published
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeProjectModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Project</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Image Upload Modal -->
+    <div class="modal" id="imageModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Upload Image</h3>
+                <button class="modal-close" onclick="closeImageModal()">×</button>
+            </div>
+            <form id="imageForm">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">Image File *</label>
+                        <input type="file" class="form-input" name="file" accept="image/*" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Alt Text (Optional)</label>
+                        <input type="text" class="form-input" name="alt_text">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeImageModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Upload</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/js/admin/admin.js"></script>
 </body>
 </html>
