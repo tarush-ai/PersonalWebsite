@@ -13,29 +13,106 @@ load_dotenv()
 app = Flask(__name__, static_folder='.')
 CORS(app)
 
-# Visitor counter file
-VISITOR_COUNT_FILE = Path('visitor_count.json')
+# Database setup
+DATABASE_URL = os.environ.get('DATABASE_URL')
+USE_DATABASE = DATABASE_URL is not None
 
-def get_visitor_count():
-    """Get current visitor count from file"""
-    if VISITOR_COUNT_FILE.exists():
+if USE_DATABASE:
+    import psycopg2
+    from psycopg2.extras import RealDictCursor
+    
+    # Fix for Render's postgres:// URLs (psycopg2 needs postgresql://)
+    if DATABASE_URL.startswith('postgres://'):
+        DATABASE_URL = DATABASE_URL.replace('postgres://', 'postgresql://', 1)
+    
+    def get_db_connection():
+        return psycopg2.connect(DATABASE_URL)
+    
+    def init_db():
+        """Initialize database table if it doesn't exist"""
         try:
-            with open(VISITOR_COUNT_FILE, 'r') as f:
-                data = json.load(f)
-                return data.get('count', 0)
-        except:
+            conn = get_db_connection()
+            cur = conn.cursor()
+            cur.execute('''
+                CREATE TABLE IF NOT EXISTS visitor_count (
+                    id INTEGER PRIMARY KEY DEFAULT 1,
+                    count INTEGER NOT NULL DEFAULT 0,
+                    CONSTRAINT single_row CHECK (id = 1)
+                )
+            ''')
+            # Insert initial row if doesn't exist
+            cur.execute('''
+                INSERT INTO visitor_count (id, count)
+                VALUES (1, 0)
+                ON CONFLICT (id) DO NOTHING
+            ''')
+            conn.commit()
+            cur.close()
+            conn.close()
+        except Exception as e:
+            print(f"Database init error: {e}")
+    
+    # Initialize database on startup
+    init_db()
+    
+    def get_visitor_count():
+        """Get current visitor count from database"""
+        try:
+            conn = get_db_connection()
+            cur = conn.cursor()
+            cur.execute('SELECT count FROM visitor_count WHERE id = 1')
+            result = cur.fetchone()
+            cur.close()
+            conn.close()
+            return result[0] if result else 0
+        except Exception as e:
+            print(f"Error getting count: {e}")
             return 0
-    return 0
+    
+    def increment_visitor_count():
+        """Increment and save visitor count in database"""
+        try:
+            conn = get_db_connection()
+            cur = conn.cursor()
+            cur.execute('''
+                UPDATE visitor_count 
+                SET count = count + 1 
+                WHERE id = 1
+                RETURNING count
+            ''')
+            result = cur.fetchone()
+            conn.commit()
+            cur.close()
+            conn.close()
+            return result[0] if result else 0
+        except Exception as e:
+            print(f"Error incrementing count: {e}")
+            return 0
 
-def increment_visitor_count():
-    """Increment and save visitor count"""
-    count = get_visitor_count()
-    count += 1
+else:
+    # Fallback to JSON file for local development
+    VISITOR_COUNT_FILE = Path('visitor_count.json')
     
-    with open(VISITOR_COUNT_FILE, 'w') as f:
-        json.dump({'count': count}, f)
+    def get_visitor_count():
+        """Get current visitor count from file"""
+        if VISITOR_COUNT_FILE.exists():
+            try:
+                with open(VISITOR_COUNT_FILE, 'r') as f:
+                    data = json.load(f)
+                    return data.get('count', 0)
+            except:
+                return 0
+        return 0
     
-    return count
+    def increment_visitor_count():
+        """Increment and save visitor count"""
+        count = get_visitor_count()
+        count += 1
+        
+        with open(VISITOR_COUNT_FILE, 'w') as f:
+            json.dump({'count': count}, f)
+        
+        return count
 
 @app.route('/api/aurelius', methods=['POST'])
 def aurelius_chat():
@@ -121,6 +198,64 @@ def visitor_counter():
     except Exception as e:
         print(f"Error in visitor_counter: {e}")
         return jsonify({'error': str(e), 'count': 0}), 500
+
+@app.route('/api/admin/visitors', methods=['POST'])
+def admin_set_visitor_count():
+    """Admin endpoint to manually set visitor count"""
+    try:
+        # Get admin token from environment
+        admin_token = os.environ.get('ADMIN_TOKEN')
+        
+        if not admin_token:
+            return jsonify({'error': 'Admin endpoint not configured'}), 500
+        
+        # Check authorization
+        auth_header = request.headers.get('Authorization')
+        provided_token = request.headers.get('X-Admin-Token')
+        
+        # Support both Authorization: Bearer <token> and X-Admin-Token: <token>
+        if auth_header and auth_header.startswith('Bearer '):
+            provided_token = auth_header.replace('Bearer ', '')
+        
+        if not provided_token or provided_token != admin_token:
+            return jsonify({'error': 'Unauthorized'}), 401
+        
+        # Get the new count from request body
+        data = request.json
+        if not data or 'count' not in data:
+            return jsonify({'error': 'Missing "count" in request body'}), 400
+        
+        new_count = data['count']
+        
+        # Validate count is a positive integer
+        if not isinstance(new_count, int) or new_count < 0:
+            return jsonify({'error': 'Count must be a positive integer'}), 400
+        
+        # Update the count
+        if USE_DATABASE:
+            conn = get_db_connection()
+            cur = conn.cursor()
+            cur.execute('UPDATE visitor_count SET count = %s WHERE id = 1 RETURNING count', (new_count,))
+            result = cur.fetchone()
+            conn.commit()
+            cur.close()
+            conn.close()
+            updated_count = result[0] if result else new_count
+        else:
+            # Update JSON file
+            with open(VISITOR_COUNT_FILE, 'w') as f:
+                json.dump({'count': new_count}, f)
+            updated_count = new_count
+        
+        return jsonify({
+            'success': True,
+            'message': f'Visitor count updated to {updated_count}',
+            'count': updated_count
+        })
+        
+    except Exception as e:
+        print(f"Error in admin_set_visitor_count: {e}")
+        return jsonify({'error': str(e)}), 500
 
 def get_og_tags(path):
     """Generate OG tags based on the requested path"""

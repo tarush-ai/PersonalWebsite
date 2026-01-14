@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Visitor Counter</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'SF Mono', 'Monaco', 'Inconsolata', monospace;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .admin-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 100%;
+        }
+        
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        input[type="password"] {
+            letter-spacing: 4px;
+        }
+        
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .message {
+            margin-top: 20px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            display: none;
+        }
+        
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .message.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .current-count {
+            background: #f8f9fa;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .current-count .label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .current-count .count {
+            font-size: 32px;
+            color: #667eea;
+            font-weight: bold;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <h1>🔧 Admin Panel</h1>
+        <p class="subtitle">Update visitor counter for tarush.ai</p>
+        
+        <div class="current-count">
+            <div class="label">Current Count</div>
+            <div class="count" id="currentCount">---</div>
+        </div>
+        
+        <form id="adminForm">
+            <div class="form-group">
+                <label for="adminToken">Admin Token</label>
+                <input 
+                    type="password" 
+                    id="adminToken" 
+                    placeholder="Enter your admin token"
+                    required
+                >
+            </div>
+            
+            <div class="form-group">
+                <label for="newCount">New Visitor Count</label>
+                <input 
+                    type="number" 
+                    id="newCount" 
+                    placeholder="e.g., 200"
+                    min="0"
+                    required
+                >
+            </div>
+            
+            <button type="submit" id="submitBtn">Update Count</button>
+        </form>
+        
+        <div class="message" id="message"></div>
+    </div>
+    
+    <script>
+        // Load current count on page load
+        async function loadCurrentCount() {
+            try {
+                const response = await fetch('/api/visitors');
+                const data = await response.json();
+                document.getElementById('currentCount').textContent = data.count.toLocaleString();
+            } catch (error) {
+                document.getElementById('currentCount').textContent = 'Error';
+            }
+        }
+        
+        loadCurrentCount();
+        
+        // Handle form submission
+        document.getElementById('adminForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const messageEl = document.getElementById('message');
+            const adminToken = document.getElementById('adminToken').value;
+            const newCount = parseInt(document.getElementById('newCount').value);
+            
+            // Disable button
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Updating...';
+            
+            // Hide previous message
+            messageEl.classList.remove('show', 'success', 'error');
+            
+            try {
+                const response = await fetch('/api/admin/visitors', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Admin-Token': adminToken
+                    },
+                    body: JSON.stringify({ count: newCount })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    messageEl.textContent = `✓ ${data.message}`;
+                    messageEl.classList.add('success', 'show');
+                    
+                    // Update current count display
+                    document.getElementById('currentCount').textContent = data.count.toLocaleString();
+                    
+                    // Clear form
+                    document.getElementById('newCount').value = '';
+                } else {
+                    messageEl.textContent = `✗ Error: ${data.error}`;
+                    messageEl.classList.add('error', 'show');
+                }
+            } catch (error) {
+                messageEl.textContent = `✗ Error: ${error.message}`;
+                messageEl.classList.add('error', 'show');
+            } finally {
+                // Re-enable button
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Update Count';
+            }
+        });
+    </script>
+</body>
+</html>

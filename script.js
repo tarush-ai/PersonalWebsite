@@ -1378,8 +1378,12 @@ function loadThemePreference() {
 // Visitor Counter Functions
 async function fetchVisitorCount() {
     try {
+        // Check if this is a new visit (not a refresh within the same session)
+        const hasVisited = sessionStorage.getItem('hasVisited');
+        const method = hasVisited ? 'GET' : 'POST';
+        
         const response = await fetch('/api/visitors', {
-            method: 'GET',
+            method: method,
             headers: {
                 'Content-Type': 'application/json'
             }
@@ -1388,6 +1392,11 @@ async function fetchVisitorCount() {
         if (response.ok) {
             const data = await response.json();
             updateVisitorCount(data.count);
+            
+            // Mark as visited for this session
+            if (!hasVisited) {
+                sessionStorage.setItem('hasVisited', 'true');
+            }
         } else {
             console.error('Failed to fetch visitor count');
             updateVisitorCount('---');
