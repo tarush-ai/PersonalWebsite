@@ -1379,7 +1379,7 @@ function loadThemePreference() {
 async function fetchVisitorCount() {
     try {
         const response = await fetch('/api/visitors', {
-            method: 'POST',
+            method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
             }
