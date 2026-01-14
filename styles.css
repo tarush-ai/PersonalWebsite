@@ -100,6 +100,54 @@ body.light-mode .chip {
     border-color: rgba(14, 165, 233, 0.2);
 }
 
+body.light-mode .traditional-nav {
+    background: rgba(250, 250, 250, 0.95);
+    border-bottom-color: rgba(0, 0, 0, 0.1);
+}
+
+body.light-mode .nav-logo {
+    color: var(--text-primary);
+}
+
+body.light-mode .nav-link {
+    color: var(--text-dim);
+}
+
+body.light-mode .nav-link:hover {
+    color: var(--text-primary);
+    background: rgba(0, 0, 0, 0.05);
+}
+
+body.light-mode .nav-link.active {
+    color: var(--accent-cyan);
+    background: rgba(14, 165, 233, 0.1);
+}
+
+body.light-mode .mobile-nav-overlay {
+    background: rgba(250, 250, 250, 0.98);
+}
+
+body.light-mode .mobile-nav-header {
+    border-bottom-color: rgba(0, 0, 0, 0.1);
+}
+
+body.light-mode .mobile-nav-close {
+    color: var(--text-dim);
+}
+
+body.light-mode .mobile-nav-link {
+    color: var(--text-primary);
+    border-bottom-color: rgba(0, 0, 0, 0.05);
+}
+
+body.light-mode .mobile-nav-link:hover {
+    color: var(--accent-cyan);
+}
+
+body.light-mode .nav-hamburger span {
+    background: var(--text-primary);
+}
+
 html, body {
     height: 100%;
     overflow: hidden;
