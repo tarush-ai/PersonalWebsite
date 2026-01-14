@@ -18,37 +18,34 @@ DATABASE_URL = os.environ.get('DATABASE_URL')
 USE_DATABASE = DATABASE_URL is not None
 
 if USE_DATABASE:
-    import psycopg2
-    from psycopg2.extras import RealDictCursor
+    import psycopg
     
-    # Fix for Render's postgres:// URLs (psycopg2 needs postgresql://)
+    # Fix for Render's postgres:// URLs (psycopg needs postgresql://)
     if DATABASE_URL.startswith('postgres://'):
         DATABASE_URL = DATABASE_URL.replace('postgres://', 'postgresql://', 1)
     
     def get_db_connection():
-        return psycopg2.connect(DATABASE_URL)
+        return psycopg.connect(DATABASE_URL)
     
     def init_db():
         """Initialize database table if it doesn't exist"""
         try:
-            conn = get_db_connection()
-            cur = conn.cursor()
-            cur.execute('''
-                CREATE TABLE IF NOT EXISTS visitor_count (
-                    id INTEGER PRIMARY KEY DEFAULT 1,
-                    count INTEGER NOT NULL DEFAULT 0,
-                    CONSTRAINT single_row CHECK (id = 1)
-                )
-            ''')
-            # Insert initial row if doesn't exist
-            cur.execute('''
-                INSERT INTO visitor_count (id, count)
-                VALUES (1, 0)
-                ON CONFLICT (id) DO NOTHING
-            ''')
-            conn.commit()
-            cur.close()
-            conn.close()
+            with get_db_connection() as conn:
+                with conn.cursor() as cur:
+                    cur.execute('''
+                        CREATE TABLE IF NOT EXISTS visitor_count (
+                            id INTEGER PRIMARY KEY DEFAULT 1,
+                            count INTEGER NOT NULL DEFAULT 0,
+                            CONSTRAINT single_row CHECK (id = 1)
+                        )
+                    ''')
+                    # Insert initial row if doesn't exist
+                    cur.execute('''
+                        INSERT INTO visitor_count (id, count)
+                        VALUES (1, 0)
+                        ON CONFLICT (id) DO NOTHING
+                    ''')
+                    conn.commit()
         except Exception as e:
             print(f"Database init error: {e}")
     
@@ -58,13 +55,11 @@ if USE_DATABASE:
     def get_visitor_count():
         """Get current visitor count from database"""
         try:
-            conn = get_db_connection()
-            cur = conn.cursor()
-            cur.execute('SELECT count FROM visitor_count WHERE id = 1')
-            result = cur.fetchone()
-            cur.close()
-            conn.close()
-            return result[0] if result else 0
+            with get_db_connection() as conn:
+                with conn.cursor() as cur:
+                    cur.execute('SELECT count FROM visitor_count WHERE id = 1')
+                    result = cur.fetchone()
+                    return result[0] if result else 0
         except Exception as e:
             print(f"Error getting count: {e}")
             return 0
@@ -72,19 +67,17 @@ if USE_DATABASE:
     def increment_visitor_count():
         """Increment and save visitor count in database"""
         try:
-            conn = get_db_connection()
-            cur = conn.cursor()
-            cur.execute('''
-                UPDATE visitor_count 
-                SET count = count + 1 
-                WHERE id = 1
-                RETURNING count
-            ''')
-            result = cur.fetchone()
-            conn.commit()
-            cur.close()
-            conn.close()
-            return result[0] if result else 0
+            with get_db_connection() as conn:
+                with conn.cursor() as cur:
+                    cur.execute('''
+                        UPDATE visitor_count 
+                        SET count = count + 1 
+                        WHERE id = 1
+                        RETURNING count
+                    ''')
+                    result = cur.fetchone()
+                    conn.commit()
+                    return result[0] if result else 0
         except Exception as e:
             print(f"Error incrementing count: {e}")
             return 0
@@ -233,14 +226,12 @@ def admin_set_visitor_count():
         
         # Update the count
         if USE_DATABASE:
-            conn = get_db_connection()
-            cur = conn.cursor()
-            cur.execute('UPDATE visitor_count SET count = %s WHERE id = 1 RETURNING count', (new_count,))
-            result = cur.fetchone()
-            conn.commit()
-            cur.close()
-            conn.close()
-            updated_count = result[0] if result else new_count
+            with get_db_connection() as conn:
+                with conn.cursor() as cur:
+                    cur.execute('UPDATE visitor_count SET count = %s WHERE id = 1 RETURNING count', (new_count,))
+                    result = cur.fetchone()
+                    conn.commit()
+                    updated_count = result[0] if result else new_count
         else:
             # Update JSON file
             with open(VISITOR_COUNT_FILE, 'w') as f:
