@@ -36,3 +36,7 @@ build/
 npm-debug.log*
 
 visitor_count.json
+
+# Uploads directory
+uploads/*
+!uploads/.gitkeep
