@@ -1,3 +1,3 @@
 My personal website.
 
-tarush.ai
+[tarush.ai](https://www.tarush.ai)
