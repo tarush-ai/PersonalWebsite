@@ -1,20 +1,10 @@
-// Particles
-function createParticles(containerId, count = 50) {
-    const container = document.getElementById(containerId);
-    if (!container) return;
-    
-    for (let i = 0; i < count; i++) {
-        const particle = document.createElement('div');
-        particle.className = 'particle';
-        particle.style.left = Math.random() * 100 + '%';
-        particle.style.animationDelay = Math.random() * 15 + 's';
-        particle.style.animationDuration = (10 + Math.random() * 10) + 's';
-        container.appendChild(particle);
-    }
+// Motion helper — respect the user's reduced-motion preference everywhere.
+function prefersReducedMotion() {
+    return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 }
 
-// Init particles
-createParticles('particles', 50);
+// Particles removed — a real terminal doesn't emit floating dots.
+function createParticles() {}
 
 // Terminal Intro
 const commands = [
@@ -72,58 +62,61 @@ function createPromptHTML(promptData) {
     return `<span class="user">${promptData.user}</span><span class="at">@</span><span class="host">${promptData.host}</span><span class="colon">:</span><span class="path">${promptData.path}</span><span class="dollar">$</span>`;
 }
 
+function appendBootLine(html) {
+    const el = document.createElement('div');
+    el.className = 'boot-text';
+    el.innerHTML = html;
+    terminalBody.appendChild(el);
+    scrollToBottom();
+    return el;
+}
+
+// A real-feeling startup log: each task sits pending (…) then resolves (ok),
+// so the waiting is visible — a shell actually doing work, not a performance.
 async function bootSequence() {
-    const bootMessages = [
-        'Initializing system...',
-        'Loading kernel modules...',
-        'Establishing secure connection...',
-        'Authentication successful.',
-        ''
-    ];
+    const reduce = prefersReducedMotion();
 
-    for (const msg of bootMessages) {
-        if (msg) {
-            const bootLine = document.createElement('div');
-            bootLine.className = 'boot-text';
-            bootLine.textContent = '> ' + msg;
-            bootLine.style.animationDelay = '0s';
-            terminalBody.appendChild(bootLine);
-            await sleep(200);
-        }
+    const skipPrompt = document.getElementById('skip-prompt');
+    if (skipPrompt && !reduce) skipPrompt.classList.add('visible');
+
+    appendBootLine('<span class="dim">tarush@citadel</span> login');
+    if (!reduce) await sleep(360);
+    appendBootLine('<span class="dim">$</span> source ~/.zshrc');
+    if (!reduce) await sleep(560);
+
+    // Resolve a pending task line: append "…", wait, then swap to "ok".
+    async function runTask(label, wait) {
+        const line = appendBootLine(label + ' <span class="dim">…</span>');
+        if (!reduce) await sleep(wait);
+        if (introSkipped) return false;
+        line.innerHTML = label + ' &nbsp;<span class="ok">ok</span>';
+        scrollToBottom();
+        return true;
     }
 
-    // Ascii art
-    const towerLines = [
-        '  ═══╦═══                                                        ═══╦═══  ',
-        '    ║║║    ████████╗ █████╗ ██████╗ ██╗   ██╗███████╗██╗  ██╗      ║║║    ',
-        '    ║║║    ╚══██╔══╝██╔══██╗██╔══██╗██║   ██║██╔════╝██║  ██║      ║║║    ',
-        '    ║║║       ██║   ███████║██████╔╝██║   ██║███████╗███████║      ║║║    ',
-        '    ║║║       ██║   ██╔══██║██╔══██╗██║   ██║╚════██║██╔══██║      ║║║    ',
-        '    ║║║       ██║   ██║  ██║██║  ██║╚██████╔╝███████║██║  ██║      ║║║    ',
-        '    ║║║       ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝      ║║║    ',
-        '  ══╩═╩══                                                        ══╩═╩══  '
+    if (!(await runTask('mounting <span class="dim">~/portfolio</span>', 560))) return;
+
+    // Load each section as its own (mock) .sh — the five the site is built on.
+    const scripts = [
+        { name: 'vericare.sh', wait: 520 },
+        { name: 'internships.sh', wait: 560 },
+        { name: 'research.sh', wait: 600 },
+        { name: 'github.sh', wait: 640 },
+        { name: 'blog.sh', wait: 560 }
     ];
-
-    const asciiArt = document.createElement('pre');
-    asciiArt.className = 'ascii-art';
-    terminalBody.appendChild(asciiArt);
-
-    for (let i = 0; i < towerLines.length; i++) {
-        const line = document.createElement('div');
-        line.className = 'ascii-line';
-        line.textContent = towerLines[i];
-        line.style.animationDelay = (i * 0.1) + 's';
-        asciiArt.appendChild(line);
-        await sleep(100);
+    for (const s of scripts) {
+        if (!(await runTask('<span class="dim">$</span> ./' + s.name, s.wait))) return;
     }
 
-    await sleep(400);
+    if (!(await runTask('initializing shell', 540))) return;
 
-    const spacer = document.createElement('div');
-    spacer.style.height = '20px';
-    terminalBody.appendChild(spacer);
+    if (!reduce) await sleep(420);
+    if (introSkipped) return;
+    appendBootLine('<span class="ok">ready.</span>');
 
-    startNextCommand();
+    if (!reduce) await sleep(640);
+    if (introSkipped) return;
+    triggerTransition();
 }
 
 async function typeCommand(cmdParts, commandSpan) {
@@ -221,18 +214,17 @@ async function executeCommand() {
 }
 
 async function triggerTransition() {
+    const reduce = prefersReducedMotion();
+    const container = document.querySelector('.terminal-container');
+    if (container) container.style.display = 'none';
+
+    const skipPrompt = document.getElementById('skip-prompt');
+    if (skipPrompt) skipPrompt.classList.remove('visible');
+
     transitionOverlay.classList.add('active');
-    document.querySelector('.terminal-container').style.display = 'none';
-    
-    for (let i = 0; i <= 100; i += 2) {
-        loadingProgress.style.width = i + '%';
-        await sleep(30);
-    }
-    
-    await sleep(500);
     finalMessage.classList.add('visible');
-    
-    await sleep(1000);
+
+    await sleep(reduce ? 0 : 420);
     showPortfolio();
 }
 
@@ -245,25 +237,18 @@ let introSkipped = false;
 function skipIntro() {
     if (introSkipped) return;
     introSkipped = true;
-    
-    // Hide skip prompt
+
     const skipPrompt = document.getElementById('skip-prompt');
-    if (skipPrompt) skipPrompt.classList.add('hidden');
-    
-    // Hide enter prompt
-    enterPrompt.classList.remove('visible');
-    
-    // Hide terminal
-    document.querySelector('.terminal-container').style.display = 'none';
-    
-    // Show transition briefly then portfolio
+    if (skipPrompt) { skipPrompt.classList.add('hidden'); skipPrompt.classList.remove('visible'); }
+    if (enterPrompt) enterPrompt.classList.remove('visible');
+
+    const container = document.querySelector('.terminal-container');
+    if (container) container.style.display = 'none';
+
     transitionOverlay.classList.add('active');
-    loadingProgress.style.width = '100%';
     finalMessage.classList.add('visible');
-    
-    setTimeout(() => {
-        showPortfolio();
-    }, 500);
+
+    setTimeout(showPortfolio, prefersReducedMotion() ? 0 : 260);
 }
 
 // Intro listeners
@@ -297,23 +282,21 @@ window.addEventListener('load', () => {
         if (targetPage === 'aurelius') targetPage = 'aureliusgpt';
         
         // Handle sub-pages
-        if (targetPage === 'internships' && parts[1]) {
-            targetPage = 'internship-' + parts[1];
-        } else if (targetPage === 'ideas' && parts[1]) {
-            targetPage = 'idea-' + parts[1];
-        } else if (targetPage === 'podcast' && parts[1]) {
-            // Handle podcast/SLUG
-            // We need to pass the raw part[1] which is the slug
+        if (targetPage === 'podcast' && parts[1]) {
+            // Handle podcast/SLUG — pass the raw slug through
             targetPage = 'podcast/' + decodeURIComponent(parts[1]);
+        } else if (targetPage === 'blog' && parts[1]) {
+            targetPage = 'blog/' + decodeURIComponent(parts[1]);
         }
-        
+
         // Check if valid
-        if (pages[targetPage] || targetPage.startsWith('internship-') || targetPage.startsWith('idea-') || targetPage.startsWith('podcast/')) {
+        if (pages[targetPage] || targetPage.startsWith('podcast/') || targetPage.startsWith('blog/')) {
             routed = true;
             initialPage = targetPage;
             skipIntro();
             setTimeout(() => {
                 navigateTo(targetPage, false);
+                revealCurrentPage(); // deep links land on real content, not a blank page
             }, 600);
         }
     }
@@ -325,10 +308,10 @@ window.addEventListener('load', () => {
     history.replaceState({ page: initialPage }, '', window.location.href);
     
     if (!routed) {
-        if (isMobile) {
+        if (prefersReducedMotion()) {
             skipIntro();
         } else {
-            setTimeout(bootSequence, 500);
+            setTimeout(bootSequence, 300);
         }
     }
 });
@@ -336,6 +319,7 @@ window.addEventListener('load', () => {
 window.addEventListener('popstate', (event) => {
     if (event.state && event.state.page) {
         navigateTo(event.state.page, false);
+        revealCurrentPage(); // back/forward shows content you've already seen
     } else {
         // Fallback or handle browser back to root
         navigateTo('home', false);
@@ -358,21 +342,11 @@ const traditionalNav = document.getElementById('traditional-nav');
 const backHomeBtn = document.getElementById('back-home-btn');
 const portfolioContent = document.getElementById('portfolio-content');
 
-// Nav suggestions
-const suggestions = [
-    { cmd: 'cd podcast', label: 'cd podcast' },
-    { cmd: 'cd vericare', label: 'cd vericare' },
-    { cmd: 'cd aureliusgpt', label: 'cd aureliusgpt' },
-    { cmd: 'cd internships', label: 'cd internships' },
-    { cmd: 'cd ideas', label: 'cd ideas' },
-    { cmd: 'cd github', label: 'cd github' }
-];
 
 let currentSuggestionIndex = 0;
 let suggestionInterval = null;
 let currentPage = 'home';
 let terminalMode = true;
-let currentInternship = null;
 let commandHistory = [];
 let terminalExpanded = false;
 
@@ -383,87 +357,12 @@ const pages = {
     'vericare': { path: '~/vericare', el: 'page-vericare' },
     'aureliusgpt': { path: '~/aureliusgpt', el: 'page-aureliusgpt' },
     'internships': { path: '~/internships', el: 'page-internships' },
+    'research': { path: '~/research', el: 'page-research' },
     'ideas': { path: '~/ideas', el: 'page-ideas' },
+    'blog': { path: '~/blog', el: 'page-blog' },
     'github': { path: '~/github', el: 'page-github' }
 };
 
-// Internship data
-const internships = {
-    'turing': {
-        company: 'Turing',
-        role: 'AI Training & Evaluation',
-        period: '2025',
-        description: 'Built datasourcing and post training workflows for a frontier lab on their SOTA AI model.',
-        details: `
-            <ul>
-                <li>Built datasourcing and post training workflows for a frontier lab on their SOTA AI model.</li>
-                <li>Proposed and executed product and engineering features for a client project.</li>
-                <li>Built automation infrastructure for the executive team.</li>
-                <li>Reported to CEO.</li>
-            </ul>
-        `,
-        tags: ['AI', 'Machine Learning', 'NLP'],
-        contact: {
-            email: 'tarushgs@gmail.com',
-            cc: 'tarush.gupta@turing.com',
-            subject: 'Turing: '
-        }
-    },
-    'humanx': {
-        company: 'HumanX',
-        role: 'Engineering Intern',
-        period: '2024',
-        description: 'HumanX is a venture-backed cross-vertical gathering of the most influential people in AI.',
-        details: `
-            <ul>
-                <li>HumanX is a venture-backed cross-vertical gathering of the most influential people in AI, in March of 2025.</li>
-                <li>Building a comprehensive competitive strategy by conducting analysis and coordinating speaker logistics.</li>
-                <li>Reporting to Marketing, Speaker Outreach, and the CEO.</li>
-            </ul>
-        `,
-        tags: ['AI', 'Product', 'Engineering'],
-        contact: {
-            email: 'tarushgs@gmail.com',
-            subject: 'HumanX: '
-        }
-    },
-    'ema': {
-        company: 'Ema Unlimited',
-        role: 'Software Engineering',
-        period: '2024',
-        description: 'Ema is an AI “employee” which turns intricate workflows into a chat, boosting company-wide productivity.',
-        details: `
-            <ul>
-                <li>Ema is an AI “employee” which turns intricate workflows into a chat, boosting company-wide productivity.</li>
-                <li>Deeply analyzed a specific vertical and identified pain points requiring AI innovation.</li>
-                <li>Reporting directly to the CEO.</li>
-            </ul>
-        `,
-        tags: ['AI', 'Enterprise', 'Automation'],
-        contact: {
-            email: 'tarushgs@gmail.com',
-            subject: 'Ema: '
-        }
-    },
-    'proshort': {
-        company: 'Proshort',
-        role: 'Engineering Intern',
-        period: '2023',
-        description: 'Proshort is a short-form video generation platform for enterprises.',
-        details: `
-            <ul>
-                <li>Proshort is a short-form video generation platform for enterprises.</li>
-                <li>Created competitive strategy, market positioning and feature roadmap, working for the head of product.</li>
-                <li>Earned special recommendation from the CEO, who is currently executing the proposed roadmap.</li>
-            </ul>
-        `,
-        tags: ['Video', 'Content', 'Tech'],
-        contact: {
-            email: 'tarushgs@gmail.com',
-            subject: 'Proshort: '
-        }
-    }
-};
 
 // Podcast Data
 const podcastEpisodes = [
@@ -624,33 +523,53 @@ function hidePodcastDetail() {
 window.showPodcastDetail = showPodcastDetail;
 window.hidePodcastDetail = hidePodcastDetail;
 
+// Privacy-friendly pageview ping — one per browser session, no cookies, no
+// third-party, no PII. Owner reads totals at GET /api/visitors.
+function recordVisit() {
+    try {
+        if (sessionStorage.getItem('visited')) return;
+        sessionStorage.setItem('visited', '1');
+        fetch('/api/visitors', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        }).catch(() => {});
+    } catch (e) { /* storage blocked — skip silently */ }
+}
+
+// Entry choice: terminal vs. classic navigation. Shown prominently at the start
+// of each session (once per session), while in terminal mode.
+function showTermHint() {
+    try { if (sessionStorage.getItem('termChoiceSeen')) return; } catch (e) { return; }
+    const m = document.getElementById('term-modal');
+    if (!m || !terminalMode) return;
+    setTimeout(() => m.classList.add('visible'), prefersReducedMotion() ? 0 : 480);
+}
+function dismissTermModal(switchToNav) {
+    const m = document.getElementById('term-modal');
+    if (m) m.classList.remove('visible');
+    try { sessionStorage.setItem('termChoiceSeen', '1'); } catch (e) {}
+    if (switchToNav && terminalMode) toggleMode();
+}
+window.dismissTermModal = dismissTermModal;
+
 function showPortfolio() {
-    createParticles('portfolio-particles', 30);
     renderPodcastList();
-    
+    recordVisit();
     portfolioPage.classList.add('active');
-    
-    // Load theme preference
     loadThemePreference();
-    
-    // Fetch visitor count and start refresh interval
-    fetchVisitorCount();
-    startVisitorCountRefresh();
-    
+
+    const reduce = prefersReducedMotion();
     requestAnimationFrame(() => {
         transitionOverlay.style.opacity = '0';
-        
         setTimeout(() => {
             transitionOverlay.style.display = 'none';
-            
-            setTimeout(() => {
-                bottomTerminal.classList.add('active');
-                modeToggle.classList.add('visible');
-                themeToggle.classList.add('visible');
-                terminalInput.focus();
-                startSuggestionCycle();
-            }, 300);
-        }, 800);
+            bottomTerminal.classList.add('active');
+            modeToggle.classList.add('visible');
+            themeToggle.classList.add('visible');
+            if (terminalInput) terminalInput.focus({ preventScroll: true });
+            startSuggestionCycle();
+            showTermHint();
+        }, reduce ? 0 : 300);
     });
 }
 
@@ -664,8 +583,12 @@ function toggleMode() {
         portfolioContent.classList.remove('navbar-mode');
         backHomeBtn.classList.toggle('visible', currentPage !== 'home');
         document.body.classList.remove('terminal-mode-off');
-        terminalInput.focus();
+        if (terminalInput) terminalInput.focus();
         startSuggestionCycle();
+        // Re-run the command reveal for the page you're on.
+        if (currentPage && pages[currentPage]) {
+            playPageReveal(document.getElementById(pages[currentPage].el));
+        }
     } else {
         toggleSwitch.classList.add('off');
         bottomTerminal.classList.remove('active');
@@ -673,6 +596,8 @@ function toggleMode() {
         portfolioContent.classList.add('navbar-mode');
         backHomeBtn.classList.remove('visible');
         document.body.classList.add('terminal-mode-off');
+        // Classic nav: never hide content behind a command.
+        document.querySelectorAll('.sub-page').forEach(p => p.classList.remove('reveal-armed', 'reveal-run'));
         if (suggestionInterval) {
             clearInterval(suggestionInterval);
         }
@@ -696,37 +621,62 @@ function updateNavbar() {
     });
 }
 
-function startSuggestionCycle() {
-    updateSuggestion();
-    autocompleteHint.classList.add('visible');
-    
-    suggestionInterval = setInterval(() => {
-        currentSuggestionIndex = (currentSuggestionIndex + 1) % suggestions.length;
-        updateSuggestion();
-    }, 5000);
+// Ghost + dropdown autocomplete — completes typed input against known commands.
+const completions = [
+    'ls', 'cat', 'clear', 'help', 'pwd', 'whoami',
+    'cd vericare', 'cd internships', 'cd research', 'cd github', 'cd blog',
+    'cd ideas', 'cd aureliusgpt', 'cd podcast', 'cd ~'
+];
+
+const suggestionsEl = document.getElementById('terminal-suggestions');
+let suggestionItems = [];
+let suggestionActive = -1;
+
+function matchingCompletions() {
+    const v = terminalInput.value.trim().toLowerCase();
+    if (!v) return [];
+    return completions.filter(c => c.startsWith(v) && c !== v);
 }
 
-function updateSuggestion() {
-    const suggestion = suggestions[currentSuggestionIndex];
-    suggestionText.textContent = suggestion.label;
-    
-    suggestionText.style.opacity = '0';
-    setTimeout(() => {
-        suggestionText.style.opacity = '1';
-    }, 150);
+function currentCompletion() {
+    const v = terminalInput.value.trim().toLowerCase();
+    if (!v) return '';
+    return completions.find(c => c.startsWith(v) && c !== v) || '';
 }
 
 function updateAutocompleteGhost() {
-    const inputValue = terminalInput.value;
-    const suggestion = suggestions[currentSuggestionIndex].cmd;
-    
-    if (inputValue && suggestion.startsWith(inputValue) && inputValue !== suggestion) {
-        autocompleteGhost.textContent = suggestion;
-        autocompleteGhost.style.opacity = '0.3';
+    const v = terminalInput.value;
+    const hit = currentCompletion();
+    // Ghost shows the full completion; the input text overlays the typed prefix.
+    if (hit && v && hit.startsWith(v.trim().toLowerCase())) {
+        autocompleteGhost.textContent = v + hit.slice(v.trim().length);
+        autocompleteGhost.style.opacity = '1';
     } else {
         autocompleteGhost.textContent = '';
+        autocompleteGhost.style.opacity = '0';
     }
 }
+
+function renderSuggestions() {
+    if (!suggestionsEl) return;
+    const items = matchingCompletions();
+    suggestionItems = items;
+    if (!items.length) { hideSuggestions(); return; }
+    if (suggestionActive >= items.length) suggestionActive = items.length - 1;
+    suggestionsEl.innerHTML = items.map((c, i) =>
+        `<div class="suggestion-item${i === suggestionActive ? ' active' : ''}" role="option" data-cmd="${c}">${c}</div>`
+    ).join('');
+    suggestionsEl.classList.add('visible');
+}
+
+function hideSuggestions() {
+    suggestionActive = -1;
+    suggestionItems = [];
+    if (suggestionsEl) { suggestionsEl.classList.remove('visible'); suggestionsEl.innerHTML = ''; }
+}
+
+// Legacy no-op retained (called on portfolio show / mode toggle).
+function startSuggestionCycle() {}
 
 // Update Open Graph meta tags based on current page
 function updateOpenGraphTags(page) {
@@ -744,26 +694,38 @@ function updateOpenGraphTags(page) {
         'home': {
             title: 'Tarush Gupta — Builder, Founder, Developer',
             description: 'Personal citadel showcasing my work in AI, startups, and research.',
-            image: `${baseUrl}/favicon.png`,
+            image: `${baseUrl}/assets/logo-mark.png`,
             url: baseUrl
         },
         'aureliusgpt': {
             title: 'AureliusGPT — Small Language Models from First Principles',
             description: 'A family of SLMs pretrained from scratch on classical philosophy texts, built without shortcuts.',
-            image: `${baseUrl}/aurelius-thinking.jpg`,
+            image: `${baseUrl}/assets/aurelius-thinking.jpg`,
             url: `${baseUrl}/aureliusgpt`
         },
         'podcast': {
             title: 'Neural Bridge Podcast — Bridging Generations Through AI',
             description: 'Connecting younger generations to current professionals through fascinating discussions on AI.',
-            image: `${baseUrl}/logo.jpg`,
+            image: `${baseUrl}/assets/logo.jpg`,
             url: `${baseUrl}/podcast`
         },
         'vericare': {
             title: 'VeriCare AI — Patient Advocacy, Augmented with AI',
             description: 'The first fully AI patient advocacy engine, built to dispute, negotiate, and reduce medical bills.',
-            image: `${baseUrl}/favicon.png`,
+            image: `${baseUrl}/assets/logo-mark.png`,
             url: `${baseUrl}/vericare`
+        },
+        'research': {
+            title: 'Tarush Gupta — Research',
+            description: 'AI research across training & evaluation, memory systems, and small language models from first principles.',
+            image: `${baseUrl}/assets/logo-mark.png`,
+            url: `${baseUrl}/research`
+        },
+        'blog': {
+            title: 'Tarush Gupta — Blog',
+            description: 'Essays and technical writeups on patient advocacy and building language models from scratch.',
+            image: `${baseUrl}/assets/logo-mark.png`,
+            url: `${baseUrl}/blog`
         }
     };
     
@@ -782,6 +744,46 @@ function updateOpenGraphTags(page) {
     document.title = data.title;
 }
 
+// Terminal reveal: in terminal mode, navigating leaves a page blank behind its
+// command (e.g. `ls ~/internships`). The USER runs that command — typed into the
+// terminal, or by clicking the command itself — and the content streams onto the
+// page. No blanking in classic-nav mode or on pages without a command (home).
+function playPageReveal(pageEl) {
+    if (!pageEl) return;
+    const echo = pageEl.querySelector(':scope > .cmd-echo');
+    pageEl.classList.remove('reveal-armed', 'reveal-run');
+    if (!echo || document.body.classList.contains('terminal-mode-off')) return;
+    if (prefersReducedMotion()) return; // show content immediately
+    pageEl.classList.add('reveal-armed'); // briefly show just the command…
+    // …then run it automatically so content streams in. No hidden content and
+    // no required keystroke — but typing `ls` still reveals instantly (below).
+    setTimeout(() => {
+        if (pageEl.classList.contains('reveal-armed')) {
+            pageEl.classList.remove('reveal-armed');
+            pageEl.classList.add('reveal-run');
+        }
+    }, 480);
+}
+function revealCurrentPage() {
+    if (!currentPage || !pages[currentPage]) return;
+    const el = document.getElementById(pages[currentPage].el);
+    if (!el) return;
+    el.classList.remove('reveal-armed');
+    el.classList.add('reveal-run'); // "execute" → stream content onto the page
+}
+function armCurrentPage() {
+    if (!currentPage || !pages[currentPage]) return;
+    const el = document.getElementById(pages[currentPage].el);
+    const echo = el && el.querySelector(':scope > .cmd-echo');
+    if (!echo) return;
+    if (document.body.classList.contains('terminal-mode-off')) return;
+    el.classList.remove('reveal-run');
+    void el.offsetWidth;
+    el.classList.add('reveal-armed');
+}
+window.playPageReveal = playPageReveal;
+window.revealCurrentPage = revealCurrentPage;
+
 function navigateTo(page, updateHistory = true) {
     // Determine the URL for history
     let url = '/';
@@ -794,16 +796,12 @@ function navigateTo(page, updateHistory = true) {
     }
 
     if (page !== 'home') {
-        if (page.startsWith('internship-')) {
-            const company = page.replace('internship-', '');
-            url = `/internships/${company}`;
-        } else if (page.startsWith('idea-')) {
-            const idea = page.replace('idea-', '');
-            url = `/ideas/${idea}`;
-        } else if (page.startsWith('podcast/')) {
-            // Handle podcast detail
+        if (page.startsWith('podcast/')) {
             const slug = page.replace('podcast/', '');
             url = `/podcast/${slug}`;
+        } else if (page.startsWith('blog/')) {
+            const slug = page.replace('blog/', '');
+            url = `/blog/${slug}`;
         } else {
             url = `/${page}`;
         }
@@ -817,21 +815,6 @@ function navigateTo(page, updateHistory = true) {
     // Update Open Graph tags for social sharing
     updateOpenGraphTags(page);
 
-    // Handle internship sub-pages
-    if (page.startsWith('internship-')) {
-        const internshipId = page.replace('internship-', '');
-        showInternshipDetail(internshipId);
-        return;
-    }
-    
-    // Handle idea sub-pages
-    if (page.startsWith('idea-')) {
-        const ideaId = page.replace('idea-', '');
-        navigateTo('ideas', false); // Don't push history for intermediate step
-        setTimeout(() => showIdeaDetail(ideaId), 100);
-        return;
-    }
-
     // Handle podcast sub-pages
     if (page.startsWith('podcast/')) {
         const slug = page.replace('podcast/', '');
@@ -839,33 +822,46 @@ function navigateTo(page, updateHistory = true) {
         setTimeout(() => showPodcastDetail(slug), 100);
         return;
     }
-    
-    if (!pages[page]) return;
-    
-    // Hide internship detail if showing
-    hideInternshipDetail();
-    
-    // Hide idea detail if showing
-    if (typeof hideIdeaDetail === 'function') {
-        hideIdeaDetail();
+
+    // Handle blog post sub-pages
+    if (page.startsWith('blog/')) {
+        const slug = page.replace('blog/', '');
+        navigateTo('blog', false); // Go to blog list first
+        setTimeout(() => showBlogPost(slug), 100);
+        return;
     }
-    
+
+    if (!pages[page]) return;
+
     // Hide podcast detail if showing
     if (typeof hidePodcastDetail === 'function') {
         hidePodcastDetail();
     }
-    
-    document.querySelectorAll('.sub-page').forEach(p => p.classList.remove('active'));
-    document.getElementById(pages[page].el).classList.add('active');
-    
+
+    // Hide blog post detail if showing
+    if (typeof hideBlogPost === 'function') {
+        hideBlogPost();
+    }
+
+    document.querySelectorAll('.sub-page').forEach(p => { p.classList.remove('active', 'reveal-armed', 'reveal-run'); });
+    const activeEl = document.getElementById(pages[page].el);
+    activeEl.classList.add('active');
+    if (typeof playPageReveal === 'function') playPageReveal(activeEl);
+
     currentPathEl.textContent = pages[page].path;
     currentPage = page;
-    
-    document.getElementById('portfolio-content').scrollTop = 0;
-    
-    terminalInput.value = '';
-    autocompleteGhost.textContent = '';
-    
+
+    // Always land at the top of the new page (the window scrolls, not the
+    // content div — so reset window/document scroll, not portfolio-content).
+    window.scrollTo(0, 0);
+    if (document.scrollingElement) document.scrollingElement.scrollTop = 0;
+    // Keep the terminal ready so `ls` can be typed right after clicking (desktop).
+    if (terminalInput && terminalMode && !isMobile) terminalInput.focus({ preventScroll: true });
+
+    if (terminalInput) terminalInput.value = '';
+    if (autocompleteGhost) autocompleteGhost.textContent = '';
+    if (typeof hideSuggestions === 'function') hideSuggestions();
+
     updateBackButton();
     updateNavbar();
 
@@ -880,92 +876,162 @@ function navigateTo(page, updateHistory = true) {
         // vericareVideo.src = ""; 
     }
     
-    // Initialize AureliusGPT when navigating to it
+    // Start/stop the Aurelius quote cycler alongside its page
     if (page === 'aureliusgpt') {
-        if (typeof initializeAureliusGPT === 'function') {
-            initializeAureliusGPT();
-        }
-        if (typeof updateStoicQuote === 'function') {
-            updateStoicQuote();
-        }
+        if (typeof initializeAureliusGPT === 'function') initializeAureliusGPT();
+        if (typeof startQuoteCycle === 'function') startQuoteCycle();
+    } else if (typeof stopQuoteCycle === 'function') {
+        stopQuoteCycle();
     }
+
+    // Live GitHub dashboard — fetch once, then re-render from cache.
+    if (page === 'github' && typeof loadGitHub === 'function') loadGitHub();
 }
 
-function showInternshipDetail(internshipId) {
-    const data = internships[internshipId];
-    if (!data) return;
-    
-    currentInternship = internshipId;
-    
-    // Update detail content
-    const detailEl = document.getElementById('internship-detail');
-    const headerEl = detailEl.querySelector('.internship-detail-header');
-    const contentEl = detailEl.querySelector('.internship-detail-content');
-    
-    headerEl.innerHTML = `
-        <h1>${data.company}</h1>
-        <p class="role">${data.role} • ${data.period}</p>
-    `;
-    
-    // Generate contact button HTML
-    let contactBtnHtml = '';
-    if (data.contact) {
-        let mailto = `mailto:${data.contact.email}?subject=${encodeURIComponent(data.contact.subject)}`;
-        if (data.contact.cc) {
-            mailto += `&cc=${data.contact.cc}`;
-        }
-        contactBtnHtml = `
-            <div style="text-align: center; margin-top: 40px;">
-                <a href="${mailto}" class="github-link" style="border-color: rgba(244, 114, 182, 0.3); background: rgba(244, 114, 182, 0.1); color: var(--accent-pink);">
-                    Contact: (${data.company} Specific)
-                </a>
-            </div>
-        `;
-    }
-    
-    contentEl.innerHTML = `
-        <p>${data.description}</p>
-        <h2>About the Role</h2>
-        <div style="line-height: 1.6; color: var(--text-dim);">${data.details}</div>
-        <div class="internship-tags" style="margin-top: 24px;">
-            ${data.tags.map(tag => `<span class="internship-tag">${tag}</span>`).join('')}
-        </div>
-        ${contactBtnHtml}
-    `;
-    
-    // Show detail, hide list
-    document.getElementById('internships-list').style.display = 'none';
+// Blog post detail — the AureliusGPT technical writeup is the one on-site post.
+let currentBlogPost = null;
+
+function showBlogPost(postId) {
+    if (postId !== 'aureliusgpt') return; // other posts are external links
+    const listEl = document.getElementById('blog-list');
+    const detailEl = document.getElementById('blog-detail');
+    if (!detailEl) return;
+
+    if (listEl) listEl.style.display = 'none';
     detailEl.classList.add('active');
-    
-    currentPathEl.textContent = `~/internships/${internshipId}`;
+    currentBlogPost = postId;
+
+    currentPathEl.textContent = '~/blog/aureliusgpt';
     document.getElementById('portfolio-content').scrollTop = 0;
 }
 
-function hideInternshipDetail() {
-    const detailEl = document.getElementById('internship-detail');
-    const listEl = document.getElementById('internships-list');
-    
+function hideBlogPost() {
+    const listEl = document.getElementById('blog-list');
+    const detailEl = document.getElementById('blog-detail');
+
     if (detailEl) detailEl.classList.remove('active');
-    if (listEl) listEl.style.display = 'block';
-    
-    currentInternship = null;
+    if (listEl) listEl.style.display = '';
+
+    currentBlogPost = null;
 }
+
+window.showBlogPost = showBlogPost;
+window.hideBlogPost = hideBlogPost;
 
 function addToHistory(cmd) {
     if (cmd.trim()) {
         commandHistory.unshift(cmd);
-        if (commandHistory.length > 20) commandHistory.pop();
-        updateHistoryDisplay();
+        if (commandHistory.length > 30) commandHistory.pop();
     }
 }
 
-function updateHistoryDisplay() {
-    const historyEl = document.getElementById('command-history');
-    if (!historyEl) return;
-    
-    historyEl.innerHTML = commandHistory.map(cmd => 
-        `<div class="history-item"><span style="color: var(--accent-green);">$</span> ${cmd}</div>`
-    ).join('');
+// Terminal transcript — command echo + optional output, shown in the panel.
+let terminalLog = [];
+
+function renderTerminalLog() {
+    const el = document.getElementById('command-history');
+    if (!el) return;
+    el.innerHTML = terminalLog.map(e => `
+        <div class="log-entry">
+            <div class="log-cmd"><span class="log-dollar">$</span>&nbsp;${escapeHtml(e.cmd)}</div>
+            ${e.out ? `<div class="log-out">${e.out}</div>` : ''}
+        </div>`).join('');
+    el.scrollTop = el.scrollHeight;
+}
+
+function pushLog(cmd, out) {
+    terminalLog.push({ cmd: cmd, out: out || '' });
+    if (terminalLog.length > 60) terminalLog.shift();
+    renderTerminalLog();
+}
+
+function expandTerminal(open) {
+    if (open && !terminalExpanded) toggleTerminalExpand();
+}
+
+// ---- Shell output: the site as a filesystem the terminal can talk back about ----
+const SITE_DIRS = [
+    { name: 'vericare', page: 'vericare' },
+    { name: 'internships', page: 'internships' },
+    { name: 'research', page: 'research' },
+    { name: 'github', page: 'github' },
+    { name: 'blog', page: 'blog' },
+    { name: 'ideas', page: 'ideas' },
+    { name: 'aureliusgpt', page: 'aureliusgpt' },
+    { name: 'podcast', page: 'podcast' }
+];
+
+function lsOutput(trimmed) {
+    let arg = trimmed.replace(/^(ls|ll|dir)\s*/, '').trim();
+    arg = arg.replace(/^~\/?/, '').replace(/\/+$/, '').trim();
+
+    if (!arg) {
+        return `<div class="ls-grid">` +
+            SITE_DIRS.map(s => `<a class="ls-item" onclick="navigateTo('${s.page}')">${s.name}/</a>`).join('') +
+            `</div>`;
+    }
+    if (arg === 'internships' || arg === 'research') {
+        const cos = arg === 'research'
+            ? ['cisco', 'dyssonance', 'turing']
+            : ['cisco', 'dyssonance', 'turing', 'humanx', 'ema', 'proshort'];
+        return `<div class="ls-grid">` +
+            cos.map(c => `<span class="ls-plain">${c}</span>`).join('') +
+            `</div>`;
+    }
+    if (arg === 'blog') {
+        return `<div class="ls-grid">` +
+            `<a class="ls-item" onclick="navigateTo('blog/aureliusgpt')">aureliusgpt-writeup.md</a>` +
+            `<a class="ls-item" href="https://medium.com/@vericareai/the-comprehensive-guide-to-requesting-an-itemized-bill-1b002fcb9a7b" target="_blank" rel="noopener">itemized-bill-guide.md ↗</a>` +
+            `</div>`;
+    }
+    if (arg === 'podcast') {
+        return `<span class="log-dim">${podcastEpisodes.length} episodes · </span><a class="ls-item" onclick="navigateTo('podcast')">open</a>`;
+    }
+    if (arg === 'ideas') {
+        return `<span class="log-dim">ideas: no public entries yet</span>`;
+    }
+    if (arg === 'github') {
+        return ghRepoOutput();
+    }
+    if (arg === 'vericare' || arg === 'aureliusgpt') {
+        return `<a class="ls-item" onclick="navigateTo('${arg}')">${arg}/</a>`;
+    }
+    return `<span class="log-err">ls: ${escapeHtml(arg)}: No such directory</span>`;
+}
+
+function whoamiOutput() {
+    return `<div class="log-kv"><span class="log-k">name</span>Tarush Gupta</div>` +
+        `<div class="log-kv"><span class="log-k">role</span>student · founder · builder</div>` +
+        `<div class="log-kv"><span class="log-k">founder</span><a class="ls-item" onclick="navigateTo('vericare')">VeriCare AI</a></div>` +
+        `<div class="log-kv"><span class="log-k">research</span>Cisco · Turing · Dyssonance AI</div>` +
+        `<div class="log-kv"><span class="log-k">focus</span>language models from first principles</div>`;
+}
+
+function helpOutput() {
+    const rows = [
+        ['cd &lt;dir&gt;', 'enter a section — cd research, cd ~'],
+        ['ls [dir]', 'list sections, or a section&#39;s contents'],
+        ['pwd', 'print the current path'],
+        ['whoami', 'the short version'],
+        ['git remote -v', 'open the GitHub profile'],
+        ['gh repo list', 'list repositories'],
+        ['clear', 'clear the terminal']
+    ];
+    return `<div class="help-grid">` +
+        rows.map(r => `<span class="log-cmd-name">${r[0]}</span><span class="log-dim">${r[1]}</span>`).join('') +
+        `</div>`;
+}
+
+function gitRemoteOutput() {
+    return `<div>origin&nbsp;&nbsp;https://github.com/tarush-ai&nbsp;&nbsp;(fetch)</div>` +
+        `<div>origin&nbsp;&nbsp;https://github.com/tarush-ai&nbsp;&nbsp;(push)</div>` +
+        `<div class="log-dim">→ opening github.com/tarush-ai</div>`;
+}
+
+function ghRepoOutput() {
+    return `<a class="repo-line" href="https://github.com/tarush-ai/AureliusGPT-Torch" target="_blank" rel="noopener">tarush-ai/AureliusGPT-Torch<span class="log-dim">   845K-param Stoic LM · PyTorch + SentencePiece</span></a>` +
+        `<a class="repo-line" href="https://github.com/tarush-ai/AureliusGPT" target="_blank" rel="noopener">tarush-ai/AureliusGPT<span class="log-dim">   Stoic SLM from scratch · NumPy, no PyTorch</span></a>` +
+        `<div class="log-dim">// on-site repo pages arrive with GitHub integration</div>`;
 }
 
 function toggleTerminalExpand() {
@@ -982,368 +1048,189 @@ function toggleTerminalExpand() {
     }
 }
 
+// ---- terminal command engine -----------------------------------------------
+// Commands drive the SPA: `cd <section>` moves you there (blank, behind its
+// command); a reveal command (ls/cat/…) streams the current section onto the
+// page. Short feedback (errors, pwd, help) shows on a transient line above the
+// input — there is no scrolling transcript, and no command runs on its own.
+const SECTION_ALIASES = {
+    vericare: 'vericare', 'vericare-ai': 'vericare',
+    internships: 'internships', internship: 'internships',
+    research: 'research', github: 'github', git: 'github',
+    blog: 'blog', ideas: 'ideas',
+    aureliusgpt: 'aureliusgpt', aurelius: 'aureliusgpt',
+    podcast: 'podcast', 'neural-bridge': 'podcast', neuralbridge: 'podcast',
+    home: 'home'
+};
+const REVEAL_CMDS = ['ls', 'll', 'dir', 'cat', 'less', 'more', 'open', 'run', 'view', 'gh', './aureliusgpt'];
+
+function resolveSection(name) {
+    if (!name) return null;
+    name = name.replace(/^~\/?/, '').replace(/\/+$/, '').trim().toLowerCase();
+    if (!name) return null;
+    return SECTION_ALIASES[name] || (pages[name] ? name : null);
+}
+
+let termFeedbackTimer = null;
+function termFeedback(html) {
+    const el = document.getElementById('terminal-feedback');
+    if (!el) return;
+    el.innerHTML = html;
+    el.classList.add('visible');
+    if (termFeedbackTimer) clearTimeout(termFeedbackTimer);
+    termFeedbackTimer = setTimeout(() => el.classList.remove('visible'), 3600);
+}
+function clearTermFeedback() {
+    const el = document.getElementById('terminal-feedback');
+    if (el) { el.classList.remove('visible'); el.innerHTML = ''; }
+}
+
 function handleCommand(cmd) {
-    const trimmed = cmd.trim().toLowerCase();
-    
-    // Add to history
-    addToHistory(cmd);
-    
-    // Clear input after command
-    terminalInput.value = '';
-    autocompleteGhost.textContent = '';
-    
-    // cd commands
-    if (trimmed.startsWith('cd ')) {
-        const target = trimmed.slice(3).trim();
-        
-        // Handle paths with slashes (e.g., internships/turing)
-        const parts = target.split('/').filter(p => p && p !== '~');
-        
-        if (target === '~' || target === '..' || target === '../' || target === '') {
-            if (currentInternship) {
-                hideInternshipDetail();
-                currentPathEl.textContent = '~/internships';
-            } else if (currentIdea) {
-                hideIdeaDetail();
-            } else if (document.getElementById('podcast-detail').style.display === 'block') {
-                hidePodcastDetail();
-            } else {
-                navigateTo('home');
-            }
-        } else if (parts.length === 2 && parts[0] === 'internships') {
-            // Handle cd internships/company
-            const company = parts[1];
-            if (['turing', 'humanx', 'ema', 'proshort'].includes(company)) {
-                navigateTo('internships');
-                setTimeout(() => navigateTo('internship-' + company), 100);
-            }
-        } else if (target === 'podcast' || target === '~/podcast') {
-            navigateTo('podcast');
-        } else if (target === 'vericare' || target === '~/vericare' || target === 'vericare-ai') {
-            navigateTo('vericare');
-        } else if (target === 'aureliusgpt' || target === '~/aureliusgpt' || target === 'aurelius') {
-            navigateTo('aureliusgpt');
-        } else if (target === 'internships' || target === '~/internships') {
-            navigateTo('internships');
-        } else if (target === 'ideas' || target === '~/ideas') {
-            navigateTo('ideas');
-        } else if (target === 'github' || target === '~/github') {
-            navigateTo('github');
-        } else if (target === 'home' || target === '~/home') {
-            navigateTo('home');
+    const raw = (cmd || '').trim();
+    if (terminalInput) terminalInput.value = '';
+    if (autocompleteGhost) autocompleteGhost.textContent = '';
+    if (typeof hideSuggestions === 'function') hideSuggestions();
+    if (!raw) return;
+    addToHistory(raw);
+
+    // Grouped commands run left to right — `cd vericare && ls`, `a ; b`.
+    const segments = raw.split(/\s*(?:&&|;)\s*/).map(s => s.trim()).filter(Boolean);
+    segments.forEach(runSingleCommand);
+}
+
+function runSingleCommand(raw) {
+    const parts = raw.split(/\s+/);
+    const c = parts[0].toLowerCase();
+    const rest = parts.slice(1).join(' ').trim();
+
+    if (c === 'clear') { clearTermFeedback(); armCurrentPage(); return; }
+    if (c === 'help' || c === 'man' || c === '?') {
+        termFeedback('<span class="tf-k">ls</span> reveal · <span class="tf-k">cd &lt;section&gt;</span> go · <span class="tf-k">cat</span> · <span class="tf-k">clear</span> · <span class="tf-k">pwd</span>  —  sections: vericare · internships · research · github · blog · ideas · aureliusgpt · podcast');
+        return;
+    }
+    if (c === 'pwd') { termFeedback(escapeHtml(currentPathEl ? currentPathEl.textContent : '~')); return; }
+    if (c === 'whoami') { navigateTo('home'); termFeedback('Tarush Gupta — student · founder · builder'); return; }
+
+    // ----- navigation: cd moves you there (page stays blank behind its command)
+    if (c === 'cd') {
+        const t = rest.toLowerCase();
+        if (t === '' || t === '~' || t === '..' || t === '../' || t === '~/') { navigateTo('home'); return; }
+        const sec = resolveSection(t);
+        if (sec === 'home') { navigateTo('home'); return; }
+        if (sec) { navigateTo(sec); return; }
+        termFeedback(`<span class="tf-err">cd: no such section: ${escapeHtml(rest)}</span>`);
+        return;
+    }
+
+    // ----- reveal: render the current (or named) section's content on the page
+    if (REVEAL_CMDS.includes(c)) {
+        const sec = resolveSection(rest);
+        if (sec && sec !== 'home' && sec !== currentPage) { navigateTo(sec); revealCurrentPage(); return; }
+        if (currentPage === 'home') {
+            termFeedback('<span class="tf-k">ls</span> reveals a section — try <span class="tf-k">cd research</span>, then <span class="tf-k">ls</span>');
+            return;
         }
-        // Internship sub-navigation (direct)
-        else if (target === 'turing' || target === 'internships/turing') {
-            navigateTo('internship-turing');
-        } else if (target === 'humanx' || target === 'internships/humanx') {
-            navigateTo('internship-humanx');
-        } else if (target === 'ema' || target === 'ema-unlimited' || target === 'internships/ema') {
-            navigateTo('internship-ema');
-        } else if (target === 'proshort' || target === 'internships/proshort') {
-            navigateTo('internship-proshort');
-        }
+        revealCurrentPage();
+        return;
     }
-    
-    if (trimmed === 'clear') {
-        commandHistory = [];
-        updateHistoryDisplay();
-    }
-    
-    if (trimmed === 'history') {
-        if (!terminalExpanded) toggleTerminalExpand();
-    }
+
+    // ----- bare section name → go there and reveal in one step
+    const bare = resolveSection(c);
+    if (bare === 'home') { navigateTo('home'); return; }
+    if (bare) { navigateTo(bare); revealCurrentPage(); return; }
+
+    termFeedback(`<span class="tf-err">command not found: ${escapeHtml(parts[0])}</span>`);
 }
 
 // Make toggle function global
 window.toggleTerminalExpand = toggleTerminalExpand;
 
-// Terminal input handlers
-terminalInput.addEventListener('input', () => {
+// Terminal input handlers — only wired if the (decorative) input exists.
+terminalInput && terminalInput.addEventListener('input', () => {
     updateAutocompleteGhost();
-    
-    if (terminalInput.value) {
-        autocompleteHint.classList.remove('visible');
-    } else {
-        autocompleteHint.classList.add('visible');
-    }
+    renderSuggestions();
 });
+
+terminalInput && terminalInput.addEventListener('blur', () => {
+    // Delay so a click on a suggestion can register before the menu closes.
+    setTimeout(hideSuggestions, 120);
+});
+
+if (suggestionsEl) {
+    suggestionsEl.addEventListener('mousedown', (e) => {
+        const item = e.target.closest('.suggestion-item');
+        if (!item) return;
+        e.preventDefault(); // keep the input focused
+        const picked = item.dataset.cmd;
+        terminalInput.value = picked;
+        autocompleteGhost.textContent = '';
+        hideSuggestions();
+        handleCommand(picked);
+    });
+}
 
 let historyIndex = -1;
 
-terminalInput.addEventListener('keydown', (e) => {
+terminalInput && terminalInput.addEventListener('keydown', (e) => {
+    const menuOpen = suggestionItems.length > 0 && suggestionsEl && suggestionsEl.classList.contains('visible');
+
     if (e.key === 'Tab') {
         e.preventDefault();
-        const suggestion = suggestions[currentSuggestionIndex].cmd;
-        if (terminalInput.value === '' || suggestion.startsWith(terminalInput.value)) {
-            terminalInput.value = suggestion;
+        const pick = (suggestionActive >= 0 && suggestionItems[suggestionActive]) || currentCompletion();
+        if (pick) {
+            terminalInput.value = pick;
             autocompleteGhost.textContent = '';
+            suggestionActive = -1;
+            renderSuggestions();
         }
+        return;
     }
-    
+
+    if (e.key === 'Escape') {
+        hideSuggestions();
+        return;
+    }
+
     if (e.key === 'Enter') {
         historyIndex = -1;
-        handleCommand(terminalInput.value);
+        const val = (menuOpen && suggestionActive >= 0) ? suggestionItems[suggestionActive] : terminalInput.value;
+        hideSuggestions();
+        handleCommand(val);
+        return;
     }
-    
-    if (e.key === 'ArrowUp') {
-        e.preventDefault();
-        if (commandHistory.length > 0) {
-            historyIndex = Math.min(historyIndex + 1, commandHistory.length - 1);
-            terminalInput.value = commandHistory[historyIndex] || '';
-        }
-    }
+
     if (e.key === 'ArrowDown') {
         e.preventDefault();
-        if (historyIndex > 0) {
+        if (menuOpen) {
+            suggestionActive = Math.min(suggestionActive + 1, suggestionItems.length - 1);
+            renderSuggestions();
+        } else if (historyIndex > 0) {
             historyIndex--;
             terminalInput.value = commandHistory[historyIndex] || '';
         } else {
             historyIndex = -1;
             terminalInput.value = '';
         }
+        return;
+    }
+
+    if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        if (menuOpen) {
+            suggestionActive = suggestionActive <= 0 ? suggestionItems.length - 1 : suggestionActive - 1;
+            renderSuggestions();
+        } else if (commandHistory.length > 0) {
+            historyIndex = Math.min(historyIndex + 1, commandHistory.length - 1);
+            terminalInput.value = commandHistory[historyIndex] || '';
+        }
+        return;
     }
 });
 
-// Ideas data
-const ideas = {
-    'resume-tailor': {
-        title: 'AI-Powered Resume Tailor',
-        status: 'available',
-        summary: 'Automatically customize resumes for specific job postings using LLMs. Match keywords, rephrase experience, and optimize for ATS systems.',
-        tags: ['AI', 'HR Tech', 'SaaS'],
-        details: `
-            <h2>The Problem</h2>
-            <p>Job seekers spend hours tailoring resumes for each application. Most don't do it well, leading to ATS rejections and missed opportunities.</p>
-            
-            <h2>The Solution</h2>
-            <p>An AI tool that analyzes job postings and automatically rewrites resume bullet points to match keywords, tone, and requirements while keeping the content authentic.</p>
-            
-            <h2>Key Features</h2>
-            <ul>
-                <li>Paste job posting URL → get tailored resume</li>
-                <li>ATS compatibility scoring</li>
-                <li>Keyword gap analysis</li>
-                <li>Multiple export formats</li>
-            </ul>
-            
-            <h2>Market Opportunity</h2>
-            <p>$500M+ resume builder market. Differentiation through AI-first approach and job-specific optimization.</p>
-            
-            <h2>Technical Approach</h2>
-            <p>GPT-4 for rewriting, custom fine-tuning on successful resumes, integration with job boards for automated posting analysis.</p>
-        `
-    },
-    'meeting-cost': {
-        title: 'Meeting Cost Calculator',
-        status: 'available',
-        summary: 'Chrome extension that shows real-time cost of meetings based on attendees\' estimated salaries. Make meetings more intentional.',
-        tags: ['Productivity', 'Extension'],
-        details: `
-            <h2>The Problem</h2>
-            <p>Companies waste millions on unnecessary meetings. Most people don't realize a 1-hour meeting with 10 people costs $500-2000 in salary alone.</p>
-            
-            <h2>The Solution</h2>
-            <p>A Chrome extension that integrates with Google Calendar and shows real-time meeting costs based on attendee roles and estimated compensation.</p>
-            
-            <h2>Key Features</h2>
-            <ul>
-                <li>Real-time cost ticker during meetings</li>
-                <li>Weekly/monthly meeting cost reports</li>
-                <li>ROI tracking for recurring meetings</li>
-                <li>Suggested attendee optimization</li>
-            </ul>
-            
-            <h2>Monetization</h2>
-            <p>Freemium model. Free for individuals, paid for teams with analytics dashboard.</p>
-            
-            <h2>Go-to-Market</h2>
-            <p>Product Hunt launch, LinkedIn viral content about meeting costs, target productivity-focused companies.</p>
-        `
-    },
-    'scholarship-matcher': {
-        title: 'Scholarship Matching Engine',
-        status: 'available',
-        summary: 'AI that matches students with scholarships they\'re actually eligible for. No more scrolling through thousands of irrelevant listings.',
-        tags: ['EdTech', 'AI', 'Matching'],
-        details: `
-            <h2>The Problem</h2>
-            <p>$100M+ in scholarships go unclaimed yearly. Students can't find relevant opportunities among thousands of listings with complex eligibility criteria.</p>
-            
-            <h2>The Solution</h2>
-            <p>AI-powered matching that understands student profiles and scholarship requirements to surface only relevant, high-probability matches.</p>
-            
-            <h2>Key Features</h2>
-            <ul>
-                <li>One-time profile creation</li>
-                <li>Smart matching algorithm</li>
-                <li>Deadline tracking and reminders</li>
-                <li>Application status tracking</li>
-                <li>Essay assistance integration</li>
-            </ul>
-            
-            <h2>Data Strategy</h2>
-            <p>Scrape and structure scholarship databases, build relationships with scholarship providers for direct listings.</p>
-            
-            <h2>Revenue Model</h2>
-            <p>Free for students. Revenue from premium features, institutional partnerships, and scholarship provider listings.</p>
-        `
-    },
-    'founder-accountability': {
-        title: 'Founder Accountability App',
-        status: 'available',
-        summary: 'Daily check-ins for solo founders. Share progress, get matched with accountability partners, prevent burnout through community.',
-        tags: ['Community', 'Startups'],
-        details: `
-            <h2>The Problem</h2>
-            <p>Solo founding is lonely. 72% of founders report mental health struggles. Accountability partners help but are hard to find and maintain.</p>
-            
-            <h2>The Solution</h2>
-            <p>Structured daily check-ins with AI-matched accountability partners at similar stages. Focus on consistency over perfection.</p>
-            
-            <h2>Key Features</h2>
-            <ul>
-                <li>2-minute daily check-ins</li>
-                <li>AI matching based on stage, industry, timezone</li>
-                <li>Streak tracking and gentle nudges</li>
-                <li>Weekly video calls with partner</li>
-                <li>Anonymous founder community</li>
-            </ul>
-            
-            <h2>Differentiation</h2>
-            <p>Not another Slack community. Structured, async-first, focused on action over discussion.</p>
-            
-            <h2>Growth Strategy</h2>
-            <p>Partner with accelerators, indie hacker communities, founder Twitter.</p>
-        `
-    },
-    'teen-events': {
-        title: 'Local Event Discovery for Teens',
-        status: 'available',
-        summary: 'Curated events, workshops, and opportunities specifically for high schoolers. Filter by interest, free/paid, and location.',
-        tags: ['Consumer', 'Gen Z', 'Local'],
-        details: `
-            <h2>The Problem</h2>
-            <p>Teens are bored and disconnected. Great local opportunities exist but are scattered across school emails, community boards, and random websites.</p>
-            
-            <h2>The Solution</h2>
-            <p>A curated discovery platform specifically for high schoolers to find local events, workshops, volunteer opportunities, and competitions.</p>
-            
-            <h2>Key Features</h2>
-            <ul>
-                <li>Interest-based filtering</li>
-                <li>Free/paid filters for accessibility</li>
-                <li>Friend activity and group planning</li>
-                <li>Resume/college app integration</li>
-                <li>Parent approval workflows</li>
-            </ul>
-            
-            <h2>Content Strategy</h2>
-            <p>Partner with local organizations, schools, and libraries. User submissions with verification.</p>
-            
-            <h2>Monetization</h2>
-            <p>Featured listings for event organizers, premium features for power users.</p>
-        `
-    },
-    'oss-matcher': {
-        title: 'Open Source Contribution Matcher',
-        status: 'available',
-        summary: 'Match developers with open source projects that need their specific skills. Lower the barrier to first contributions.',
-        tags: ['Developer Tools', 'Open Source'],
-        details: `
-            <h2>The Problem</h2>
-            <p>Developers want to contribute to open source but don't know where to start. Maintainers need help but can't find contributors with the right skills.</p>
-            
-            <h2>The Solution</h2>
-            <p>A matching platform that analyzes developer skills from GitHub and matches them with "good first issues" they're uniquely qualified to solve.</p>
-            
-            <h2>Key Features</h2>
-            <ul>
-                <li>GitHub skill analysis</li>
-                <li>Personalized issue recommendations</li>
-                <li>Difficulty and time estimates</li>
-                <li>Mentorship matching for complex issues</li>
-                <li>Contribution tracking and portfolio</li>
-            </ul>
-            
-            <h2>Technical Approach</h2>
-            <p>GitHub API for skill inference, NLP on issue descriptions, collaborative filtering for recommendations.</p>
-            
-            <h2>Community Building</h2>
-            <p>Partner with major OSS projects, sponsor Hacktoberfest, integrate with GitHub Sponsors.</p>
-        `
-    }
-};
-
-let currentIdea = null;
-
-function showIdeaDetail(ideaId) {
-    const data = ideas[ideaId];
-    if (!data) return;
-    
-    currentIdea = ideaId;
-    
-    const detailEl = document.getElementById('idea-detail');
-    const listEl = document.getElementById('ideas-list');
-    
-    // Update detail content
-    document.getElementById('idea-detail-title').textContent = data.title;
-    document.getElementById('idea-detail-summary').textContent = data.summary;
-    document.getElementById('idea-detail-tags').innerHTML = data.tags.map(tag => 
-        `<span class="idea-tag">${tag}</span>`
-    ).join('');
-    document.getElementById('idea-detail-content').innerHTML = data.details;
-    
-    // Update email links
-    const emailSubject = encodeURIComponent(`Idea: ${data.title}`);
-    document.getElementById('idea-unlock-btn').href = `mailto:tarushgs@gmail.com?subject=${emailSubject}&body=Hi Tarush,%0A%0AI'm interested in building "${data.title}". I'd love to discuss this idea further.%0A%0A[Tell me about yourself and your background]`;
-    
-    // Show detail, hide list
-    listEl.style.display = 'none';
-    detailEl.classList.add('active');
-    
-    currentPathEl.textContent = `~/ideas/${ideaId}`;
-    document.getElementById('portfolio-content').scrollTop = 0;
-}
-
-function hideIdeaDetail() {
-    const detailEl = document.getElementById('idea-detail');
-    const listEl = document.getElementById('ideas-list');
-    
-    if (detailEl) detailEl.classList.remove('active');
-    if (listEl) listEl.style.display = 'block';
-    
-    currentIdea = null;
-    currentPathEl.textContent = '~/ideas';
-}
-
-function goBackFromIdea() {
-    hideIdeaDetail();
-}
-
-// Toggle side Aurelius face minimize/maximize
-function toggleSideFace() {
-    const sideFace = document.getElementById('aurelius-side-face');
-    const toggleIcon = document.getElementById('side-face-toggle-icon');
-    
-    if (sideFace) {
-        sideFace.classList.toggle('minimized');
-        
-        // Update icon
-        if (sideFace.classList.contains('minimized')) {
-            toggleIcon.textContent = '»';
-        } else {
-            toggleIcon.textContent = '«';
-        }
-    }
-}
 
 // Make functions available globally
 window.navigateTo = navigateTo;
 window.toggleMode = toggleMode;
-window.showIdeaDetail = showIdeaDetail;
-window.hideIdeaDetail = hideIdeaDetail;
-window.goBackFromIdea = goBackFromIdea;
-window.toggleSideFace = toggleSideFace;
 
 // Toggle switch event listeners
 toggleSwitch.addEventListener('click', toggleMode);
@@ -1375,101 +1262,6 @@ function loadThemePreference() {
     }
 }
 
-// Visitor Counter Functions
-async function fetchVisitorCount() {
-    try {
-        // Check if this is a new visit (not a refresh within the same session)
-        const hasVisited = sessionStorage.getItem('hasVisited');
-        const method = hasVisited ? 'GET' : 'POST';
-        
-        const response = await fetch('/api/visitors', {
-            method: method,
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-        
-        if (response.ok) {
-            const data = await response.json();
-            updateVisitorCount(data.count);
-            
-            // Mark as visited for this session
-            if (!hasVisited) {
-                sessionStorage.setItem('hasVisited', 'true');
-            }
-        } else {
-            console.error('Failed to fetch visitor count');
-            updateVisitorCount('---');
-        }
-    } catch (error) {
-        console.error('Error fetching visitor count:', error);
-        updateVisitorCount('---');
-    }
-}
-
-// Refresh visitor count periodically (every 30 seconds)
-function startVisitorCountRefresh() {
-    setInterval(async () => {
-        try {
-            const response = await fetch('/api/visitors', {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-            
-            if (response.ok) {
-                const data = await response.json();
-                const counterEl = document.getElementById('visitor-count');
-                if (counterEl && counterEl.textContent !== '---') {
-                    counterEl.textContent = data.count.toLocaleString();
-                }
-            }
-        } catch (error) {
-            console.error('Error refreshing visitor count:', error);
-        }
-    }, 30000); // 30 seconds
-}
-
-function updateVisitorCount(count) {
-    const counterEl = document.getElementById('visitor-count');
-    if (counterEl) {
-        // Animate the count
-        animateCounter(counterEl, count);
-    }
-}
-
-function animateCounter(element, targetCount) {
-    if (targetCount === '---') {
-        element.textContent = '---';
-        return;
-    }
-    
-    const duration = 2000;
-    const start = 0;
-    const end = parseInt(targetCount);
-    const startTime = performance.now();
-    
-    function update(currentTime) {
-        const elapsed = currentTime - startTime;
-        const progress = Math.min(elapsed / duration, 1);
-        
-        // Easing function for smooth animation
-        const easeOutQuart = 1 - Math.pow(1 - progress, 4);
-        const current = Math.floor(start + (end - start) * easeOutQuart);
-        
-        element.textContent = current.toLocaleString();
-        
-        if (progress < 1) {
-            requestAnimationFrame(update);
-        } else {
-            element.textContent = end.toLocaleString();
-        }
-    }
-    
-    requestAnimationFrame(update);
-}
-
 // AureliusGPT Chat
 // Backend handles the inference
 
@@ -1498,13 +1290,26 @@ function getRandomQuote() {
     return stoicQuotes[Math.floor(Math.random() * stoicQuotes.length)];
 }
 
-// Update quote in the header
-function updateStoicQuote() {
-    const quoteElement = document.querySelector('.aurelius-quote');
-    if (quoteElement) {
-        const newQuote = getRandomQuote();
-        quoteElement.innerHTML = newQuote;
-    }
+// Cycle the Aurelius emblem quote with a gentle cross-fade.
+let quoteCycleInterval = null;
+function startQuoteCycle() {
+    const el = document.querySelector('.aurelius-quote');
+    if (!el) return;
+    stopQuoteCycle();
+    el.textContent = getRandomQuote();
+    if (prefersReducedMotion()) return;
+    quoteCycleInterval = setInterval(() => {
+        el.style.opacity = '0';
+        setTimeout(() => {
+            let q = getRandomQuote();
+            while (q === el.textContent && stoicQuotes.length > 1) q = getRandomQuote();
+            el.textContent = q;
+            el.style.opacity = '1';
+        }, 400);
+    }, 6500);
+}
+function stopQuoteCycle() {
+    if (quoteCycleInterval) { clearInterval(quoteCycleInterval); quoteCycleInterval = null; }
 }
 
 let isAureliusSending = false;
@@ -1564,63 +1369,8 @@ function stopAureliusPromptCycle() {
 // Make it globally available
 window.useSamplePrompt = useSamplePrompt;
 
-// Image state management
-function setAureliusImage(state) {
-    const img = document.getElementById('aurelius-state-image');
-    const sideImg = document.getElementById('aurelius-side-image');
-    const sideFaceContainer = document.getElementById('aurelius-side-face');
-    const imageDisplay = document.querySelector('.aurelius-image-display');
-    if (!img) return;
-    
-    // Remove all state classes from both images
-    img.classList.remove('thinking', 'eureka', 'meditating');
-    if (sideImg) {
-        sideImg.classList.remove('thinking', 'eureka', 'meditating');
-    }
-    
-    // Map states to images
-    const stateImages = {
-        'idle': '/aurelius-logo.png',
-        'meditating': '/aurelius-meditating.jpg',
-        'thinking': '/aurelius-thinking.jpg',
-        'eureka': '/aurelius-eureka.png'
-    };
-    
-    if (stateImages[state]) {
-        // Add fade effect to main image
-        img.style.opacity = '0';
-        
-        setTimeout(() => {
-            img.src = stateImages[state];
-            if (state !== 'idle') {
-                img.classList.add(state);
-            }
-            img.style.opacity = '1';
-        }, 300);
-        
-        // Update side image as well
-        if (sideImg) {
-            sideImg.style.opacity = '0';
-            setTimeout(() => {
-                sideImg.src = stateImages[state];
-                if (state !== 'idle') {
-                    sideImg.classList.add(state);
-                }
-                sideImg.style.opacity = '1';
-            }, 300);
-        }
-    }
-    
-    // Show side face when processing or when there are messages
-    if (sideFaceContainer) {
-        const messagesContainer = document.getElementById('aurelius-messages');
-        const hasMessages = messagesContainer && messagesContainer.children.length > 0;
-        
-        if (state === 'thinking' || state === 'eureka' || state === 'meditating' || hasMessages) {
-            sideFaceContainer.classList.add('visible');
-        }
-    }
-}
+// Aurelius is now a typographic emblem, not pictures — state no longer swaps images.
+function setAureliusImage() {}
 
 // Export functionality
 function exportConversation(format) {
@@ -1944,27 +1694,8 @@ async function typewriterEffect(text, element, speed = 30) {
     }
 }
 
-// Create particles for AureliusGPT page
-function createAureliusParticles() {
-    const existingContainer = document.querySelector('.aurelius-particles');
-    if (existingContainer) return; // Already created
-    
-    const container = document.createElement('div');
-    container.className = 'aurelius-particles';
-    document.getElementById('page-aureliusgpt').appendChild(container);
-    
-    const particleCount = 25;
-    const colors = ['gold', 'purple'];
-    
-    for (let i = 0; i < particleCount; i++) {
-        const particle = document.createElement('div');
-        particle.className = `aurelius-particle ${colors[Math.floor(Math.random() * colors.length)]}`;
-        particle.style.left = Math.random() * 100 + '%';
-        particle.style.animationDelay = Math.random() * 15 + 's';
-        particle.style.animationDuration = (12 + Math.random() * 8) + 's';
-        container.appendChild(particle);
-    }
-}
+// Particles removed for restraint.
+function createAureliusParticles() {}
 
 // Init Aurelius
 function initializeAureliusGPT() {
@@ -2024,15 +1755,25 @@ function initializeAureliusGPT() {
 // Global export
 window.sendAureliusMessage = sendAureliusMessage;
 
+// Keep the in-menu Dark/Terminal switches showing the current state.
+function syncMenuToggles() {
+    const t = document.querySelector('.mnc-switch[data-role="theme"]');
+    const m = document.querySelector('.mnc-switch[data-role="mode"]');
+    if (t) t.classList.toggle('on', !document.body.classList.contains('light-mode')); // dark = on
+    if (m) m.classList.toggle('on', terminalMode); // terminal on = on
+}
+window.syncMenuToggles = syncMenuToggles;
+
 // Mobile Navigation Toggle
 function toggleMobileNav() {
     const navOverlay = document.getElementById('mobile-nav-overlay');
-    
+
     if (navOverlay) {
         navOverlay.classList.toggle('active');
-        
+
         if (navOverlay.classList.contains('active')) {
             document.body.style.overflow = 'hidden'; // Prevent scrolling background
+            syncMenuToggles(); // reflect current Dark/Terminal state on open
         } else {
             document.body.style.overflow = '';
         }
@@ -2042,12 +1783,185 @@ function toggleMobileNav() {
 // Make toggleMobileNav global
 window.toggleMobileNav = toggleMobileNav;
 
-// Handle chip clicks
-function handleChipCommand(cmd) {
-    const input = document.getElementById('terminal-input');
-    if (input) {
-        input.value = cmd;
-        handleCommand(cmd);
+// Dismiss the mobile menu by clicking anywhere outside the links, or via Escape.
+(function wireMobileNavDismiss() {
+    const overlay = document.getElementById('mobile-nav-overlay');
+    if (overlay) {
+        overlay.addEventListener('click', (e) => {
+            // Clicks on the backdrop / header gap (not a link) close the menu.
+            if (e.target === overlay ||
+                e.target.classList.contains('mobile-nav-links') ||
+                e.target.classList.contains('mobile-nav-header')) {
+                toggleMobileNav();
+            }
+        });
+    }
+    document.addEventListener('keydown', (e) => {
+        if (e.key !== 'Escape') return;
+        const o = document.getElementById('mobile-nav-overlay');
+        if (o && o.classList.contains('active')) toggleMobileNav();
+    });
+})();
+
+// ============================================================================
+// GitHub dashboard — bespoke rendering of live /api/github data (profile,
+// contribution calendar, recent repos). Fetched once, re-rendered from cache.
+// ============================================================================
+let githubData = null;
+let githubFetching = false;
+
+async function loadGitHub() {
+    const host = document.getElementById('github-live');
+    if (!host) return;
+    if (githubData) { renderGitHub(githubData); return; }
+    if (githubFetching) return;
+    githubFetching = true;
+    host.innerHTML = '<div class="gh-loading">fetching from github<span class="gh-dots">…</span></div>';
+    try {
+        const res = await fetch('/api/github');
+        githubData = await res.json();
+        renderGitHub(githubData);
+    } catch (e) {
+        host.innerHTML = '<div class="gh-error">Could not reach the GitHub API. ' +
+            '<a href="https://github.com/tarush-ai" target="_blank">Open GitHub →</a></div>';
+    } finally {
+        githubFetching = false;
     }
 }
-window.handleChipCommand = handleChipCommand;
+
+function ghEscape(s) {
+    if (s == null) return '';
+    return String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+}
+
+function ghRelTime(iso) {
+    if (!iso) return '';
+    const then = new Date(iso).getTime();
+    if (isNaN(then)) return '';
+    const secs = Math.max(1, Math.floor((Date.now() - then) / 1000));
+    const units = [['year', 31536000], ['month', 2592000], ['week', 604800], ['day', 86400], ['hour', 3600], ['minute', 60]];
+    for (const [name, s] of units) {
+        const v = Math.floor(secs / s);
+        if (v >= 1) return `${v} ${name}${v > 1 ? 's' : ''} ago`;
+    }
+    return 'just now';
+}
+
+function ghLevel(count) {
+    if (!count) return 0;
+    if (count <= 2) return 1;
+    if (count <= 5) return 2;
+    if (count <= 9) return 3;
+    return 4;
+}
+
+function renderGitHub(data) {
+    const host = document.getElementById('github-live');
+    if (!host) return;
+    if (!data || data.ok === false) {
+        const login = (data && data.username) || 'tarush-ai';
+        host.innerHTML = '<div class="gh-error">GitHub data is temporarily unavailable. ' +
+            '<a href="https://github.com/' + ghEscape(login) + '" target="_blank">Open GitHub →</a></div>';
+        return;
+    }
+    host.innerHTML = [
+        renderGhProfile(data.profile),
+        renderGhCalendar(data.calendar),
+        renderGhRepos(data.repos, data.profile)
+    ].join('');
+}
+
+// Curated, hardcoded identity block — stable and on-brand (not pulled live).
+// The contribution graph and repositories below stay live from the API.
+function renderGhProfile() {
+    return `
+    <div class="gh-profile">
+        <img class="gh-avatar" src="/assets/logo-mark.png" alt="Tarush Gupta">
+        <div class="gh-identity">
+            <a class="gh-name" href="https://github.com/tarush-ai" target="_blank">Tarush Gupta</a>
+            <span class="gh-login">@tarush-ai</span>
+        </div>
+        <p class="gh-bio">Building language models from first principles. AI research at <strong>Cisco</strong>, <strong>Turing</strong>, and <strong>Dyssonance AI</strong> · founder of <strong>VeriCare AI</strong>.</p>
+    </div>`;
+}
+
+function renderGhCalendar(cal) {
+    if (!cal) {
+        return `
+        <div class="gh-section">
+            <div class="gh-section-title">Contributions</div>
+            <div class="gh-note">Add a <code>GITHUB_TOKEN</code> to <code>.env</code> to render the contribution graph — the calendar is only exposed through GitHub's GraphQL API.</div>
+        </div>`;
+    }
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    let monthRow = '';
+    let lastMonth = -1;
+    cal.weeks.forEach(week => {
+        const first = week[0];
+        let label = '';
+        if (first) {
+            const m = new Date(first.date).getMonth();
+            if (m !== lastMonth) { label = months[m]; lastMonth = m; }
+        }
+        monthRow += `<div class="gh-month">${label}</div>`;
+    });
+    let grid = '';
+    cal.weeks.forEach(week => {
+        const byDay = {};
+        week.forEach(d => { byDay[d.weekday] = d; });
+        let col = '';
+        for (let wd = 0; wd < 7; wd++) {
+            const d = byDay[wd];
+            if (!d) { col += '<div class="gh-cell gh-empty"></div>'; continue; }
+            const label = `${d.count} contribution${d.count === 1 ? '' : 's'} on ${d.date}`;
+            col += `<div class="gh-cell" data-level="${ghLevel(d.count)}" title="${label}"></div>`;
+        }
+        grid += `<div class="gh-week">${col}</div>`;
+    });
+    return `
+    <div class="gh-section">
+        <div class="gh-section-title">${cal.total.toLocaleString()} contributions in the last year</div>
+        <div class="gh-graph-scroll">
+            <div class="gh-graph">
+                <div class="gh-months">${monthRow}</div>
+                <div class="gh-grid">${grid}</div>
+            </div>
+        </div>
+        <div class="gh-legend">
+            <span>Less</span>
+            <span class="gh-cell" data-level="0"></span>
+            <span class="gh-cell" data-level="1"></span>
+            <span class="gh-cell" data-level="2"></span>
+            <span class="gh-cell" data-level="3"></span>
+            <span class="gh-cell" data-level="4"></span>
+            <span>More</span>
+        </div>
+    </div>`;
+}
+
+function renderGhRepos(repos, profile) {
+    if (!repos || !repos.length) return '';
+    const cards = repos.map(r => {
+        const lang = r.language && r.language.name
+            ? `<span class="gh-lang"><span class="gh-lang-dot"></span>${ghEscape(r.language.name)}</span>` : '';
+        const stars = r.stars ? `<span class="gh-meta-item">★ ${r.stars}</span>` : '';
+        const forks = r.forks ? `<span class="gh-meta-item">⑂ ${r.forks}</span>` : '';
+        const updated = r.pushedAt ? `<span class="gh-meta-item">updated ${ghRelTime(r.pushedAt)}</span>` : '';
+        return `
+        <a class="gh-repo" href="${ghEscape(r.url)}" target="_blank">
+            <div class="gh-repo-name">${ghEscape(r.name)}</div>
+            ${r.description ? `<p class="gh-repo-desc">${ghEscape(r.description)}</p>` : ''}
+            <div class="gh-repo-meta">${lang}${stars}${forks}${updated}</div>
+        </a>`;
+    }).join('');
+    const allLink = profile && profile.url
+        ? `<a class="gh-all" href="${ghEscape(profile.url)}?tab=repositories" target="_blank">All repositories →</a>` : '';
+    return `
+    <div class="gh-section">
+        <div class="gh-section-title">Recent repositories</div>
+        <div class="gh-repos">${cards}</div>
+        ${allLink}
+    </div>`;
+}
+
+window.loadGitHub = loadGitHub;

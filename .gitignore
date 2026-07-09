@@ -23,6 +23,10 @@ Thumbs.db
 *-original.png
 *-backup.*
 
+# macOS screenshots (dropped into the project folder by accident)
+Screenshot*.png
+Screen Shot*.png
+
 # Editor directories
 .vscode/
 .idea/
