@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AureliusGPT · Tarush Gupta</title>
+  <meta name="description" content="Talk to AureliusGPT, an 845K-parameter Stoic language model pretrained from scratch on Meditations.">
+  <meta property="og:title" content="AureliusGPT">
+  <meta property="og:description" content="Talk to AureliusGPT, an 845K-parameter Stoic language model pretrained from scratch on Meditations.">
+  <meta property="og:url" content="https://www.tarush.ai/aureliusgpt">
+  <meta property="og:type" content="article">
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+  <script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+  <link rel="stylesheet" href="/assets/site.css">
+  <script src="/assets/site.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js" defer></script>
+  <script src="/assets/aurelius.js" defer></script>
+<link rel="stylesheet" href="/assets/home.css">
+</head>
+<body class="portfolio reading-page">
+<div class="page">
+  <header class="site-header">
+    <a class="site-name" href="/"><img class="name-mark" src="/assets/favicon.svg" width="28" height="28" alt="" aria-hidden="true">Tarush Gupta</a>
+    <nav class="site-nav" aria-label="Main navigation"><a href="/experience">Experience</a><a href="/research">Research / Writeups</a><a href="/projects">Projects</a><a href="/talks">Talks</a><a href="/interests">Interests</a></nav>
+  </header>
+
+  <main id="main">
+    <h1>AureliusGPT</h1>
+    <p class="muted">An 845K-parameter language model trained on <em>Meditations</em> and synthetic text. This is a small training experiment; outputs can be repetitive or incoherent. <a href="/writing/aureliusgpt">Technical writeup</a>.</p>
+
+    <div class="chat" id="chat">
+      <div class="chat-log" id="chat-log" aria-live="polite">
+        <p class="chat-empty" id="chat-empty">“The soul becomes dyed with the color of its thoughts.” Ask about virtue, death, nature, or what is in your control.</p>
+      </div>
+      <form class="chat-form" id="chat-form" autocomplete="off">
+        <label for="chat-input" class="visually-hidden">Message</label>
+        <input id="chat-input" type="text" placeholder="Try a single word, like “virtue”" maxlength="200">
+        <button id="chat-send" type="submit">send</button>
+      </form>
+    </div>
+
+    <div class="chat-controls">
+      <label><input type="checkbox" id="validator"> grade each answer with GPT-4o</label>
+      <button class="btn-quiet" type="button" id="chat-export">export conversation</button>
+    </div>
+    <div class="suggest" id="suggest">
+      <button type="button">Virtue</button>
+      <button type="button">Death</button>
+      <button type="button">Nature</button>
+      <button type="button">Accept</button>
+    </div>
+
+    <a class="back" href="/projects">← all projects</a>
+  </main>
+
+  <footer class="site-footer">
+    <span>© 2026 Tarush Gupta</span>
+    <button class="theme-toggle" type="button">dark</button>
+  </footer>
+</div>
+</body>
+</html>

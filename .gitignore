@@ -44,3 +44,13 @@ visitor_count.json
 # Uploads directory
 uploads/*
 !uploads/.gitkeep
+
+# Private source material (rec letter, resume, etc.) — never commit
+new_context/
+
+# Private portfolio/repository review notes
+.local-review/
+
+# Local-only material; site/ is the public boundary.
+context/
+.venv/
