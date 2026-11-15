@@ -1,0 +1,7 @@
+*
+!server.py
+!pyproject.toml
+!uv.lock
+!README.md
+!site/
+!site/**

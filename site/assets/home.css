@@ -1,0 +1,147 @@
+/* Portfolio: one type family, three text levels, one link color. */
+.portfolio {
+  --bg: #faf9f6; --fg: #292927; --muted: #656560; --faint: #656560;
+  --rule: #e3e1dc; --surface: #f2f0eb; --accent: #244d79; --link: #315f8c;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  font-family: var(--sans); font-size: 15px; line-height: 1.65;
+  background: var(--bg); color: var(--fg);
+}
+.portfolio .page { max-width: 800px; padding: 64px 36px 40px; }
+.portfolio .site-header { display: block; margin-bottom: 30px; }
+.portfolio .site-name { display: inline-block; font: inherit; font-size: 28px; font-weight: 400; line-height: 1.25; letter-spacing: -.7px; margin: 0 0 16px; }
+.portfolio .site-name, .portfolio .site-name a { color: var(--fg); text-decoration: none; }
+.portfolio .site-nav { display: flex; flex-wrap: wrap; gap: 7px 22px; }
+.portfolio .site-nav a { font: inherit; font-size: 13px; letter-spacing: 0; color: var(--muted); }
+.portfolio a { color: var(--link); text-decoration: none; text-underline-offset: 3px; }
+.portfolio a:hover, .portfolio a:focus-visible { color: var(--accent); text-decoration: underline; text-decoration-thickness: 1px; }
+.portfolio p { margin: 0 0 10px; }
+.portfolio strong, .portfolio b { font-weight: inherit; }
+.intro { font-size: 15px; line-height: 1.7; }
+.profile-links, .resource-links { display: flex; flex-wrap: wrap; gap: 5px 18px; padding: 0; margin: 12px 0 0; list-style: none; font-size: 13px; }
+.portfolio section { margin-top: 44px; scroll-margin-top: 28px; }
+.portfolio h2 { font: inherit; font-size: 18px; letter-spacing: -.25px; margin: 0 0 20px; line-height: 1.4; }
+.portfolio h3 { font: inherit; font-size: 15px; line-height: 1.6; margin: 0; }
+.experience { margin-bottom: 24px; scroll-margin-top: 28px; }
+.entry-heading { display: flex; justify-content: space-between; gap: 18px; align-items: baseline; margin-bottom: 5px; }
+.entry-heading h3 { flex: 1; min-width: 0; }
+.dates { font-size: 13px; color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.inline-role { font: inherit; color: var(--muted); }
+.experience-points { padding-left: 15px; margin: 4px 0 0; font-size: 15px; line-height: 1.65; }
+.experience-points li { padding-left: 1px; margin: 3px 0; }
+.experience-points li::marker, .plain-list li::marker { color: var(--muted); font-size: .65em; }
+.experience > .resource-links { padding-left: 16px; margin-top: 6px; }
+.future-site { color: var(--fg); text-decoration: none; }
+.earlier { margin: 8px 0 0; }
+.earlier summary { font: inherit; font-size: 13px; color: var(--muted); }
+.earlier summary::before { color: var(--muted); }
+.earlier > div { margin-top: 12px; font-size: 15px; color: var(--muted); }
+.paper-entry p, .writeup-entry p, .essay-entry p { font-size: 15px; margin: 5px 0; }
+.paper-entry .paper-meta, .writeup-entry .paper-meta, .essay-entry .paper-meta { color: var(--muted); font-size: 13px; line-height: 1.65; }
+.resource-links { margin-top: 7px; }
+.writeup-entry, .essay-entry { margin-top: 25px; }
+.project-group + .project-group { margin-top: 28px; }
+.portfolio .group-label { font-size: 13px; color: var(--muted); margin: 0 0 14px; }
+.plain-list { list-style: disc; margin: 0; padding-left: 16px; }
+.project-index { list-style: none; margin: 0; padding: 0; }
+.project-index li { display: grid; grid-template-columns: 195px minmax(0, 1fr); gap: 24px; margin: 0 0 17px; font-size: 15px; scroll-margin-top: 28px; align-items: baseline; }
+.project-index li > span:not(.plain-title) { color: var(--muted); }
+.talk-index { list-style: none; margin: 0; padding: 0; }
+.talk-index > li { margin-bottom: 20px; scroll-margin-top: 28px; }
+.talk-index p { font-size: 15px; color: var(--muted); margin: 3px 0 0; }
+.interest-list { list-style: none; margin: 0; padding: 0; font-size: 15px; }
+.interest-list li { margin-bottom: 12px; }
+.portfolio .site-footer { font-family: inherit; margin-top: 44px; padding-top: 20px; border-top: 1px solid var(--rule); font-size: 13px; color: var(--muted); }
+.portfolio .site-footer > div { display: flex; gap: 20px; }
+.portfolio .theme-toggle { font-family: inherit; color: var(--muted); }
+.portfolio .meta { font-family: inherit; }
+.section-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 12px 24px; margin-bottom: 20px; }
+.portfolio .section-heading h2 { margin: 0; }
+.section-heading > a { flex-shrink: 0; font-size: 13px; }
+.more-context { font-size: 13px; color: var(--muted); }
+.theme-toggle { display: inline-flex; align-items: center; justify-content: center; min-width: 32px; min-height: 32px; padding: 6px; }
+.theme-toggle svg { width: 18px; height: 18px; }
+.skip-link { position: absolute; top: -100px; left: 16px; padding: 10px 16px; background: var(--bg); z-index: 10; }
+.skip-link:focus { top: 10px; }
+.portfolio :focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+/* Reading pages retain a wider measure and the same navigation. */
+.portfolio.reading-page .page { max-width: 920px; }
+.archive-page .site-name, .reading-page .site-name { font-size: 28px; }
+.archive-page h1 { font: inherit; font-size: 22px; letter-spacing: -.35px; line-height: 1.3; margin: 0 0 22px; }
+.reading-page h1 { font: inherit; font-size: 28px; letter-spacing: -.6px; line-height: 1.3; margin: 0 0 22px; }
+.archive-page .project-group { margin-top: 22px; }
+.archive-page .article-head, .reading-page .article-head { margin-bottom: 24px; }
+.archive-page .article-head > p { font-size: 15px; }
+.reading-page .article-head .meta { font-family: inherit; font-size: 13px; margin-bottom: 10px; }
+.reading-page .article-head .dek { font-size: 16px; font-style: normal; line-height: 1.7; }
+.reading-page .prose { font-size: 16px; line-height: 1.85; }
+.reading-page .prose p { margin: 0 0 1.2em; }
+.reading-page .prose > p:first-of-type::first-letter { float: none; font-size: inherit; line-height: inherit; padding: 0; color: inherit; }
+.reading-page .prose h2 { margin: 32px 0 12px; font-size: 20px; }
+.reading-page .prose h3 { margin: 24px 0 10px; font-size: 16px; }
+.reading-page .specs div { font-size: 15px; padding: 6px 0; }
+.reading-page .specs dt { font-family: inherit; font-size: 13px; color: var(--muted); }
+.reading-page .links a, .reading-page .back { font-family: inherit; font-size: 13px; }
+.reading-page .essay-award { font-family: inherit; font-size: 15px; margin-bottom: 24px; }
+.reading-page .essay-award span { font-size: 13px; }
+.reading-page .essay-introduction { font-size: 15px; padding: 18px 0 4px; margin-bottom: 30px; }
+.reading-page .works-cited { font-size: 13px; line-height: 1.7; }
+.reading-page .article-toc { margin: 20px 0 28px; font-size: 13px; display: flex; flex-wrap: wrap; gap: 8px 18px; }
+.reading-page .chat { border-radius: 3px; scroll-margin-top: 24px; }
+.reading-page .chat-form input { font-size: 16px; }
+.reading-page .chat-controls, .reading-page .chat-controls .btn-quiet { font-family: inherit; font-size: 13px; }
+.reading-page .suggest button { font-style: normal; font-size: 13px; border-radius: 3px; }
+.reading-page .back { margin-top: 32px; }
+:root[data-theme="dark"] .portfolio { --bg: #181b1e; --fg: #e5e8eb; --muted: #a5aeb7; --faint: #a5aeb7; --rule: #333a40; --surface: #22272c; --accent: #b6d3ef; --link: #92bce5; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .portfolio { --bg: #181b1e; --fg: #e5e8eb; --muted: #a5aeb7; --faint: #a5aeb7; --rule: #333a40; --surface: #22272c; --accent: #b6d3ef; --link: #92bce5; } }
+@media (max-width: 640px) {
+  .section-heading { flex-wrap: wrap; gap: 6px 16px; }
+  .portfolio .page { padding: 34px 24px; }
+  .portfolio .site-name { font-size: 26px; }
+  .archive-page .site-name, .reading-page .site-name { font-size: 26px; }
+  .portfolio .site-header { margin-bottom: 25px; }
+  .entry-heading { flex-wrap: wrap; gap: 2px 14px; }
+  .entry-heading h3 { flex-basis: 100%; }
+  .portfolio .site-nav { gap: 8px 18px; }
+  .portfolio section { margin-top: 36px; }
+  .project-index li { grid-template-columns: 1fr; gap: 3px; margin-bottom: 20px; }
+  .reading-page h1 { font-size: 26px; }
+}
+
+/* Inline references retain a quiet affordance; linked titles stay unadorned. */
+.portfolio p a, .portfolio .experience-points a, .portfolio .interest-list a,
+.portfolio .project-index li > span a, .portfolio .prose a {
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--link) 35%, transparent);
+  text-decoration-thickness: 1px;
+}
+.portfolio a:hover, .portfolio a:focus-visible { text-decoration-color: currentColor; }
+
+.portfolio .section-heading h2 a { color: var(--fg); }
+.section-arrow { font-size: .8em; color: var(--link); margin-left: 3px; }
+
+/* Personal notes use the same quiet rhythm as the work pages. */
+.interest-note + .interest-note { margin-top: 24px; }
+.interest-note h3 { margin-bottom: 6px; }
+.interest-photos { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 20px; }
+.interest-photos figure { margin: 0; min-width: 0; }
+.interest-photos img { display: block; width: 100%; height: auto; }
+.interest-photos figcaption { font-size: 13px; color: var(--muted); margin-top: 7px; }
+@media (max-width: 640px) { .interest-photos { grid-template-columns: 1fr; } }
+
+/* Separate personal context from the work above without adding cards. */
+.portfolio .interests-block, .portfolio .interest-chapter { border-top: 1px solid var(--rule); padding-top: 26px; }
+.portfolio .interests-block h3 { color: var(--muted); font-size: 13px; margin: 22px 0 7px; }
+.portfolio .interest-chapter h2 { font-size: 20px; }
+.portfolio .site-nav a[aria-current="page"] { color: var(--fg); text-decoration: underline; }
+
+/* Keep project resources above the specs, distinct from article navigation. */
+.reading-page .article-resources { margin: 0 0 24px; }
+.reading-page .article-toc { border-top: 1px solid var(--rule); padding-top: 16px; }
+.portfolio .interest-chapter { margin-top: 28px; padding-top: 20px; }
+.portfolio h1 + .interest-chapter { margin-top: 0; }
+.vericare-entry .resource-links { padding-left: 0; margin-top: 12px; gap: 8px 18px; }
+.portfolio #vericare > .vericare-entry { margin-bottom: 0; }
+
+/* The monogram travels with the name, including its home link. */
+.portfolio .site-name { display: inline-flex; align-items: center; gap: 10px; }
+.name-mark { display: block; flex: 0 0 auto; width: 28px; height: 28px; }

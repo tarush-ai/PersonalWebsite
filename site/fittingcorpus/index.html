@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Fitting Corpus Is Part of the Measurement</title>
+<meta name="description" content="Auditing a Jacobian lens on Pythia: changing only the corpus a Jacobian lens is fitted on changes what it reads. Interpretability as a Science Workshop, NeurIPS 2026.">
+<meta name="author" content="Tarush Gupta">
+<meta property="og:title" content="The Fitting Corpus Is Part of the Measurement">
+<meta property="og:description" content="Auditing a Jacobian lens on Pythia. Interpretability as a Science Workshop, NeurIPS 2026.">
+<meta property="og:type" content="article">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232b6982'/%3E%3Cg fill='%23ffffff'%3E%3Crect x='6' y='6' width='5' height='5' rx='1' opacity='.45'/%3E%3Crect x='13.5' y='6' width='5' height='5' rx='1' opacity='.7'/%3E%3Crect x='21' y='6' width='5' height='5' rx='1'/%3E%3Crect x='6' y='13.5' width='5' height='5' rx='1' opacity='.7'/%3E%3Crect x='13.5' y='13.5' width='5' height='5' rx='1'/%3E%3Crect x='21' y='13.5' width='5' height='5' rx='1' opacity='.45'/%3E%3Crect x='6' y='21' width='5' height='5' rx='1'/%3E%3Crect x='13.5' y='21' width='5' height='5' rx='1' opacity='.45'/%3E%3Crect x='21' y='21' width='5' height='5' rx='1' opacity='.7'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="stylesheet" href="static/css/site.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="venue">Interpretability as a Science Workshop &middot; NeurIPS 2026 &middot; Sydney</span>
+    <h1>The Fitting Corpus Is Part of the Measurement</h1>
+    <p class="subtitle">Auditing a Jacobian Lens on Pythia</p>
+    <p class="authors"><a href="https://tarush.ai/">Tarush Gupta</a></p>
+    <p class="affil">Independent Researcher</p>
+    <nav class="links" aria-label="Paper links">
+      <a class="pill" href="static/pdf/fittingcorpus-workshop.pdf">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 1.8L18.2 9H13V3.8zM8 12h8v1.6H8V12zm0 3.2h8v1.6H8v-1.6zm0 3.2h5v1.6H8v-1.6z"/></svg>
+        <span>Paper</span></a>
+      <a class="pill" href="https://neurips.cc/virtual/2026/loc/sydney/165983">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2h2v2h6V2h2v2h2a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2V2zM5 9v10h14V9H5zm2 2h4v4H7v-4z"/></svg>
+        <span>NeurIPS 2026</span></a>
+      <a class="pill" href="https://github.com/tarush-ai/fittingcorpus">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+        <span>Code</span></a>
+      <a class="pill" href="https://huggingface.co/Tarush-AI/fittingcorpus">
+        
+        <span>Maps &amp; results</span></a>
+      <a class="pill" href="#cite">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6h5v5H7.6c.1 2 1 3.2 2.9 3.8V17C6.9 16.4 5 14 5 10.4V6zm9 0h5v5h-2.4c.1 2 1 3.2 2.9 3.8V17c-3.6-.6-5.5-3-5.5-6.6V6z"/></svg>
+        <span>BibTeX</span></a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+<section style="padding-top: 8px;">
+  <div class="wrap">
+    <figure class="teaser">
+      <a href="static/img/pipeline.svg" title="Open the figure full size"><img src="static/img/pipeline.svg" alt="Schematic of the measurement. The fitting corpus P supplies prompts over which the Jacobian J is averaged. A read-context corpus Q supplies a 128-token passage placed before each test prompt, whose hidden state is transported by J, unembedded, and scored by the rank of the intermediate concept at each layer of the band." loading="lazy"></a>
+      <figcaption><b>Figure 1.</b> The measurement. The fitting corpus <i>P</i> supplies the prompts
+        the map <i>J</i><sub>&#8467;</sub> is averaged over (top); the read-context corpus <i>Q</i>
+        supplies the 128-token passage in front of each test prompt (bottom). The factorial varies
+        <i>P</i> and <i>Q</i> over eight corpora each, holding all else fixed.</figcaption>
+    </figure>
+  </div>
+</section>
+<section class="band" id="abstract">
+  <div class="wrap prose">
+    <h2>Abstract</h2>
+    <p>Interpretability lenses show what an intermediate layer of a language model represents by
+      mapping its hidden state onto the model's vocabulary. The Jacobian lens of
+      <a href="https://transformer-circuits.pub/2026/workspace/index.html">Gurnee et al. (2026)</a>
+      first passes the hidden state through a linear map: the model's derivative of a late-layer
+      hidden state with respect to that layer, averaged over a set of prompts. The lens therefore
+      depends on a fitting corpus, the text those prompts are drawn from. The original work shows
+      that a few prompts suffice, but it does not vary which text they come from. We vary it on
+      EleutherAI's Pythia models, scoring each lens by how often it ranks a test prompt's annotated
+      intermediate concept among its top tokens. On Pythia-410M, changing only the fitting corpus
+      moves this readout score from 22.8 to 26.0 out of 100, against 19.8 for the logit lens, which
+      fits nothing. Disjoint samples of one corpus agree far more closely than different corpora do,
+      and the effect recurs at Pythia-1B and 2.8B. It is not explained by how much of each corpus
+      appears verbatim in Pythia's training data or by any of twenty measured corpus and map
+      statistics, and it persists as the fitting set grows from 25 to 800 prompts. The fitting
+      corpus is therefore part of a Jacobian-lens measurement, and should be reported and varied
+      like the model and the layer.</p>
+  </div>
+</section>
+<section id="results">
+  <div class="wrap"><h2>Key results</h2>
+    <p class="lede">A Jacobian lens reads a language model's hidden states through a linear map
+      averaged over a set of prompts. Hold the model, the test prompts and the scoring fixed, change
+      only which text those prompts come from, and the lens reads differently.</p>
+    <div class="stats">
+      <div class="stat">
+        <span class="big">22.8&ndash;26.0 <span class="unit">/ 100</span></span>
+        <p>Readout score of Pythia-410M's Jacobian lens across eight fitting corpora, averaged over
+          read contexts. The logit lens, which fits nothing, scores 19.8.</p>
+      </div>
+      <div class="stat">
+        <span class="big">0.989</span>
+        <p>Share of the variance that lies between corpora rather than between disjoint samples of
+          one corpus, against a pre-registered threshold of 0.70.</p>
+      </div>
+      <div class="stat">
+        <span class="big">1B &middot; 2.8B</span>
+        <p>The corpus ordering recurs at both, against criteria fixed before those models were
+          scored.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="method">
+  <div class="wrap prose">
+    <h2>The measurement</h2>
+    <p>The logit lens applies a model's own final normalisation and unembedding to an intermediate
+      hidden state, and has no parameters. The Jacobian lens first transports the hidden state
+      <i>h</i><sub>&#8467;</sub> with a linear map <i>J</i><sub>&#8467;</sub>: the model's derivative
+      of its penultimate-layer state with respect to layer &#8467;, averaged over prompts <i>x</i>
+      from a fitting corpus <i>P</i>.</p>
+    <div class="eq" role="math" aria-label="J sub l equals the expectation over x drawn from P of the derivative of h sub L with respect to h sub l; the lens reads softmax of W U times LN of J sub l h sub l">
+      <i>J</i><sub>&#8467;</sub> = &#120124;<sub><i>x</i>&sim;<i>P</i></sub>&thinsp;[&thinsp;&part;<i>h</i><sub><i>L</i></sub>(<i>x</i>) / &part;<i>h</i><sub>&#8467;</sub>(<i>x</i>)&thinsp;],
+      &nbsp;&nbsp; read<sub>&#8467;</sub>(<i>h</i><sub>&#8467;</sub>) = softmax(<i>W</i><sub><i>U</i></sub>&thinsp;LN(<i>J</i><sub>&#8467;</sub><i>h</i><sub>&#8467;</sub>))
+    </div>
+    <p>Setting <i>J</i><sub>&#8467;</sub> to the identity recovers the logit lens. Because
+      <i>J</i><sub>&#8467;</sub> is an average over <i>P</i>, a different fitting corpus can give a
+      different map. The <em>read context</em>, the text placed in front of the prompt being read,
+      instead changes <i>h</i><sub>&#8467;</sub> itself. Nothing in the method requires the two to
+      match.</p>
+
+    <h3>Test prompts</h3>
+    <p>We evaluate on the 551 test prompts released with the lens, in six families: multi-hop facts,
+      multilingual, order of operations, poetry, typo correction and word association. Each is
+      annotated with an intermediate concept the model should compute on the way to its answer. In
+      <em>&ldquo;Fact: The language spoken in the country where the Amazon River ends is&rdquo;</em>,
+      the answer is <em>Portuguese</em> and the intermediate is <em>Brazil</em>. A lens does well on
+      this prompt if <em>Brazil</em> ranks near the top at the middle layers. Each prompt is read
+      after a 128-token passage from a read-context corpus, disjoint from every fitting prompt.</p>
+
+    <h3>Readout score</h3>
+    <ol class="steps">
+      <li>At each layer of the source's middle band (layers 9 to 21 of Pythia-410M's 24), rank the
+        intermediate among all vocabulary tokens by the lens's logits.</li>
+      <li>For a threshold <i>k</i>, the prompt counts as recovered if its best rank in the band is at
+        most <i>k</i>.</li>
+      <li>The readout score is the fraction of prompts recovered, averaged over
+        <i>k</i> &isin; {1, 2, 5, 10, 20, 50, 100} and multiplied by 100.</li>
+    </ol>
+    <p>If <em>Brazil</em>'s best rank across the band were 7, the Amazon prompt would count at
+      <i>k</i> = 10, 20, 50 and 100 but not at 1, 2 or 5, contributing 4/7 of a prompt. A score of 26
+      is therefore a mean over seven thresholds, not a success rate. Word association sits at the
+      floor for every lens, the logit lens included, so scores use the other five families. This
+      rule, <em>any-layer recovery</em>, is the source's own definition and the paper's primary;
+      a stricter <em>majority-layer</em> rule, which requires the top <i>k</i> at half or more of the
+      band's layers, is a sensitivity analysis.</p>
+  </div>
+</section>
+
+<section class="band" id="grid">
+  <div class="wrap">
+    <h2>Changing the fitting corpus changes the readout</h2>
+    <p class="kicker">Every cell uses the same model, test prompts and scoring. Only the corpus the
+      map was fitted on (rows) and the passage placed before each prompt (columns) change.</p>
+    <div class="card">
+      <div class="card-head">
+        <p class="card-title">Readout score at Pythia-410M, any-layer recovery</p>
+        <div class="legend">
+          <span class="key"><svg width="22" height="6" aria-hidden="true"><rect width="22" height="4" y="1" rx="2" fill="var(--pile)"/></svg>Pile components</span>
+          <span class="key"><svg width="22" height="6" aria-hidden="true"><rect width="22" height="4" y="1" rx="2" fill="var(--post)"/></svg>After the Pile</span>
+        </div>
+      </div>
+      <div class="scroll-x"><div class="chart" id="chart-grid" role="img" aria-label="Heatmap of readout scores: eight fitting corpora by eight read contexts, with row and column means."></div></div>
+      <p class="note only-narrow">Swipe sideways to see every column.</p>
+      <p class="note">The colour scale starts at the logit lens (19.8, read without a prefix). Hover a
+        cell for its value; the table below lists all 64.</p>
+      <details class="data"><summary>Show the numbers</summary><div class="tbl-wrap" id="table-grid"></div></details>
+    </div>
+    <div class="prose" style="margin-top: 26px;">
+      <p>Averaged over read contexts, the map fitted on GitHub scores 22.8 and the map fitted on
+        StackExchange 26.0. Fitting and reading on the same corpus confers no detectable advantage,
+        and GitHub is the worst fitting corpus in all five families.</p>
+    </div>
+    <div class="card" style="margin-top: 18px;">
+      <div class="card-head">
+        <p class="card-title">How the variance among the 64 cells splits</p>
+        <div class="seg" role="group" aria-label="Recovery rule">
+          <button type="button" data-rule="Any-layer" aria-pressed="true">Any-layer (primary)</button>
+          <button type="button" data-rule="Majority-layer" aria-pressed="false">Majority-layer</button>
+        </div>
+      </div>
+      <div class="chart" id="chart-variance" role="img" aria-label="Variance shares of the fit by read grid, with 95% intervals."></div>
+      <p class="note" id="variance-note"></p>
+    </div>
+  </div>
+</section>
+
+<section id="samples">
+  <div class="wrap">
+    <h2>Different corpora, not different samples</h2>
+    <p class="kicker">Two pre-registered tests ask whether the corpus effect is sampling noise, or
+      the lexical diversity of the fitting text.</p>
+    <div class="card">
+      <div class="card-head">
+        <p class="card-title">Both tests clear the thresholds fixed in advance</p>
+        <div class="legend">
+          <span class="key"><svg width="14" height="14" aria-hidden="true"><circle cx="7" cy="7" r="5.5" fill="var(--minc)"/></svg>Any-layer (primary)</span>
+          <span class="key"><svg width="14" height="14" aria-hidden="true"><path d="M7 1 L13 7 L7 13 L1 7 Z" fill="var(--perc)"/></svg>Majority-layer (registered)</span>
+        </div>
+      </div>
+      <div class="chart" id="chart-tests" role="img" aria-label="Two bullet charts: between-source share of variance 0.989 against a threshold of 0.70, and matched-pool spread of 22.7 pooled seed standard deviations against a threshold of 20."></div>
+    </div>
+    <div class="prose" style="margin-top: 26px;">
+      <p>We refit maps on four disjoint document blocks from each of Pile-CC and Wikipedia. Source
+        identity accounts for 0.989 of the variance among their scores. With the fitting prompts
+        matched on type-token ratio, the share of distinct tokens in a window, the spread between
+        five corpora stays at 22.7 <em>pooled seed SDs</em>, a unit that measures how far a score
+        moves when only the fitting sample changes. Both tests were registered under majority-layer
+        recovery, before any-layer became the paper's primary rule, and pass under it too (0.972 and
+        22.2).</p>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="membership">
+  <div class="wrap">
+    <h2>Training-data exposure does not explain the ordering</h2>
+    <p class="kicker">Pythia's training data are published, so whether a corpus was seen in training
+      can be measured rather than assumed.</p>
+    <div class="card">
+      <div class="card-head">
+        <p class="card-title">Containment in Pythia's training data against the readout each corpus produces</p>
+        <div class="legend">
+          <span class="key"><svg width="14" height="14" aria-hidden="true"><circle cx="7" cy="7" r="5.5" fill="var(--pile)"/></svg>Pile component</span>
+          <span class="key"><svg width="14" height="14" aria-hidden="true"><rect x="1.5" y="1.5" width="11" height="11" rx="2" fill="var(--post)"/></svg>After the Pile</span>
+        </div>
+      </div>
+      <div class="chart" id="chart-contain" role="img" aria-label="Scatter of 32-gram containment on a log axis against mean readout score for eight fitting corpora. The three corpora with no detectable containment read inside the range of the five Pile components."></div>
+      <p class="note">Spearman &minus;0.10 over eight corpora. Values below 0.002 are reported as no
+        detectable match, not as absence from training: re-wrapping identical text can leave as
+        little as 0.14% of its 32-grams intact.</p>
+      <details class="data"><summary>Show the numbers</summary><div class="tbl-wrap" id="table-contain"></div></details>
+    </div>
+    <div class="prose" style="margin-top: 26px;">
+      <p><em>32-gram containment</em> is the fraction of a corpus's 32-token windows that occur
+        verbatim in Pythia's training data. If maps fitted on text Pythia saw more often read better,
+        the three later corpora should read below the five Pile components. All three read inside
+        their range, and GitHub, the most contained corpus, builds the worst map. Containment is a
+        coarse proxy for exposure on eight corpora, so finer exposure mechanisms are not ruled
+        out.</p>
+    </div>
+  </div>
+</section>
+
+<section id="ladder">
+  <div class="wrap">
+    <h2>The effect replicates at Pythia-1B and 2.8B</h2>
+    <p class="kicker">The five Pile corpora were refit at 1B (200 prompts per map) and 2.8B (25) and
+      compared with 410M on two criteria fixed before those models were scored.</p>
+    <div class="card">
+      <div class="card-head">
+        <p class="card-title">Per task family, against each criterion</p>
+        <div class="legend">
+          <span class="key"><svg width="14" height="14" aria-hidden="true"><circle cx="7" cy="7" r="5.5" fill="var(--size-a)"/></svg>Pythia-1B</span>
+          <span class="key"><svg width="14" height="14" aria-hidden="true"><path d="M7 1 L13 7 L7 13 L1 7 Z" fill="var(--size-b)"/></svg>Pythia-2.8B</span>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div><div class="chart" id="chart-tau" role="img" aria-label="Kendall tau with the 410M corpus ordering per family at 1B and 2.8B, against a criterion of 0.6."></div><p class="note" id="tau-note"></p></div>
+        <div><div class="chart" id="chart-R" role="img" aria-label="Between-corpus spread R per family at 1B and 2.8B, against a criterion of 10."></div><p class="note" id="R-note"></p></div>
+      </div>
+      <details class="data"><summary>Show the numbers</summary><div class="tbl-wrap" id="table-ladder"></div></details>
+    </div>
+    <div class="prose" style="margin-top: 26px;">
+      <p>Both criteria use <i>z</i>: the intermediate's logit minus the mean logit over the vocabulary,
+        divided by the logits' standard deviation, at the band layer where it is largest. The
+        agreement criterion asks Kendall's <i>&tau;</i> with the 410M corpus ordering to reach 0.6 in
+        at least three of five families (<i>&tau;</i> = 1 for identical orderings). The spread
+        criterion asks the between-corpus spread of <i>z</i> to exceed ten pooled seed SDs
+        (<i>R</i> &ge; 10) in at least four of five. Both are met at both sizes. <i>R</i> is not
+        comparable across sizes, because the 2.8B maps were fitted from 25 prompts. The 1.4B model is
+        reported in the paper but not counted, because its numbers were seen before the criteria
+        were fixed.</p>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="nsweep">
+  <div class="wrap">
+    <h2>More fitting prompts do not remove it</h2>
+    <p class="kicker">The source shows the lens converges with few prompts. Convergence to one
+      corpus's map is not invariance across corpora.</p>
+    <div class="card">
+      <div class="card-head"><p class="card-title">Readout-score points, Pythia-410M, any-layer recovery</p></div>
+      <div class="chart" id="chart-n" role="img" aria-label="Two bars: the largest change in any corpus's readout score as the fitting set grows from 25 to 800 prompts is 0.78 points; the spread between corpora at fixed size is 2.46 points."></div>
+    </div>
+    <div class="prose" style="margin-top: 26px;">
+      <p>The ratio, 0.32, misses the pre-registered flatness criterion of 0.25, so the curves are not
+        strictly flat, but the corpus matters long after sampling noise has become small beside it.
+        No statistic we measured identifies which property of a corpus makes its map read better:
+        none of twenty statistics of the map and the corpus meets the criterion fixed for it. Several
+        correlate strongly with the ordering, such as the dispersion of the per-prompt Jacobians
+        (<i>r</i> = &minus;0.95), and each collapses when one corpus, usually GitHub, is left out.</p>
+    </div>
+  </div>
+</section>
+
+<section id="scope">
+  <div class="wrap">
+    <h2>What this shows, and what it does not</h2>
+    <div class="two-col">
+      <div class="card">
+        <h3>Shows</h3>
+        <ul>
+          <li>The readout score of a Jacobian lens depends on its fitting corpus by more than three
+            points out of 100, far more than resampling within a corpus.</li>
+          <li>Every fitted map beats the logit lens, by 4.2 to 7.1 points when read without a prefix,
+            and maps fitted on a network with re-initialised transformer blocks read below it on 3 of
+            3 corpora, so the gain needs the trained computation.</li>
+          <li>The corpus ordering recurs across five task families, disjoint fitting samples, and at
+            1B and 2.8B.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Does not show</h3>
+        <ul>
+          <li>That the maps recover concepts Pythia represents. Pythia answers 3 to 6% of the test
+            prompts at top-1, and a systematic bias, such as a map that promotes frequent tokens, is
+            not ruled out. That needs a test set calibrated to Pythia's competence.</li>
+          <li>Anything at frontier scale: the full factorial ran at 410M, and the 2.8B maps were
+            fitted from 25 prompts.</li>
+          <li>Which property of a corpus matters: corpus identity bundles domain, formatting and token
+            statistics.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="prose">
+      <div class="callout"><p><b>Recommendation.</b> Report the fitting corpus with the model and the
+        layer, and vary it, as fitting-set size already is.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="reproduce">
+  <div class="wrap prose">
+    <h2>Reproduce</h2>
+    <p>Every statistic in the paper recomputes from the stored results in about a minute on a
+      CPU:</p>
+<pre><code>git clone https://github.com/tarush-ai/fittingcorpus && cd fittingcorpus
+uv sync
+bash repro/01_setup_local.sh      # vendors the Jacobian-lens reference implementation
+bash repro/04_fetch_results.sh    # the results JSON from Hugging Face, about 8 MB
+bash repro/RUN_ALL.sh --tier T0   # recomputes every statistic in the paper</code></pre>
+    <p>The fitted maps (16.2 GB) and every results file are on
+      <a href="https://huggingface.co/Tarush-AI/fittingcorpus">Hugging Face</a>. Tier T1 re-scores
+      every read from the stored maps on a CPU, and T2 refits maps on a GPU. Each experiment's
+      pre-registration, with its decision rule fixed before it ran, is in the
+      <a href="https://github.com/tarush-ai/fittingcorpus">repository</a>.</p>
+  </div>
+</section>
+
+<section id="cite">
+  <div class="wrap prose">
+    <h2>Citation</h2>
+    <p><a href="static/pdf/fittingcorpus-workshop.pdf">Download the workshop paper</a> or view it on the
+      <a href="https://neurips.cc/virtual/2026/loc/sydney/165983">NeurIPS 2026 page</a>.</p>
+    <div class="bib">
+      <button type="button" class="copy" id="copy-bib">Copy</button>
+<pre id="bibtex"><code>@inproceedings{gupta2026fittingcorpus,
+  title     = {The Fitting Corpus Is Part of the Measurement:
+               Auditing a Jacobian Lens on {Pythia}},
+  author    = {Gupta, Tarush},
+  booktitle = {Interpretability as a Science Workshop at NeurIPS 2026},
+  year      = {2026},
+  url       = {https://neurips.cc/virtual/2026/loc/sydney/165983}
+}</code></pre>
+    </div>
+  </div>
+</section>
+
+</main>
+<footer>
+  <div class="wrap">
+    Tarush Gupta &middot; 2026 &middot;
+    <a href="https://github.com/tarush-ai/fittingcorpus">Code</a> &middot;
+    <a href="https://huggingface.co/Tarush-AI/fittingcorpus">Maps and results</a> &middot;
+    <a href="https://neurips.cc/virtual/2026/loc/sydney/165983">NeurIPS 2026</a><br>
+    The charts draw every number from the paper's tables.
+  </div>
+</footer>
+
+<div class="tip" id="tip" role="status" aria-live="polite"></div>
+<noscript><p style="text-align:center">The charts need JavaScript; the paper has every number.</p></noscript>
+<script src="static/js/data.js"></script>
+<script src="static/js/site.js"></script>
+</body>
+</html>
