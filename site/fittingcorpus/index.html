@@ -61,9 +61,9 @@
       mapping its hidden state onto the model's vocabulary. The Jacobian lens of
       <a href="https://transformer-circuits.pub/2026/workspace/index.html">Gurnee et al. (2026)</a>
       first passes the hidden state through a linear map: the model's derivative of a late-layer
-      hidden state with respect to that layer, averaged over a set of prompts. The lens therefore
+      hidden state with respect to the one being read, averaged over a set of prompts. The lens therefore
       depends on a fitting corpus, the text those prompts are drawn from. The original work shows
-      that a few prompts suffice, but it does not vary which text they come from. We vary it on
+      that a few prompts suffice, but it does not compare different source corpora. We do so on
       EleutherAI's Pythia models, scoring each lens by how often it ranks a test prompt's annotated
       intermediate concept among its top tokens. On Pythia-410M, changing only the fitting corpus
       moves this readout score from 22.8 to 26.0 out of 100, against 19.8 for the logit lens, which
