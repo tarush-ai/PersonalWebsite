@@ -3,23 +3,27 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>The Fitting Corpus Is Part of the Measurement</title>
+<title>The Fitting Corpus Is Part of the Measurement: Auditing a Jacobian Lens on Pythia</title>
 <meta name="description" content="Auditing a Jacobian lens on Pythia: changing only the corpus a Jacobian lens is fitted on changes what it reads. Interpretability as a Science Workshop, NeurIPS 2026.">
 <meta name="author" content="Tarush Gupta">
 <meta property="og:title" content="The Fitting Corpus Is Part of the Measurement">
 <meta property="og:description" content="Auditing a Jacobian lens on Pythia. Interpretability as a Science Workshop, NeurIPS 2026.">
 <meta property="og:type" content="article">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232b6982'/%3E%3Cg fill='%23ffffff'%3E%3Crect x='6' y='6' width='5' height='5' rx='1' opacity='.45'/%3E%3Crect x='13.5' y='6' width='5' height='5' rx='1' opacity='.7'/%3E%3Crect x='21' y='6' width='5' height='5' rx='1'/%3E%3Crect x='6' y='13.5' width='5' height='5' rx='1' opacity='.7'/%3E%3Crect x='13.5' y='13.5' width='5' height='5' rx='1'/%3E%3Crect x='21' y='13.5' width='5' height='5' rx='1' opacity='.45'/%3E%3Crect x='6' y='21' width='5' height='5' rx='1'/%3E%3Crect x='13.5' y='21' width='5' height='5' rx='1' opacity='.45'/%3E%3Crect x='21' y='21' width='5' height='5' rx='1' opacity='.7'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="icon" type="image/svg+xml" href="static/img/tg.svg">
+<script>try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
 <link rel="stylesheet" href="static/css/site.css">
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
 
+<header class="site-header paper-shell">
+    <a class="site-name" href="/"><img class="name-mark" src="static/img/tg.svg" width="28" height="28" alt="" aria-hidden="true">Tarush Gupta</a>
+    <nav class="site-nav" aria-label="Main navigation"><a href="/experience">Experience</a><a href="/research" aria-current="page">Research / Writeups</a><a href="/projects">Projects</a><a href="/talks">Talks</a><a href="/interests">Interests</a></nav>
+  </header>
 <header class="hero">
   <div class="wrap">
     <span class="venue">Interpretability as a Science Workshop &middot; NeurIPS 2026 &middot; Sydney</span>
-    <h1>The Fitting Corpus Is Part of the Measurement</h1>
-    <p class="subtitle">Auditing a Jacobian Lens on Pythia</p>
+    <h1>The Fitting Corpus Is Part of the Measurement: Auditing a Jacobian Lens on Pythia</h1>
     <p class="authors"><a href="https://tarush.ai/">Tarush Gupta</a></p>
     <p class="affil">Independent Researcher</p>
     <nav class="links" aria-label="Paper links">
@@ -33,6 +37,7 @@
         <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
         <span>Code</span></a>
       <a class="pill" href="https://huggingface.co/Tarush-AI/fittingcorpus">
+        <span class="emoji" aria-hidden="true">🤗</span>
         
         <span>Maps &amp; results</span></a>
       <a class="pill" href="#cite">
@@ -367,19 +372,16 @@ bash repro/RUN_ALL.sh --tier T0   # recomputes every statistic in the paper</cod
   </div>
 </section>
 
+<div class="paper-shell"><a class="back" href="/writing">← research papers / writeups</a></div>
 </main>
-<footer>
-  <div class="wrap">
-    Tarush Gupta &middot; 2026 &middot;
-    <a href="https://github.com/tarush-ai/fittingcorpus">Code</a> &middot;
-    <a href="https://huggingface.co/Tarush-AI/fittingcorpus">Maps and results</a> &middot;
-    <a href="https://neurips.cc/virtual/2026/loc/sydney/165983">NeurIPS 2026</a><br>
-    The charts draw every number from the paper's tables.
-  </div>
-</footer>
+<footer class="site-footer paper-shell">
+    <span>© 2026 Tarush Gupta</span>
+    <button class="theme-toggle" type="button">dark</button>
+  </footer>
 
 <div class="tip" id="tip" role="status" aria-live="polite"></div>
 <noscript><p style="text-align:center">The charts need JavaScript; the paper has every number.</p></noscript>
+<script src="static/js/theme.js"></script>
 <script src="static/js/data.js"></script>
 <script src="static/js/site.js"></script>
 </body>

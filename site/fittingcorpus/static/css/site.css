@@ -2,19 +2,19 @@
 
 :root {
   color-scheme: light;
-  --page: #ffffff;
-  --band: #f6f6f3;
-  --card: #ffffff;
-  --ink: #0b0b0b;
-  --ink-2: #52514e;
-  --ink-3: #898781;
-  --hair: #e1e0d9;
+  --page: #faf9f6;
+  --band: #f2f0eb;
+  --card: #faf9f6;
+  --ink: #292927;
+  --ink-2: #656560;
+  --ink-3: #656560;
+  --hair: #e3e1dc;
   --axis: #c3c2b7;
   --ring: rgba(11, 11, 11, 0.10);
   --pill: #2b2b2a;
   --pill-ink: #ffffff;
   --pill-hover: #444441;
-  --accent: #2b6982;          /* petrol: single-hue magnitude */
+  --accent: #315f8c;          /* petrol: single-hue magnitude */
   --accent-soft: rgba(43, 105, 130, 0.10);
   --pile: #2a78d6;            /* corpus group: Pile component */
   --post: #eb6834;            /* corpus group: after the Pile */
@@ -31,11 +31,11 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
-    --page: #0f0f0e; --band: #161615; --card: #1a1a19;
-    --ink: #f0efec; --ink-2: #c3c2b7; --ink-3: #898781;
-    --hair: #2c2c2a; --axis: #383835; --ring: rgba(255,255,255,0.10);
+    --page: #181b1e; --band: #22272c; --card: #181b1e;
+    --ink: #e5e8eb; --ink-2: #a5aeb7; --ink-3: #a5aeb7;
+    --hair: #333a40; --axis: #383835; --ring: rgba(255,255,255,0.10);
     --pill: #e9e8e3; --pill-ink: #111110; --pill-hover: #ffffff;
-    --accent: #5aa6bb; --accent-soft: rgba(90,166,187,0.14);
+    --accent: #92bce5; --accent-soft: rgba(90,166,187,0.14);
     --pile: #3987e5; --post: #d95926; --pile-soft: rgba(57,135,229,0.12);
     --minc: #9085e9; --perc: #199e70;
     --size-a: #6f84a8; --size-b: #c3cfe3;
@@ -45,11 +45,11 @@
 }
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --page: #0f0f0e; --band: #161615; --card: #1a1a19;
-  --ink: #f0efec; --ink-2: #c3c2b7; --ink-3: #898781;
-  --hair: #2c2c2a; --axis: #383835; --ring: rgba(255,255,255,0.10);
+  --page: #181b1e; --band: #22272c; --card: #181b1e;
+  --ink: #e5e8eb; --ink-2: #a5aeb7; --ink-3: #a5aeb7;
+  --hair: #333a40; --axis: #383835; --ring: rgba(255,255,255,0.10);
   --pill: #e9e8e3; --pill-ink: #111110; --pill-hover: #ffffff;
-  --accent: #5aa6bb; --accent-soft: rgba(90,166,187,0.14);
+  --accent: #92bce5; --accent-soft: rgba(90,166,187,0.14);
   --pile: #3987e5; --post: #d95926; --pile-soft: rgba(57,135,229,0.12);
   --minc: #9085e9; --perc: #199e70;
   --size-a: #6f84a8; --size-b: #c3cfe3;
@@ -214,3 +214,26 @@ footer a { color: var(--ink-2); }
 .skip-link:focus { top: 12px; }
 a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 @media (max-width: 760px) { .hero { padding-top: 38px; } .stats { gap: 0; } }
+
+/* Same navigation and footer hierarchy as the portfolio writeups. */
+.paper-shell { max-width: 920px; padding-left: 36px; padding-right: 36px; margin-left: auto; margin-right: auto; }
+.site-header { padding-top: 64px; margin-bottom: 30px; }
+.site-name { display: inline-flex; align-items: center; gap: 10px; font-size: 28px; font-weight: 400; line-height: 1.25; letter-spacing: -.7px; margin-bottom: 16px; color: var(--ink); text-decoration: none; }
+.name-mark { width: 28px; height: 28px; flex-shrink: 0; }
+.site-nav { display: flex; flex-wrap: wrap; gap: 7px 22px; }
+.site-nav a { font-size: 13px; color: var(--ink-2); text-decoration: none; }
+.site-nav a[aria-current="page"] { color: var(--ink); text-decoration: underline; }
+.site-nav a:hover, .back:hover { text-decoration: underline; }
+.back { display: inline-block; margin-top: 32px; font-size: 13px; text-decoration: none; }
+.site-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 44px; padding-top: 20px; padding-bottom: 40px; border-top: 1px solid var(--hair); font-size: 13px; color: var(--ink-2); text-align: left; }
+.theme-toggle { display: inline-flex; align-items: center; justify-content: center; min-width: 32px; min-height: 32px; padding: 6px; border: 0; background: transparent; color: var(--ink-2); cursor: pointer; }
+.theme-toggle svg { width: 18px; height: 18px; }
+@media (max-width: 640px) {
+ .paper-shell { padding-left: 24px; padding-right: 24px; }
+ .site-header { padding-top: 34px; margin-bottom: 25px; }
+ .site-name { font-size: 26px; }
+ .site-nav { gap: 8px 18px; }
+}
+
+/* The site header already supplies the gap above the paper title. */
+.site-header + .hero { padding-top: 0; }
