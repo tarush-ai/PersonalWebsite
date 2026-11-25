@@ -1,0 +1,96 @@
+/* Site-wide layout and type rhythm. Loaded last on every public page. */
+:root {
+  --space-section: 32px;
+  --space-entry: 20px;
+}
+.portfolio .site-header, .site-header.paper-shell { display: block; margin-bottom: 32px; }
+.portfolio .site-name, .paper-shell .site-name { margin: 0 0 16px; font-size: 28px; line-height: 1.25; }
+.portfolio .site-nav, .paper-shell .site-nav { display: flex; flex-wrap: wrap; gap: 8px 20px; }
+.portfolio .site-nav a, .paper-shell .site-nav a { font-size: 14px; line-height: 1.5; }
+.portfolio { font-size: 16px; line-height: 1.65; }
+.portfolio .intro, .portfolio .experience-points,
+.portfolio .project-index li, .portfolio .talk-index p,
+.portfolio .paper-entry p, .portfolio .writeup-entry p, .portfolio .essay-entry p { font-size: 16px; line-height: 1.65; }
+.portfolio h1 { font-size: 30px; font-weight: 400; line-height: 1.25; margin: 0 0 20px; }
+.portfolio .site-name { font-size: 28px; margin: 0 0 16px; }
+.portfolio h2, .portfolio .interest-chapter h2 { font-size: 22px; font-weight: 500; line-height: 1.4; margin: 0 0 12px; }
+.portfolio h3 { font-size: 17px; font-weight: 500; line-height: 1.5; }
+.portfolio p { margin: 0 0 12px; }
+.portfolio section { margin-top: var(--space-section); }
+.portfolio main > h1 + section, .portfolio .writing-category:first-of-type { margin-top: 0; }
+.portfolio .section-heading { margin-bottom: 16px; }
+.portfolio .section-heading h2 { margin: 0; }
+.portfolio .experience, .portfolio .talk-index > li { margin: 0 0 var(--space-entry); }
+.portfolio .experience:last-child, .portfolio .talk-index > li:last-child { margin-bottom: 0; }
+.portfolio .paper-entry, .portfolio .writeup-entry, .portfolio .essay-entry { margin: 0; }
+.portfolio article + .paper-entry, .portfolio article + .writeup-entry,
+.portfolio article + .essay-entry { margin-top: var(--space-entry); }
+.portfolio .paper-meta, .portfolio .entry-context, .portfolio .article-head .meta,
+.hero .meta, .hero .entry-context {
+  font-family: inherit; font-size: 14px; font-weight: 400; line-height: 1.5;
+  letter-spacing: 0; color: var(--muted, var(--ink-2)); margin: 6px 0;
+}
+.portfolio .paper-entry .paper-meta, .portfolio .writeup-entry .paper-meta,
+.portfolio .essay-entry .paper-meta, .portfolio article .entry-context { font-size: 14px; line-height: 1.5; }
+.portfolio .writing-category, .portfolio .interest-chapter, .portfolio .interests-block { padding-top: 20px; }
+.portfolio .project-index li { grid-template-columns: 195px minmax(0, 1fr); gap: 24px; margin-bottom: 18px; }
+.portfolio .article-head { margin-bottom: 20px; }
+.portfolio .article-head .meta, .hero .meta { display: block; margin: 0 0 10px; }
+.portfolio .article-head h1, .hero h1 { font-size: clamp(28px, 3vw, 36px); line-height: 1.2; font-weight: 400; margin: 0 0 12px; }
+.portfolio .article-head .dek { margin: 0; font-size: 17px; line-height: 1.65; }
+.portfolio .prose { font-size: 17px; line-height: 1.75; }
+.portfolio .prose p { margin: 0 0 18px; }
+.portfolio .prose h2 { font-size: 22px; margin: 32px 0 12px; }
+.portfolio .prose h3 { font-size: 18px; margin: 24px 0 10px; }
+.portfolio .prose > h2:first-child { margin-top: 0; }
+.portfolio .prose ul, .portfolio .prose ol { margin: 16px 0 20px; }
+.portfolio .prose li { margin-bottom: 12px; }
+.portfolio .essay-introduction { padding: 16px 0; margin: 20px 0; font-size: 16px; }
+.portfolio .article-toc { margin: 20px 0; padding-top: 16px; }
+.portfolio .full-toc ul { margin: 12px 0 0; gap: 6px 24px; }
+.portfolio .full-toc summary { font-family: inherit; letter-spacing: 0; }
+.portfolio .timestamp-note { margin-top: 32px; padding-top: 20px; }
+.portfolio .site-footer, .site-footer.paper-shell {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 32px; padding-top: 16px; font-size: 14px;
+}
+.portfolio .back { display: inline-block; margin-top: 24px; font-size: 14px; }
+/* Keep the original page and paper proportions from their base stylesheets. */
+.hero { padding-bottom: 20px; }
+.hero .links { margin-top: 16px; }
+#main > section { padding-top: 16px; padding-bottom: 16px; }
+.portfolio #main > section { padding-bottom: 0; }
+.portfolio #main > section:not(.writing-category):not(.interest-chapter):not(.interests-block) { padding-top: 0; }
+.prose p { margin-bottom: 18px; }
+.kicker, .lede { margin-bottom: 18px; }
+.site-footer.paper-shell { padding-bottom: 32px; }
+@media (max-width: 700px) {
+  .portfolio .site-header, .site-header.paper-shell { display: block; margin-bottom: 24px; }
+  .portfolio .site-name, .paper-shell .site-name { font-size: 26px; margin-bottom: 14px; }
+  .portfolio .site-nav, .paper-shell .site-nav { gap: 8px 18px; }
+  .portfolio .project-index li { grid-template-columns: 1fr; gap: 4px; }
+  .portfolio .prose { font-size: 16px; }
+  .portfolio .full-toc ul { grid-template-columns: 1fr; }
+}
+
+.site-header .theme-toggle {
+  position: fixed;
+  top: 20px;
+  right: 24px;
+  z-index: 20;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--bg, var(--page));
+}
+.site-header .theme-toggle:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+@media (max-width: 640px) {
+  .site-header .theme-toggle { top: 16px; right: 12px; }
+  .site-header .site-name { padding-right: 36px; }
+}

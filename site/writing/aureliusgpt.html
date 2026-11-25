@@ -14,12 +14,14 @@
   <link rel="stylesheet" href="/assets/site.css">
   <script src="/assets/site.js" defer></script>
 <link rel="stylesheet" href="/assets/home.css">
+  <link rel="stylesheet" href="/assets/layout.css">
 </head>
-<body class="portfolio reading-page">
+<body class="portfolio reading-page writeup-page">
+<a class="skip-link" href="#main">Skip to content</a>
 <div class="page">
-  <header class="site-header">
+  <header class="site-header"><button class="theme-toggle" type="button" aria-label="Switch theme">dark</button>
     <a class="site-name" href="/"><img class="name-mark" src="/assets/favicon.svg" width="28" height="28" alt="" aria-hidden="true">Tarush Gupta</a>
-    <nav class="site-nav" aria-label="Main navigation"><a href="/experience">Experience</a><a href="/research" aria-current="page">Research / Writeups</a><a href="/projects">Projects</a><a href="/talks">Talks</a><a href="/interests">Interests</a></nav>
+    <nav class="site-nav" aria-label="Main navigation"><a href="/experience">Experience</a><a href="/writing" aria-current="page">Writeups</a><a href="/projects">Projects</a><a href="/talks">Talks</a><a href="/interests">Interests</a></nav>
   </header>
 
   <main id="main">
@@ -44,8 +46,6 @@
         <div><dt>training</dt><dd>PyTorch · local CPU · 80/20 split</dd></div>
         <div><dt>distill</dt><dd>off-policy, sequence-level (Llama 3.2 1B)</dd></div>
       </dl>
-
-
 
       <nav class="article-toc" aria-label="On this page"><a href="#overview">Overview</a><a href="#data">Data</a><a href="#architecture">Architecture</a><a href="#training">Training</a><a href="#limitations">Limitations</a></nav>
       <div class="prose">
@@ -73,13 +73,10 @@
       </div>
     </article>
 
-    <a class="back" href="/writing">← research papers / writeups</a>
+    <a class="back" href="/writing">All writeups</a>
   </main>
 
-  <footer class="site-footer">
-    <span>© 2026 Tarush Gupta</span>
-    <button class="theme-toggle" type="button">dark</button>
-  </footer>
+  <footer class="site-footer"><a href="mailto:tarushgs@gmail.com">tarushgs@gmail.com</a></footer>
 </div>
 </body>
 </html>

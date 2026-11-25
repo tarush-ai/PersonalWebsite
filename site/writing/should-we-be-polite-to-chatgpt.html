@@ -14,12 +14,14 @@
   <link rel="stylesheet" href="/assets/site.css">
   <script src="/assets/site.js" defer></script>
 <link rel="stylesheet" href="/assets/home.css">
+  <link rel="stylesheet" href="/assets/layout.css">
 </head>
-<body class="portfolio reading-page">
+<body class="portfolio reading-page writeup-page">
+<a class="skip-link" href="#main">Skip to content</a>
 <div class="page">
-  <header class="site-header">
+  <header class="site-header"><button class="theme-toggle" type="button" aria-label="Switch theme">dark</button>
     <a class="site-name" href="/"><img class="name-mark" src="/assets/favicon.svg" width="28" height="28" alt="" aria-hidden="true">Tarush Gupta</a>
-    <nav class="site-nav" aria-label="Main navigation"><a href="/experience">Experience</a><a href="/research" aria-current="page">Research / Writeups</a><a href="/projects">Projects</a><a href="/talks">Talks</a><a href="/interests">Interests</a></nav>
+    <nav class="site-nav" aria-label="Main navigation"><a href="/experience">Experience</a><a href="/writing" aria-current="page">Writeups</a><a href="/projects">Projects</a><a href="/talks">Talks</a><a href="/interests">Interests</a></nav>
   </header>
 
   <main id="main">
@@ -30,7 +32,7 @@
         <p class="dek">What does a model’s politeness tell us about its alignment?</p>
       </header>
 
-      <p class="essay-award">Very High Commendation<br><span>John Locke Institute Essay Competition · Science &amp; Technology · 2026</span></p>
+      <p class="entry-context">Very High Commendation · John Locke Institute Essay Competition · Science &amp; Technology</p>
       <div class="essay-introduction"><p>This essay begins with an everyday question about chatbot etiquette and develops a broader argument about AI safety. I distinguish politeness as a user’s courtesy from politeness as learned model behavior, then examine why outward behavior may be insufficient evidence of alignment.</p><p>Drawing on philosophy, reinforcement learning, and the incentives shaping AI development, I argue for bringing interpretability and safety into pretraining.</p></div>
 
       <div class="prose">
@@ -72,13 +74,10 @@
       </ul>
     </article>
 
-    <a class="back" href="/writing">← research papers / writeups</a>
+    <a class="back" href="/writing">All writeups</a>
   </main>
 
-  <footer class="site-footer">
-    <span>© 2026 Tarush Gupta</span>
-    <button class="theme-toggle" type="button">dark</button>
-  </footer>
+  <footer class="site-footer"><a href="mailto:tarushgs@gmail.com">tarushgs@gmail.com</a></footer>
 </div>
 </body>
 </html>

@@ -145,3 +145,60 @@
 /* The monogram travels with the name, including its home link. */
 .portfolio .site-name { display: inline-flex; align-items: center; gap: 10px; }
 .name-mark { display: block; flex: 0 0 auto; width: 28px; height: 28px; }
+
+/* Research archive and verifiable source downloads. */
+.archive-crosslink { margin-top: 36px !important; }
+.portfolio .archive-label { margin-top: 32px; }
+.portfolio .writeup-entry + .paper-entry { margin-top: 25px; }
+.timestamp-note { border-top: 1px solid var(--rule); margin-top: 36px; padding-top: 24px; font-size: 14px; }
+.timestamp-note summary { cursor: pointer; color: var(--link); }
+.timestamp-note details p:first-of-type { margin-top: 16px; }
+.timestamp-note pre { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 13px; }
+
+/* A comfortable reading measure; the stamped source stays unchanged. */
+
+.pareto-page .essay-date { color: var(--muted); font-size: 14px; }
+.pareto-page .essay-preface { color: var(--muted); font-size: 16px; }
+.pareto-page .essay-definitions { padding-left: 23px; margin: 18px 0 28px; list-style: disc; }
+.pareto-page .essay-definitions li { margin-bottom: 16px; padding-left: 5px; }
+.pareto-page .essay-definitions strong { font-weight: 600; }
+.pareto-page .essay-definitions li::marker { color: var(--muted); }
+.pareto-page .essay-definitions a { text-decoration: underline; }
+.pareto-page .essay-summary { border-left: 2px solid var(--link); padding-left: 20px; }
+
+#timestamp { scroll-margin-top: 24px; }
+@media (max-width: 640px) {
+  .pareto-page .essay-definitions { padding-left: 19px; }
+  .pareto-page .essay-summary { padding-left: 16px; }
+}
+
+/* Shared reading typography for all writeups. */
+.portfolio.writeup-page .page { max-width: 800px; }
+.writeup-page .article-head h1 { font-size: clamp(28px, 4.5vw, 36px); line-height: 1.2; letter-spacing: -.7px; margin-bottom: 16px; }
+.writeup-page .article-head .meta, .writeup-page .essay-date { font-size: 14px; color: var(--muted); }
+.writeup-page .prose { font-size: 17px; line-height: 1.8; overflow-wrap: anywhere; }
+.writeup-page .prose p { margin: 0 0 22px; }
+.writeup-page .prose h2 { font-size: 22px; font-weight: 500; margin: 44px 0 14px; scroll-margin-top: 24px; }
+.writeup-page .prose h3 { font-size: 18px; font-weight: 500; margin: 28px 0 12px; }
+.writeup-page .prose ul { padding-left: 23px; margin: 18px 0 28px; list-style: disc; }
+.writeup-page .prose li { margin-bottom: 16px; padding-left: 5px; }
+.writeup-page .prose strong { font-weight: 600; }
+.writeup-page .prose li::marker { color: var(--muted); }
+.writeup-page .article-toc { display: flex; flex-wrap: wrap; gap: 8px 20px; font-size: 14px; margin: 20px 0 30px; }
+.writeup-page .works-cited { font-size: 14px; overflow-wrap: anywhere; }
+.portfolio .writing-category { border-top: 1px solid var(--rule); padding-top: 22px; margin-top: 32px; }
+.writing-category > article { margin: 0; }
+.writing-category > article + article { margin-top: 26px; }
+@media (max-width: 640px) {
+  .writeup-page .prose { font-size: 16px; }
+  .writeup-page .prose ul { padding-left: 19px; }
+}
+
+/* Complete contents for long essays, kept separate from the stamped text. */
+.writeup-page .full-toc { display: block; }
+.full-toc details { border: 0; margin: 0; padding: 0; }
+.full-toc summary { cursor: pointer; font: inherit; color: var(--muted); }
+.full-toc ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 24px; list-style: none; margin: 14px 0 0; padding: 0; }
+.full-toc li { margin: 0; line-height: 1.5; }
+#essay-title { scroll-margin-top: 24px; }
+@media (max-width: 640px) { .full-toc ul { grid-template-columns: 1fr; } }
