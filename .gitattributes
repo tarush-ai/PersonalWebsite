@@ -1,0 +1,3 @@
+# Timestamped sources must retain their exact bytes across checkouts.
+site/assets/writing/*.md -text
+site/assets/writing/*.ots binary

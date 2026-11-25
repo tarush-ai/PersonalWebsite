@@ -205,6 +205,8 @@ PROJECT_EXTENSIONS = {'.html', '.css', '.js', '.json', '.png', '.jpg', '.jpeg',
 
 # Old single-page-app routes, kept so existing links still land somewhere.
 LEGACY_REDIRECTS = {
+    'research': '/interests#research-interests',
+    'research.html': '/interests#research-interests',
     'blog': '/writing',
     'blog/aureliusgpt': '/writing/aureliusgpt',
     'vericare': '/experience#vericare',

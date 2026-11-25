@@ -12,20 +12,21 @@
 <link rel="icon" type="image/svg+xml" href="static/img/tg.svg">
 <script>try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
 <link rel="stylesheet" href="static/css/site.css">
+  <link rel="stylesheet" href="/assets/layout.css">
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
 
-<header class="site-header paper-shell">
+<header class="site-header paper-shell"><button class="theme-toggle" type="button" aria-label="Switch theme">dark</button>
     <a class="site-name" href="/"><img class="name-mark" src="static/img/tg.svg" width="28" height="28" alt="" aria-hidden="true">Tarush Gupta</a>
-    <nav class="site-nav" aria-label="Main navigation"><a href="/experience">Experience</a><a href="/research" aria-current="page">Research / Writeups</a><a href="/projects">Projects</a><a href="/talks">Talks</a><a href="/interests">Interests</a></nav>
+    <nav class="site-nav" aria-label="Main navigation"><a href="/experience">Experience</a><a href="/writing" aria-current="page">Writeups</a><a href="/projects">Projects</a><a href="/talks">Talks</a><a href="/interests">Interests</a></nav>
   </header>
 <header class="hero">
   <div class="wrap">
-    <span class="venue">Interpretability as a Science Workshop &middot; NeurIPS 2026 &middot; Sydney</span>
+    <p class="meta">Research paper · 2026</p>
     <h1>The Fitting Corpus Is Part of the Measurement: Auditing a Jacobian Lens on Pythia</h1>
-    <p class="authors"><a href="https://tarush.ai/">Tarush Gupta</a></p>
-    <p class="affil">Independent Researcher</p>
+    <p class="entry-context">Interpretability as a Science Workshop · NeurIPS 2026 · Sydney</p>
+    <p class="entry-context"><a href="https://tarush.ai/">Tarush Gupta</a> · Independent Researcher</p>
     <nav class="links" aria-label="Paper links">
       <a class="pill" href="static/pdf/fittingcorpus-workshop.pdf">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 1.8L18.2 9H13V3.8zM8 12h8v1.6H8V12zm0 3.2h8v1.6H8v-1.6zm0 3.2h5v1.6H8v-1.6z"/></svg>
@@ -38,7 +39,7 @@
         <span>Code</span></a>
       <a class="pill" href="https://huggingface.co/Tarush-AI/fittingcorpus">
         <span class="emoji" aria-hidden="true">🤗</span>
-        
+
         <span>Maps &amp; results</span></a>
       <a class="pill" href="#cite">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6h5v5H7.6c.1 2 1 3.2 2.9 3.8V17C6.9 16.4 5 14 5 10.4V6zm9 0h5v5h-2.4c.1 2 1 3.2 2.9 3.8V17c-3.6-.6-5.5-3-5.5-6.6V6z"/></svg>
@@ -372,12 +373,9 @@ bash repro/RUN_ALL.sh --tier T0   # recomputes every statistic in the paper</cod
   </div>
 </section>
 
-<div class="paper-shell"><a class="back" href="/writing">← research papers / writeups</a></div>
+<div class="paper-shell"><a class="back" href="/writing">All writeups</a></div>
 </main>
-<footer class="site-footer paper-shell">
-    <span>© 2026 Tarush Gupta</span>
-    <button class="theme-toggle" type="button">dark</button>
-  </footer>
+<footer class="site-footer paper-shell"><a href="mailto:tarushgs@gmail.com">tarushgs@gmail.com</a></footer>
 
 <div class="tip" id="tip" role="status" aria-live="polite"></div>
 <noscript><p style="text-align:center">The charts need JavaScript; the paper has every number.</p></noscript>
